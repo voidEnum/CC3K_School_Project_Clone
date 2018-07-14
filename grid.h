@@ -3,11 +3,12 @@
 #include <exception>
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <string>
 
+#include "textdisplay.h"
+#include "cell.h"
 
-class TextDisplay;
-class Cell;
 
 class MyMapNotFoundException : public std::exception {
 public:
@@ -16,13 +17,12 @@ public:
 
 class Grid {
   std::vector<std::vector<Cell>> theGrid;  // The actual grid.
-  TextDisplay *td = nullptr; // The text display.
+  std::unique_ptr<TextDisplay> td;  // The text display.
   int level;  // What level does this grid represent
     // Add private members, if necessary.
 
 public:
   Grid();
-  ~Grid();
 
   void init(const std::string &fname, int n); // Sets up a new grid by reading
                                               // from fname in mapFolder

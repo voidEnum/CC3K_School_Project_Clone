@@ -1,8 +1,6 @@
 #include "grid.h"
 
 #include <fstream>
-#include "cell.h"
-#include "textdisplay.h"
 
 using namespace std;
 
@@ -10,11 +8,8 @@ const char * MyMapNotFoundException::what() const noexcept {
     return "Tried to load a non existent map";
 }
 
-Grid::Grid(): theGrid(), td{new TextDisplay()}, level{0} {}
-
-Grid::~Grid() {
-  delete td;
-}
+Grid::Grid(): theGrid(), td(new TextDisplay()),
+               level{0} {}
 
 void Grid::init(const string &fname, const int n) {
 

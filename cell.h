@@ -1,6 +1,7 @@
 #ifndef CELL_H
 #define CELL_H
 #include <cstddef>
+#include <memory>
 
 class Entity;
 
@@ -10,7 +11,8 @@ enum class Terrain {VertWall, HoriWall, ChamFloor,
 class Cell  {
   const size_t r, c;
   Terrain t; 
-  Entity * e;
+  std::shared_ptr<Entity> e;
+  //Entity * e;
 
   // Add other private members if necessary
 
