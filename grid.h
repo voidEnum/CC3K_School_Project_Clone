@@ -1,31 +1,35 @@
 #ifndef GRID_H
 #define GRID_H
+#include <exception>
 #include <iostream>
 #include <vector>
-#include <cstddef>
-#include "cell.h"
-#include "state.h"
-#include "info.h"
+#include <string>
+
 
 class TextDisplay;
-template <typename InfoType, typename StateType> class Observer;
-class InvalidMove{};
+class Cell;
+
+class MyMapNotFoundException : public std::exception {
+public:
+  virtual const char *what() const noexcept;
+};
 
 class Grid {
   std::vector<std::vector<Cell>> theGrid;  // The actual grid.
   TextDisplay *td = nullptr; // The text display.
-  Observer<Info, State> *ob = nullptr;  // Another observer (intent:  graphics)
-  // Add private members, if necessary.
+  int level;  // What level does this grid represent
+    // Add private members, if necessary.
 
- public:
+public:
+  Grid();
   ~Grid();
-  
-  void setObserver(Observer<Info, State> *ob);
-  bool isFull() const;  // Is the game over, i.e., is the grid full?
-  Colour whoWon() const; // Who has more pieces when the board is full?
-  void init(size_t n); // Sets up an n x n grid.  Clears old grid, if necessary.
-  void setPiece(size_t r, size_t c, Colour colour);  // Plays piece at row r, col c.
-  void toggle(size_t r, size_t c);  // Flips piece at row r, col c.
+
+  void init(const std::string &fname, int n); // Sets up a new grid by reading
+                                              // from fname in mapFolder
+
+  Cell getCell(int row, int col) const;
+  int getWidth() const;
+  int getHeight() const;
 
   friend std::ostream &operator<<(std::ostream &out, const Grid &g);
 };
