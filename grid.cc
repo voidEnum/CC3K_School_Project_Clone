@@ -8,8 +8,7 @@ const char * MyMapNotFoundException::what() const noexcept {
     return "Tried to load a non existent map";
 }
 
-Grid::Grid(): theGrid(), td(new TextDisplay()),
-               level{0} {}
+Grid::Grid(): theGrid(), chambers(), td(new TextDisplay()),level{0} {}
 
 void Grid::init(const string &fname, const int n) {
 
@@ -22,8 +21,9 @@ void Grid::init(const string &fname, const int n) {
     throw MyMapNotFoundException();
   }
 
-  int row = 0, col = 0;
+  int row = 0;
   while (getline(inFile, s)) {
+    int col = 0;
     newGrid.push_back(vector<Cell>());
     vector<Cell> &v = newGrid.back();
     for (auto it = s.begin(); it != s.end(); it++) {
@@ -42,9 +42,48 @@ void Grid::init(const string &fname, const int n) {
   
   theGrid.swap(newGrid);
   level = n;
+  findChambers();
 
   td->buildDisplay(*this);
 }
+
+//  Helper function for find_Chambers. Recursively sets cell and all 
+//  chamberFloor  neighbours of cell to be in chamber n.
+void Grid::assignChamber(Cell &cell, int n) {
+  if (cell.getTerrain() != Terrain::ChamFloor || cell.getChamber() != 0) {
+    return;
+  } else {
+    cell.setChamber(n);
+    int r = cell.getRow(), c = cell.getCol();
+    // in a properly formed map, Chamber floors will never be on the edges
+    for (int i = (r - 1); i <= (r + 1); i++) {
+      for (int j = (c - 1); j <= (c + 1); j++) {
+        assignChamber(theGrid[i][j], n);
+      }
+    }
+  }
+}
+
+//  Helper function for init. Used after Grid is setup to sort cells into 
+//  chambers
+void Grid::findChambers() {
+  vector<vector<Cell *>> newChambers; // Tmp vector for new chambers
+  for (auto row = theGrid.begin(); row != theGrid.end(); row++) {
+    for (auto col = row->begin(); col != row->end(); col++) {
+      if (col->getTerrain() == Terrain::ChamFloor &&
+          col->getChamber() == 0) { // current cell is chamFloor and not sorted
+        int nextChamberNum = newChambers.size() + 1;
+        assignChamber(*col, nextChamberNum);
+        newChambers.push_back(vector<Cell *>());
+        newChambers.back().push_back(&(*col));
+      } else if (col->getChamber() != 0) {
+        newChambers[col->getChamber() - 1].push_back(&(*col));
+      }
+    }
+  }
+  chambers.swap(newChambers);
+}
+
 
 int Grid::getWidth() const {
   if (theGrid.size()) {
@@ -53,6 +92,7 @@ int Grid::getWidth() const {
     return 0;
   }
 }
+
 
 int Grid::getHeight() const {
   return theGrid.size();
