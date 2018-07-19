@@ -11,3 +11,11 @@ void Creature::beginTurn() {}
 
 
 void Creature::endTurn() {}
+
+int Creature::getAtk() const{
+  return atk;
+}
+
+int Creature::getDef() const{
+  return def;
+}

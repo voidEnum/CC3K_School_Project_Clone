@@ -1,22 +1,25 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
-
+#include "creature.h"
 #include <memory>
-class Player: public Creature{
+
+
+class Player: public Creature, public std::enable_shared_from_this<Player> {
   int gold;
  public:
-  Player(Entity &entity);
-  atkStatus attack(Cell &cell);
-  atkStatus wasAttacked(Creature &crtr);
-  void move(Cell &cell);
+  Player();
+  atkStatus attack(Cell &target);
+  atkStatus wasAttacked(Creature *aggressor);
+  void move(Cell *target);
   virtual void beginTurn()=0;
   virtual void endTurn()=0;
-  bool usePotion(Cell &cell);
+  void addGold(int reward);
+  //bool usePotion(Cell &cell);
   int finalScore();
-  shared_ptr<Player>withoutBuffs();
+  std::shared_ptr<Player>withoutBuffs();
  private:
   void die();
-  static int ceil_divide(int numerator, int denom)
-}
+  static int ceil_divide(int numerator, int denom);
+};
 
 #endif

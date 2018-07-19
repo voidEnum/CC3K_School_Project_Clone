@@ -1,1 +1,1 @@
-textdisplay.o: textdisplay.cc textdisplay.h grid.h cell.h
+textdisplay.o: textdisplay.cc textdisplay.h grid.h cell.h entity.h

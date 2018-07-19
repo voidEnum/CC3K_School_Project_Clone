@@ -1,10 +1,12 @@
 #include "player.h"
+#include "cell.h"
+using namespace std;
 
-Player::Player(Entity &entity): Entity{entity}, gold{0} {}
+Player::Player(): Creature(nullptr, '@'), gold{0} {}
 
-void Player::usePotion(Potion &target) {
+/*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);
-}
+}*/
 
 
 int Player::finalScore() {
@@ -12,7 +14,7 @@ int Player::finalScore() {
 }
 
 shared_ptr<Player>Player::withoutBuffs() {
-  return this;
+  return shared_from_this();
 }
 
 void Player::addGold(int reward) {
@@ -20,10 +22,10 @@ void Player::addGold(int reward) {
 }
 
 atkStatus Player::attack(Cell &target) {
-  if (target.occupant == nullptr) {
+  if (target.getOccupant() == nullptr) {
     return atkStatus::EmptyTarget;
   }
-  return target.occupant.wasAttacked(this);
+  return target.getOccupant()->wasAttacked<Player *>(this);
 }
 
 int Player::ceil_divide(int numerator, int denom) {
@@ -33,10 +35,10 @@ int Player::ceil_divide(int numerator, int denom) {
   return (numerator / denom) + 1;
 }
 
-atkStatus Player::wasAttacked(Creature &aggressor) {
+atkStatus Player::wasAttacked(Creature *aggressor) {
   int randomAction = rand() % 2;
-  if (randomAction = 0) { 
-    int damage = ceil_divide(100 * aggressor.atk, 100 + def);    
+  if (randomAction == 0) { 
+    int damage = ceil_divide(100 * aggressor->getAtk(), 100 + getDef());    
     hp -= damage;
     return atkStatus::Hit;
   }
@@ -45,8 +47,9 @@ atkStatus Player::wasAttacked(Creature &aggressor) {
   }
 }
 
-void Player::move(Cell &target) {
-  cell = target;
+
+void Player::move(Cell *target) {
+  this->setCell(target);
 } 
 
 void Player::die() {

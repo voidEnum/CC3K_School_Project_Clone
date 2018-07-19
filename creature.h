@@ -14,6 +14,8 @@ public:
   virtual void move(Cell *target);
   virtual void beginTurn();
   virtual void endTurn();
+  virtual int getAtk() const;
+  virtual int getDef() const;
 };
 
 #endif
