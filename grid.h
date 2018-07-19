@@ -28,9 +28,13 @@ public:
   void init(const std::string &fname, int n); // Sets up a new grid by reading
                                               // from fname in mapFolder
 
-  Cell getCell(int row, int col) const;
+  Cell &getCell(int row, int col);
   int getWidth() const;
   int getHeight() const;
+
+  void moveEntity(Cell & src, Cell & dest);
+  void removeEntity(Cell & remFrom);
+  void placeEntity(std::shared_ptr<Entity> e, Cell & placeHere);
 
   void printChambers();
 
