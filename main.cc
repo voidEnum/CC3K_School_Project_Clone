@@ -5,8 +5,25 @@
 #include "grid.h"
 #include "creature.h"
 #include "player.h"
+#include "game.h"
+#include "controller.h"
 using namespace std;
 
+int main() {
+  Game theGame();
+  Controller theController(cin);
+
+  theController.getCommand();
+  theController.sendRace();
+
+  while (true) {
+    theController.getCommand();
+    theController.sendCommand();
+  }
+}
+
+
+/*
 int main() {
 
   Grid grid;
@@ -54,3 +71,4 @@ int main() {
     cout << "Enter Command: (help for cmd list)" << endl;
   }
 }
+*/
