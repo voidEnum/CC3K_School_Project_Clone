@@ -4,7 +4,7 @@
 
 #include "grid.h"
 #include "creature.h"
-
+#include "player.h"
 using namespace std;
 
 int main() {
