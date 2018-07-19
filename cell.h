@@ -21,9 +21,12 @@ public:
   int getRow() const;
   int getCol() const;
   int getChamber() const;
+  std::shared_ptr<Entity> getOccupant() const;
+  void setOccupant(std::shared_ptr<Entity> e);
   Terrain getTerrain() const;
 
-  void setChamber(int n);
+  char getSymbol() const;
 
+  void setChamber(int n);
 };
 #endif

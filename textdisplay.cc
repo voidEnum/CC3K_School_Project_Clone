@@ -3,9 +3,11 @@
 #include "grid.h"
 #include "cell.h"
 
+#include "entity.h"
+
 using namespace std;
 
-void TextDisplay::buildDisplay(const Grid &g) {
+void TextDisplay::buildDisplay(Grid &g) {
   theDisplay.clear();
   int h = g.getHeight();
   int w = g.getWidth();
@@ -13,16 +15,14 @@ void TextDisplay::buildDisplay(const Grid &g) {
     theDisplay.push_back(vector<char>());
     vector<char> &c = theDisplay.back();
     for (int j = 0; j < w; j++) {
-      switch (g.getCell(i, j).getTerrain()) {
-        case Terrain::VertWall  : c.push_back('|'); break;
-        case Terrain::HoriWall  : c.push_back('-'); break;
-        case Terrain::ChamFloor : c.push_back('.'); break;
-        case Terrain::PassFloor : c.push_back('#'); break;
-        case Terrain::Door      : c.push_back('+'); break;
-        default                 : c.push_back(' ');
-      }
+      c.push_back(g.getCell(i, j).getSymbol());   
     }
   }
+}
+
+void TextDisplay::update(const Cell &whatChanged) {
+  int r = whatChanged.getRow(), c = whatChanged.getCol();
+  theDisplay[r][c] = whatChanged.getSymbol();
 }
 
 ostream &operator<<(ostream &out, const TextDisplay &td) {

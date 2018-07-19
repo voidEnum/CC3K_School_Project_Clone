@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include "entity.h"
+
 using namespace std;
 
 const char * MyMapNotFoundException::what() const noexcept {
@@ -84,6 +86,25 @@ void Grid::findChambers() {
   chambers.swap(newChambers);
 }
 
+void Grid::moveEntity(Cell &src, Cell &dest) {
+  dest.setOccupant(src.getOccupant());
+  dest.getOccupant()->setCell(&dest);
+  src.setOccupant(nullptr);
+  td->update(src);
+  td->update(dest);
+}
+
+void Grid::placeEntity(shared_ptr<Entity> e, Cell &placeHere) {
+  e->setCell(&placeHere);
+  placeHere.setOccupant(e);
+  td->update(placeHere);
+}
+
+void Grid::removeEntity(Cell & remFrom) {
+  remFrom.getOccupant()->setCell(nullptr);
+  remFrom.setOccupant(nullptr);
+  td->update(remFrom);
+}
 
 int Grid::getWidth() const {
   if (theGrid.size()) {
@@ -93,12 +114,11 @@ int Grid::getWidth() const {
   }
 }
 
-
 int Grid::getHeight() const {
   return theGrid.size();
 }
 
-Cell Grid::getCell(int row, int col) const {
+Cell & Grid::getCell(int row, int col) {
   return theGrid[row][col];
 }
 
