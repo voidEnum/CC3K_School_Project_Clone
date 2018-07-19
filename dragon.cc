@@ -1,5 +1,4 @@
 #include "dragon.h"
-#include "treasure.h"
 #include <iostream>
 
 using namespace std;
