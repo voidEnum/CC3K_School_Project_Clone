@@ -6,8 +6,9 @@
 
 class Player: public Creature, public std::enable_shared_from_this<Player> {
   int gold;
+  int maxHp;
  public:
-  Player();
+  Player(int maxHp);
   atkStatus attack(Cell &target);
   atkStatus wasAttacked(Creature *aggressor);
   void move(Cell *target);
@@ -17,9 +18,6 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   //bool usePotion(Cell &cell);
   int finalScore();
   std::shared_ptr<Player>withoutBuffs();
- private:
-  void die();
-  static int ceil_divide(int numerator, int denom);
 };
 
 #endif
