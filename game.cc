@@ -182,7 +182,7 @@ void Game::movePlayer(const string &direction) {
     theGrid->moveEntity(player_Posn, heading_dir);
   }
   else {
-    throw Invalid_behave("Invalid behaviour!");
+    throw Invalid_behave("");
   }
 }
 
@@ -219,7 +219,7 @@ bool valid_dir(string dir) {
     return true;
   }
   else {
-    throw Invalid_behave("Invalid direction command!");
+    throw Invalid_behave("");
     return false;
   }
 }

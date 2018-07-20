@@ -31,7 +31,6 @@ int main() {
       theController.requestDisplay(theGame);
     }
     catch (Invalid_behave& ib) {
-      cout << ib.what() << " Please try another command." << endl;
       continue;
     }
   }
