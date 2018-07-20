@@ -5,16 +5,32 @@
 #include "invalid_behave.h"
 #include <sstream>
 #include <iostream>
-#include <memory>
+#include <iterator>
 
 using namespace std;
 
 Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
   theGrid->init("maps/basicFloor.txt", 1);
 }
-/*
+
 void Game::generateEnemies() {
-  int size = theGrid.size();
+  vector<vector<Cell *>> &cha = theGrid->getChambers();
+  for (int i = 0; i < 20; ++i) {
+    int numChambers = cha.size();
+    int selectedChamberIdx = rand() % (numChambers);
+    vector<Cell *> &cha2 = cha[selectedChamberIdx];
+    int numCells = cha2.size();
+    int selectedCellIdx = rand() % (numCells);
+
+    Cell &selected = *(cha2[selectedCellIdx]);
+
+    shared_ptr<Enemy> enemy(new Enemy());
+    theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
+    enemies.emplace_back(enemy);
+    cha2.erase(cha2.begin() + selectedCellIdx);
+  }
+}
+  /*int size = theGrid.size();
   int randomrange = 0;
   int randomnumber = 0;
   Vector<Cell>candidates;
@@ -32,9 +48,9 @@ void Game::generateEnemies() {
     placeEntity(e, candidates[randomnumber]);
     enemies.emplace_back(e);
   }
-}  
+}*/  
     
-void Game::generatePotions() {
+/*void Game::generatePotions() {
   int size = theGrid.size();
   int randomrange = 0;
   int randomnumber = 0;
@@ -81,11 +97,11 @@ void Game::generatePlayer(const string &race) {
 
   vector<vector<Cell *>> &cha = theGrid->getChambers();
   int numChambers = cha.size();
-  int selectedChamberIdx = rand() % (numChambers - 1);
+  int selectedChamberIdx = rand() % (numChambers);
 
   vector<Cell *> &cha2 = cha[selectedChamberIdx];
   int numCells = cha2.size();
-  int selectedCellIdx = rand() % (numCells -1);
+  int selectedCellIdx = rand() % (numCells);
 
   Cell &selected = *(cha2[selectedCellIdx]);
 
@@ -121,6 +137,7 @@ bool Game::startRound(const string &race) {
   //generateTreasures();
   generatePlayer(race);
   (void)race;
+  generateEnemies();
   return true;
 }
 
@@ -176,8 +193,8 @@ void Game::movePlayer(const string &direction) {
   Posn player_Posn = player->getPosn();
   Posn heading_dir = dir_to_posn(theGrid->getCell(player_Posn), direction);
   char heading_tile = theGrid->getCell(heading_dir).getSymbol();
-  if (heading_tile != '|' && heading_tile != '-' &&
-      heading_tile != ' ') { 
+  if (heading_tile == '#' || heading_tile == '.' ||
+      heading_tile == '\\' || heading_tile == '+') { 
     cout << heading_tile << endl;
     theGrid->moveEntity(player_Posn, heading_dir);
   }

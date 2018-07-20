@@ -16,6 +16,10 @@ public:
   virtual void endTurn();
   virtual int getAtk() const;
   virtual int getDef() const;
+  virtual int getHp() const;
+  virtual int damage(int atk, int def);
+ private:
+  int ceil_divide(int numerator, int denom);
 };
 
 #endif
