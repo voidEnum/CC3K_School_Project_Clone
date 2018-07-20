@@ -1,5 +1,7 @@
 #include "entity.h"
 
+#include "posn.h"
+
 char Entity::getSymbol() const {
   return symbol;
 }
@@ -9,8 +11,8 @@ atkStatus Entity::wasAttacked(Creature *aggressor) {
   return atkStatus::InvalidTarget;
 }
 
-Entity::Entity(Cell *c = nullptr, char sym = 'Y'): cell{c}, symbol{sym} {}
+Entity::Entity(Posn p = {-1, -1}, char sym = 'Y'): pos{p}, symbol{sym} {}
 
-void Entity::setCell(Cell *c) {
-  cell = c;
+void Entity::setPos(Posn p) {
+  pos = p;
 }

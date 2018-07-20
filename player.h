@@ -10,9 +10,9 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   Player();
   atkStatus attack(Cell &target);
   atkStatus wasAttacked(Creature *aggressor);
-  void move(Cell *target);
-  virtual void beginTurn()=0;
-  virtual void endTurn()=0;
+  void move(Posn p);
+  //virtual void beginTurn();
+  //virtual void endTurn();
   void addGold(int reward);
   //bool usePotion(Cell &cell);
   int finalScore();

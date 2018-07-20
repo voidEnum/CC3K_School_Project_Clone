@@ -1,7 +1,8 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
-class Cell;
+#include "posn.h"
+
 class Creature;
 class Player;
 
@@ -9,10 +10,10 @@ enum class atkStatus {EmptyTarget, InvalidTarget, Miss, Hit, Kill};
 
 class Entity {
 protected:
-  Cell *cell;
+  Posn pos;
   char symbol;
 public:
-  Entity(Cell *c, char sym);
+  Entity(Posn p, char sym);
   virtual atkStatus wasAttacked(Creature *aggressor);
   //virtual atkStatus wasAttacked(Player *aggressor);
   template<typename T> 
@@ -21,7 +22,7 @@ public:
     return atkStatus::InvalidTarget;
   }
   virtual char getSymbol() const;
-  virtual void setCell(Cell *c);
+  virtual void setPos(Posn p);
 };
 
 #endif

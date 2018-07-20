@@ -1,8 +1,8 @@
 CXX=g++
 CXXFLAGS=-std=c++14 -Wextra -Wpedantic -Wall -Werror -MMD -g
-OBJECTS=main.o cell.o grid.o textdisplay.o entity.o creature.o player.o
+OBJECTS=main.o cell.o grid.o textdisplay.o entity.o creature.o player.o controller.o game.o
 DEPENDS=${OBJECTS:.o=.d}
-EXEC=fileInputGridTest
+EXEC=cc3k
 
 ${EXEC}: ${OBJECTS}
 	${CXX} ${CXXFLAGS} ${OBJECTS}  -o ${EXEC}

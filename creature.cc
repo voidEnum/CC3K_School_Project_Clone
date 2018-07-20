@@ -1,11 +1,7 @@
 #include "creature.h"
 
-Creature::Creature(Cell *c, char sym, int mhp, int h, int a, int d):
-                   Entity(c, sym), maxHp{mhp}, hp{h}, atk{a}, def{d} {}
-
-void Creature::move(Cell *target) {
-  cell = target;
-}
+Creature::Creature(Posn p, char sym, int mhp, int h, int a, int d):
+                   Entity(p, sym), maxHp{mhp}, hp{h}, atk{a}, def{d} {}
 
 void Creature::beginTurn() {}
 
