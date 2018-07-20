@@ -125,25 +125,40 @@ void Game::update_display() {
   theGrid.td.update();
 }
 
-void Game::movePlayer(Cell &dest) {
-  thegrid.moveEntity(player.cell, dest);
+Cell &dir_to_cell(Cell &cur_cell, string direction) {
+  int row = cur_cell.getRow();
+  int col = cur_cell.getCol();
+  switch (direction) {
+    case "ea" : return theGrid[row][col + 1];
+    case "no" : return theGrid[row - 1][col];
+    case "we" : return theGrid[row][col - 1];
+    case "so" : return theGrid[row + 1][col];
+    case "nw" : return theGrid[row - 1][col - 1];
+    case "ne" : return theGrid[row - 1][col + 1];
+    case "sw" : return theGrid[row + 1][col - 1];
+    case "se" : return theGrid[row + 1][col + 1];
+  }
 }
 
-void Game::PlayerAttack(Cell &target) {
-  player.attack(target);
+void Game::movePlayer(string direction) {
+  thegrid.moveEntity(player.cell, dir_to_cell(player.cell, direction));
+}
+
+void Game::PlayerAttack(string direction) {
+  player.attack(dir_to_cell(player.cell, direction));
 }
 
 void Game::enemyAttack() {
   
   
-void Game::Player_usePotion(Cell &target) {
+void Game::Player_usePotion(string direction) {
   int size = potions.size();
   int target_row = target.getRow();
   int target_col = target.getCol();
   for (int i = 0; i < size; ++size) { 
     if (target_row == potions.at(i).getRow() &&
         target_col == potions.at(i).getCol()) {
-      player->usePotion(target);
+      player->usePotion(dir_to_cell(player.cell, direction));
       shared_ptr<Potion>removed_potion = potions.back();
       potions.pop_back();
       removeEntity(removed_potion.cell);
@@ -156,8 +171,42 @@ void Game::freeze() {
   frozen = !frozen;
 }
 
-void Game::processTurn() {
-  if (!frozen) {
+bool valid_dir(string dir) {
+  if (dir == "ea" || dir == "no" || dir == "so" || dir == "we" ||
+      dir == "sw" || dir == "se" || dir == "nw" || dir == "ne") {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void Game::processTurn(string command) {
+  istringstream iss(command);
+  string s;
+  iss >> s;
+  if (s == "a") {
+    iss >> s;
+    if (valid_dir(s)) {
+      PlayerAttack(s);
+    }
+  }
+  else if (s == "use") {
+    iss >> s;
+    if (valid_dir(s)) {
+      Player_usePotion(s);
+    }
+  }
+  else if (s == "restart") {
+    changeFloor();
+  }
+  else if (s == "f") {
+    freeze();
+  }
+  else if (valid_dir(s)) {
+    movePlayer(s);
+  } 
+  else if (!frozen) {
     moveEnemies(enemies);
   }
   update_display(); 

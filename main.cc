@@ -70,5 +70,10 @@ int main() {
     }
     cout << "Enter Command: (help for cmd list)" << endl;
   }
+  while (1) {  
+    processturn();
+  }
+    
+  
 }
 */
