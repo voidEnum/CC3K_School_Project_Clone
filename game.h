@@ -28,7 +28,7 @@ class Game {
   //void moveEnemies(std::vector<Enemy *>enemies);
   //void changeFloor();
   //void update_display();
-  //void movePlayer(std::string direction);
+  void movePlayer(const std::string &direction);
   //void PlayerAttack(std::string direction);
   //void enemyAttack();
   //void Player_usePotion();
