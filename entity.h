@@ -22,7 +22,8 @@ public:
     return atkStatus::InvalidTarget;
   }
   virtual char getSymbol() const;
-  virtual void setPos(Posn p);
+  void setPos(Posn p);
+  Posn getPosn() const;
 };
 
 #endif

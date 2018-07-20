@@ -155,28 +155,29 @@ void Game::changeFloor() {
   
 void Game::update_display() {
   theGrid.td.update();
-}
+}*/
 
-Cell &dir_to_cell(Cell &cur_cell, string direction) {
+
+Posn dir_to_posn(Cell &cur_cell, string direction) {
   int row = cur_cell.getRow();
   int col = cur_cell.getCol();
-  switch (direction) {
-    case "ea" : return theGrid[row][col + 1];
-    case "no" : return theGrid[row - 1][col];
-    case "we" : return theGrid[row][col - 1];
-    case "so" : return theGrid[row + 1][col];
-    case "nw" : return theGrid[row - 1][col - 1];
-    case "ne" : return theGrid[row - 1][col + 1];
-    case "sw" : return theGrid[row + 1][col - 1];
-    case "se" : return theGrid[row + 1][col + 1];
-  }
+  if (direction == "ea") return {row, col + 1};
+  else if (direction == "no") return {row - 1, col};
+  else if (direction == "we") return {row, col - 1};
+  else if (direction == "so") return {row + 1, col};
+  else if (direction == "nw") return {row - 1, col - 1};
+  else if (direction == "ne") return {row - 1, col + 1};
+  else if (direction == "sw") return {row + 1, col - 1};
+  else if (direction == "se") return {row + 1, col + 1};
+  else return {-1, -1};
 }
 
-void Game::movePlayer(string direction) {
-  thegrid.moveEntity(player.cell, dir_to_cell(player.cell, direction));
+void Game::movePlayer(const string &direction) {
+  Posn player_Posn = player->getPosn();
+  theGrid->moveEntity(player_Posn, dir_to_posn(theGrid->getCell(player_Posn), direction));
 }
 
-void Game::PlayerAttack(string direction) {
+/*void Game::PlayerAttack(string direction) {
   player.attack(dir_to_cell(player.cell, direction));
 }
 
@@ -201,7 +202,7 @@ void Game::Player_usePotion(string direction) {
 
 void Game::freeze() {
   frozen = !frozen;
-}
+}*/
 
 bool valid_dir(string dir) {
   if (dir == "ea" || dir == "no" || dir == "so" || dir == "we" ||
@@ -212,12 +213,12 @@ bool valid_dir(string dir) {
     return false;
   }
 }
-*/
+
 bool Game::processTurn(const string &command) {
   istringstream iss(command);
   string s;
   iss >> s;
-  if (s == "a") {
+  /*if (s == "a") {
     //iss >> s;
     //if (valid_dir(s)) {
     //  PlayerAttack(s);
@@ -234,13 +235,13 @@ bool Game::processTurn(const string &command) {
   }
   else if (s == "f") {
     //freeze();
-  }
-  /*else if (valid_dir(s)) {
-    //movePlayer(s);
-  }*/ 
-  else if (!frozen) {
+  }*/
+  if (valid_dir(s)) {
+    movePlayer(s);
+  } 
+  /*else if (!frozen) {
    // moveEnemies(enemies);
-  }
+  }*/
   return true;
 }
 
