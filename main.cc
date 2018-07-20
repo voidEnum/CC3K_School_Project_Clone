@@ -10,6 +10,7 @@
 #include "game.h"
 #include "controller.h"
 #include "invalid_behave.h"
+#include "enemy.h"
 using namespace std;
 
 int main() {
