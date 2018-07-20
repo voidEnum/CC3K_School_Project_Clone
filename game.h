@@ -7,18 +7,21 @@ class Game {
   vector<shared_ptr<Enemy>>enemies;
   vector<shared_ptr<Potion>>potions;
   bool frozen;
+  // methods
  public:
   Game();
+  bool startRound(string race);
+  void processTurn(string command);
+ private:
   void generateEnemeies();
   void generatePotions();
   void generateTreasures();
-  void generatePlayer();
-  void startRound();
+  void generatePlayer(string race);
   void moveEnemies(vector<Enemy *>enemies);
   void changeFloor();
   void update_display();
-  void movePlayer();
-  void PlayerAttack();
+  void movePlayer(string direction);
+  void PlayerAttack(string direction);
   void enemyAttack();
   void Player_usePotion();
   void freeze();
