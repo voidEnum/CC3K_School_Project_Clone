@@ -4,6 +4,7 @@
 #include "player.h"
 #include "treasure.h"
 #include "treasure_normal.h"
+#include "invalid_behave.h"
 
 #include <sstream>
 #include <iostream>
@@ -158,7 +159,16 @@ Posn dir_to_posn(Cell &cur_cell, string direction) {
 
 void Game::movePlayer(const string &direction) {
   Posn player_Posn = player->getPosn();
-  theGrid->moveEntity(player_Posn, dir_to_posn(theGrid->getCell(player_Posn), direction));
+  Posn heading_dir = dir_to_posn(theGrid->getCell(player_Posn), direction);
+  char heading_tile = theGrid->getCell(heading_dir).getSymbol();
+  if (heading_tile != '|' && heading_tile != '-' &&
+      heading_tile != ' ') { 
+    cout << heading_tile << endl;
+    theGrid->moveEntity(player_Posn, heading_dir);
+  }
+  else {
+    throw Invalid_behave("");
+  }
 }
 
 /*void Game::PlayerAttack(string direction) {
@@ -194,6 +204,7 @@ bool valid_dir(string dir) {
     return true;
   }
   else {
+    throw Invalid_behave("");
     return false;
   }
 }
@@ -219,7 +230,7 @@ bool Game::processTurn(const string &command) {
   }
   else if (s == "f") {
     //freeze();
-  }*/
+  }*/ 
   if (valid_dir(s)) {
     movePlayer(s);
   } 
