@@ -2,7 +2,7 @@
 #include "cell.h"
 using namespace std;
 
-Player::Player(): Creature({-1, -1}, '@'), gold{0} {}
+Player::Player(): Creature('@'), gold{0} {}
 
 /*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);

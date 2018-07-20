@@ -2,7 +2,10 @@
 
 #include "cell.h"
 #include "player.h"
+#include "treasure.h"
+#include "treasure_normal.h"
 #include "invalid_behave.h"
+
 #include <sstream>
 #include <iostream>
 #include <iterator>
@@ -70,73 +73,54 @@ void Game::generateEnemies() {
     potions.emplace_back(p);
   }
 }  
-  
-void Game::generateTreasures() {
-  int size = theGrid.size();
-  int randomrange = 0;
-  int randomnumber = 0;
-  Vector<Cell>candidates;
-  for (int i = 0; i < size; ++i) {
-    for (int j = 0; j < size; ++j) {
-      if (theGrid[i][j].cell.tile == Terrain::Chamfloor) {
-        ++randomrange;
-        candidates.emplace_back(theGrid[i][j]);
-      }
-    }
-  }
-  for (int k = 0; k < 10; ++k) {
-    randomnumber = rand() % randomrange;
-    Treasure &t = Treasure{&candidates[randomnumber]};
-    placeEntity(t, candidates[randomnumber]);
+*/ 
+ 
+void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
+  for (int i = 0; i < NUM_TREASURE_SPAWN; i++) {
+    int numChambers = vvc.size();
+    int selectedChamberIdx = rand() % numChambers;
+
+    vector<Cell *> &vc = vvc[selectedChamberIdx];
+    int numCells = vc.size();
+    int selectedCellIdx = rand() % numCells;
+
+    Cell &selected = *(vc[selectedCellIdx]);
+    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
+    shared_ptr<Treasure> toPlace(new Treasure_Normal()); 
+    theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
   }
 }
-*/
 
-void Game::generatePlayer(const string &race) {
+
+void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   (void)race;
 
-  vector<vector<Cell *>> &cha = theGrid->getChambers();
-  int numChambers = cha.size();
-  int selectedChamberIdx = rand() % (numChambers);
+  int numChambers = vvc.size();
+  int selectedChamberIdx = rand() % numChambers;
 
-  vector<Cell *> &cha2 = cha[selectedChamberIdx];
-  int numCells = cha2.size();
-  int selectedCellIdx = rand() % (numCells);
+  vector<Cell *> &vc = vvc[selectedChamberIdx];
+  int numCells = vc.size();
+  int selectedCellIdx = rand() % numCells;
 
-  Cell &selected = *(cha2[selectedCellIdx]);
+  Cell &selected = *(vc[selectedCellIdx]);
+  vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
 
   shared_ptr<Player> test(new Player());
 
   player = test;
-  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
-  /*
-  int size = theGrid.size();
-  int randomrange = 0;
-  int randomnumber = 0;
-  Vector<Cell>candidates;
-  for (int i = 0; i < size; ++i) {
-    for (int j = 0; j < size; ++j) {
-      if (theGrid[i][j].cell.tile == Terrain::Chamfloor) {
-        ++randomrange;
-        candidates.emplace_back(theGrid[i][j]);
-      }
-    }
-  } 
-  randomnumber = rand() % randomrange;
-  Player &user = Player{&candidates[randomnumber]};
-  placeEntity(user, candidates[randomnumber]);
-  player = user;
-  */
+  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()}); 
 }       
 
 
 
 bool Game::startRound(const string &race) {
+  // Copy the chamber layout
+  vector<vector<Cell *>> candidateCells = theGrid->getChambers();
+  
   //generateEnemies();
   //generatePotions();
-  //generateTreasures();
-  generatePlayer(race);
-  (void)race;
+  generatePlayer(race, candidateCells);
+  generateTreasures(candidateCells);
   generateEnemies();
   return true;
 }

@@ -10,6 +10,7 @@
 class Player;
 
 class Game {
+  static const int NUM_TREASURE_SPAWN = 10;
   std::unique_ptr<Grid> theGrid;
   std::shared_ptr<Player> player;
   std::vector<std::shared_ptr<Enemy>>enemies;
@@ -24,8 +25,8 @@ class Game {
  private:
   void generateEnemies();
   //void generatePotions();
-  //void generateTreasures();
-  void generatePlayer(const std::string &race);
+  void generateTreasures(std::vector<std::vector<Cell *>> &vvc); // all normal treasures for now
+  void generatePlayer(const std::string &race, std::vector<std::vector<Cell *>> &vvc); // generic player for now
   //void moveEnemies(std::vector<Enemy *>enemies);
   //void changeFloor();
   //void update_display();
