@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <time.h>
+#include <stdlib.h>
 
 #include "grid.h"
 #include "creature.h"
@@ -13,12 +15,18 @@ int main() {
   Game theGame;
   Controller theController(cin);
 
+  srand(time(NULL));
+
+  cout << "please select your race: (all input will result in a generic player for now)" <<endl;
+  
   theController.getCommand();
   theController.sendRace(theGame);
+  theController.requestDisplay(theGame);
 
   while (true) {
     theController.getCommand();
     theController.sendCommand(theGame);
+    theController.requestDisplay(theGame);
   }
 }
 

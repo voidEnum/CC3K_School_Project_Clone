@@ -1,10 +1,15 @@
 #include "game.h"
 
+#include "cell.h"
+#include "player.h"
+
 #include <sstream>
+#include <iostream>
+#include <memory>
 
 using namespace std;
 
-Game::Game(): theGrid(), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
+Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
   theGrid->init("maps/basicFloor.txt", 1);
 }
 /*
@@ -69,9 +74,26 @@ void Game::generateTreasures() {
     placeEntity(t, candidates[randomnumber]);
   }
 }
+*/
 
+void Game::generatePlayer(const string &race) {
+  (void)race;
 
-void Game::generatePlayer() {
+  vector<vector<Cell *>> &cha = theGrid->getChambers();
+  int numChambers = cha.size();
+  int selectedChamberIdx = rand() % numChambers - 1;
+
+  vector<Cell *> &cha2 = cha[selectedChamberIdx];
+  int numCells = cha2.size();
+  int selectedCellIdx = rand() % numCells -1;
+
+  Cell &selected = *(cha2[selectedCellIdx]);
+
+  shared_ptr<Player> test(new Player());
+
+  player = test;
+  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
+  /*
   int size = theGrid.size();
   int randomrange = 0;
   int randomnumber = 0;
@@ -88,15 +110,16 @@ void Game::generatePlayer() {
   Player &user = Player{&candidates[randomnumber]};
   placeEntity(user, candidates[randomnumber]);
   player = user;
+  */
 }       
-*/
 
 
-bool Game::startRound(string race) {
+
+bool Game::startRound(const string &race) {
   //generateEnemies();
   //generatePotions();
   //generateTreasures();
-  //generatePlayer();
+  generatePlayer(race);
   (void)race;
   return true;
 }
@@ -190,7 +213,7 @@ bool valid_dir(string dir) {
   }
 }
 */
-bool Game::processTurn(string command) {
+bool Game::processTurn(const string &command) {
   istringstream iss(command);
   string s;
   iss >> s;
@@ -219,5 +242,9 @@ bool Game::processTurn(string command) {
    // moveEnemies(enemies);
   }
   return true;
+}
+
+void Game::print() {
+  cout << *theGrid;
 }
 

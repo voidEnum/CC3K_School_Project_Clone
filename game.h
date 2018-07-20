@@ -17,13 +17,14 @@ class Game {
   // methods
  public:
   Game();
-  bool startRound(std::string race);
-  bool processTurn(std::string command);
+  bool startRound(const std::string &race);
+  bool processTurn(const std::string &command);
+  void print();
  private:
   //void generateEnemeies();
   //void generatePotions();
   //void generateTreasures();
-  //void generatePlayer(std::string race);
+  void generatePlayer(const std::string &race);
   //void moveEnemies(std::vector<Enemy *>enemies);
   //void changeFloor();
   //void update_display();

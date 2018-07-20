@@ -10,7 +10,8 @@ const char * MyMapNotFoundException::what() const noexcept {
     return "Tried to load a non existent map";
 }
 
-Grid::Grid(): theGrid(), chambers(), td(new TextDisplay()),level{0} {}
+Grid::Grid(): theGrid{vector<vector<Cell>>()}, chambers{vector<vector<Cell *>>()},
+              td(new TextDisplay()),level{0} {}
 
 void Grid::init(const string &fname, const int n) {
 
@@ -41,7 +42,6 @@ void Grid::init(const string &fname, const int n) {
     }
     row++;
   }
-  
   theGrid.swap(newGrid);
   level = n;
   findChambers();
@@ -85,6 +85,10 @@ void Grid::findChambers() {
     }
   }
   chambers.swap(newChambers);
+}
+
+vector<vector<Cell *>> & Grid::getChambers() {
+  return chambers;
 }
 
 void Grid::moveEntity(Posn src, Posn dest) {
