@@ -13,7 +13,7 @@ protected:
   Posn pos;
   char symbol;
 public:
-  Entity(Posn p, char sym);
+  Entity(Posn p = {-1, -1}, char sym = 'Y');
   virtual atkStatus wasAttacked(Creature *aggressor);
   //virtual atkStatus wasAttacked(Player *aggressor);
   template<typename T> 

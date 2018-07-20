@@ -11,7 +11,7 @@ atkStatus Entity::wasAttacked(Creature *aggressor) {
   return atkStatus::InvalidTarget;
 }
 
-Entity::Entity(Posn p = {-1, -1}, char sym = 'Y'): pos{p}, symbol{sym} {}
+Entity::Entity(Posn p, char sym): pos{p}, symbol{sym} {}
 
 void Entity::setPos(Posn p) {
   pos = p;
