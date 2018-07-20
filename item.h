@@ -3,6 +3,9 @@
 
 #include "entity.h"
 
-class Item: public Entity {};
+class Item: public Entity {
+protected:
+  Item(char sym);
+};
 
 #endif
