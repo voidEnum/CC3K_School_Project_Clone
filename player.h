@@ -10,7 +10,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   Player();
   atkStatus attack(Cell &target);
   atkStatus wasAttacked(Creature *aggressor);
-  void move(Cell *target);
+  void move(Posn p);
   virtual void beginTurn()=0;
   virtual void endTurn()=0;
   void addGold(int reward);

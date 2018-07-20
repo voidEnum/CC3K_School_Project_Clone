@@ -1,9 +1,13 @@
 #include "game.h"
 
-Game::Game(): theGrid{nullptr}, player{nullptr}, enemies{nullptr}, potions{nullptr}, frozen{false} {
-  theGrid.init();
-}
+#include <sstream>
 
+using namespace std;
+
+Game::Game(): theGrid(), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
+  theGrid->init("maps/basicFloor.txt", 1);
+}
+/*
 void Game::generateEnemies() {
   int size = theGrid.size();
   int randomrange = 0;
@@ -85,14 +89,19 @@ void Game::generatePlayer() {
   placeEntity(user, candidates[randomnumber]);
   player = user;
 }       
-  
-void Game::startRound() {
-  generateEnemies();
-  generatePotions();
-  generateTreasures();
-  generatePlayer();
+*/
+
+
+bool Game::startRound(string race) {
+  //generateEnemies();
+  //generatePotions();
+  //generateTreasures();
+  //generatePlayer();
+  (void)race;
+  return true;
 }
 
+/*
 void Game::moveEnemies(vector<shared_ptr<Enemy>>enemies) {
   int size = enemies.size();
   int randomrange = 0;
@@ -148,7 +157,7 @@ void Game::PlayerAttack(string direction) {
   player.attack(dir_to_cell(player.cell, direction));
 }
 
-void Game::enemyAttack() {
+void Game::enemyAttack() {}
   
   
 void Game::Player_usePotion(string direction) {
@@ -180,34 +189,35 @@ bool valid_dir(string dir) {
     return false;
   }
 }
-
-void Game::processTurn(string command) {
+*/
+bool Game::processTurn(string command) {
   istringstream iss(command);
   string s;
   iss >> s;
   if (s == "a") {
-    iss >> s;
-    if (valid_dir(s)) {
-      PlayerAttack(s);
-    }
+    //iss >> s;
+    //if (valid_dir(s)) {
+    //  PlayerAttack(s);
+    //}
   }
   else if (s == "use") {
-    iss >> s;
-    if (valid_dir(s)) {
-      Player_usePotion(s);
-    }
+    //iss >> s;
+    //if (valid_dir(s)) {
+    //  Player_usePotion(s);
+    //}
   }
   else if (s == "restart") {
-    changeFloor();
+    //changeFloor();
   }
   else if (s == "f") {
-    freeze();
+    //freeze();
   }
-  else if (valid_dir(s)) {
-    movePlayer(s);
-  } 
+  /*else if (valid_dir(s)) {
+    //movePlayer(s);
+  }*/ 
   else if (!frozen) {
-    moveEnemies(enemies);
+   // moveEnemies(enemies);
   }
-  update_display(); 
+  return true;
 }
+

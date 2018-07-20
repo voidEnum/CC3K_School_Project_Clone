@@ -10,15 +10,15 @@
 using namespace std;
 
 int main() {
-  Game theGame();
+  Game theGame;
   Controller theController(cin);
 
   theController.getCommand();
-  theController.sendRace();
+  theController.sendRace(theGame);
 
   while (true) {
     theController.getCommand();
-    theController.sendCommand();
+    theController.sendCommand(theGame);
   }
 }
 
