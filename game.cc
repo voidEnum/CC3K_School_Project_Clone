@@ -1,9 +1,18 @@
 #include "game.h"
 
-Game::Game(): theGrid{nullptr}, player{nullptr}, enemies{nullptr}, potions{nullptr}, frozen{false} {
-  theGrid.init();
-}
+#include "cell.h"
+#include "player.h"
 
+#include <sstream>
+#include <iostream>
+#include <memory>
+
+using namespace std;
+
+Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
+  theGrid->init("maps/basicFloor.txt", 1);
+}
+/*
 void Game::generateEnemies() {
   int size = theGrid.size();
   int randomrange = 0;
@@ -65,9 +74,26 @@ void Game::generateTreasures() {
     placeEntity(t, candidates[randomnumber]);
   }
 }
+*/
 
+void Game::generatePlayer(const string &race) {
+  (void)race;
 
-void Game::generatePlayer() {
+  vector<vector<Cell *>> &cha = theGrid->getChambers();
+  int numChambers = cha.size();
+  int selectedChamberIdx = rand() % numChambers - 1;
+
+  vector<Cell *> &cha2 = cha[selectedChamberIdx];
+  int numCells = cha2.size();
+  int selectedCellIdx = rand() % numCells -1;
+
+  Cell &selected = *(cha2[selectedCellIdx]);
+
+  shared_ptr<Player> test(new Player());
+
+  player = test;
+  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
+  /*
   int size = theGrid.size();
   int randomrange = 0;
   int randomnumber = 0;
@@ -84,15 +110,21 @@ void Game::generatePlayer() {
   Player &user = Player{&candidates[randomnumber]};
   placeEntity(user, candidates[randomnumber]);
   player = user;
+  */
 }       
-  
-void Game::startRound() {
-  generateEnemies();
-  generatePotions();
-  generateTreasures();
-  generatePlayer();
+
+
+
+bool Game::startRound(const string &race) {
+  //generateEnemies();
+  //generatePotions();
+  //generateTreasures();
+  generatePlayer(race);
+  (void)race;
+  return true;
 }
 
+/*
 void Game::moveEnemies(vector<shared_ptr<Enemy>>enemies) {
   int size = enemies.size();
   int randomrange = 0;
@@ -148,7 +180,7 @@ void Game::PlayerAttack(string direction) {
   player.attack(dir_to_cell(player.cell, direction));
 }
 
-void Game::enemyAttack() {
+void Game::enemyAttack() {}
   
   
 void Game::Player_usePotion(string direction) {
@@ -180,34 +212,39 @@ bool valid_dir(string dir) {
     return false;
   }
 }
-
-void Game::processTurn(string command) {
+*/
+bool Game::processTurn(const string &command) {
   istringstream iss(command);
   string s;
   iss >> s;
   if (s == "a") {
-    iss >> s;
-    if (valid_dir(s)) {
-      PlayerAttack(s);
-    }
+    //iss >> s;
+    //if (valid_dir(s)) {
+    //  PlayerAttack(s);
+    //}
   }
   else if (s == "use") {
-    iss >> s;
-    if (valid_dir(s)) {
-      Player_usePotion(s);
-    }
+    //iss >> s;
+    //if (valid_dir(s)) {
+    //  Player_usePotion(s);
+    //}
   }
   else if (s == "restart") {
-    changeFloor();
+    //changeFloor();
   }
   else if (s == "f") {
-    freeze();
+    //freeze();
   }
-  else if (valid_dir(s)) {
-    movePlayer(s);
-  } 
+  /*else if (valid_dir(s)) {
+    //movePlayer(s);
+  }*/ 
   else if (!frozen) {
-    moveEnemies(enemies);
+   // moveEnemies(enemies);
   }
-  update_display(); 
+  return true;
 }
+
+void Game::print() {
+  cout << *theGrid;
+}
+

@@ -10,7 +10,8 @@ const char * MyMapNotFoundException::what() const noexcept {
     return "Tried to load a non existent map";
 }
 
-Grid::Grid(): theGrid(), chambers(), td(new TextDisplay()),level{0} {}
+Grid::Grid(): theGrid{vector<vector<Cell>>()}, chambers{vector<vector<Cell *>>()},
+              td(new TextDisplay()),level{0} {}
 
 void Grid::init(const string &fname, const int n) {
 
@@ -41,7 +42,6 @@ void Grid::init(const string &fname, const int n) {
     }
     row++;
   }
-  
   theGrid.swap(newGrid);
   level = n;
   findChambers();
@@ -51,7 +51,8 @@ void Grid::init(const string &fname, const int n) {
 
 //  Helper function for find_Chambers. Recursively sets cell and all 
 //  chamberFloor  neighbours of cell to be in chamber n.
-void Grid::assignChamber(Cell &cell, int n) {
+void Grid::assignChamber(Posn p, int n) {
+  Cell &cell = getCell(p);
   if (cell.getTerrain() != Terrain::ChamFloor || cell.getChamber() != 0) {
     return;
   } else {
@@ -60,7 +61,7 @@ void Grid::assignChamber(Cell &cell, int n) {
     // in a properly formed map, Chamber floors will never be on the edges
     for (int i = (r - 1); i <= (r + 1); i++) {
       for (int j = (c - 1); j <= (c + 1); j++) {
-        assignChamber(theGrid[i][j], n);
+        assignChamber({i, j}, n);
       }
     }
   }
@@ -75,7 +76,7 @@ void Grid::findChambers() {
       if (col->getTerrain() == Terrain::ChamFloor &&
           col->getChamber() == 0) { // current cell is chamFloor and not sorted
         int nextChamberNum = newChambers.size() + 1;
-        assignChamber(*col, nextChamberNum);
+        assignChamber({col->getRow(), col->getCol()}, nextChamberNum);
         newChambers.push_back(vector<Cell *>());
         newChambers.back().push_back(&(*col));
       } else if (col->getChamber() != 0) {
@@ -86,24 +87,28 @@ void Grid::findChambers() {
   chambers.swap(newChambers);
 }
 
-void Grid::moveEntity(Cell &src, Cell &dest) {
-  dest.setOccupant(src.getOccupant());
-  dest.getOccupant()->setCell(&dest);
-  src.setOccupant(nullptr);
-  td->update(src);
-  td->update(dest);
+vector<vector<Cell *>> & Grid::getChambers() {
+  return chambers;
 }
 
-void Grid::placeEntity(shared_ptr<Entity> e, Cell &placeHere) {
-  e->setCell(&placeHere);
-  placeHere.setOccupant(e);
-  td->update(placeHere);
+void Grid::moveEntity(Posn src, Posn dest) {
+  getCell(dest).setOccupant(getCell(src).getOccupant());
+  getCell(dest).getOccupant()->setPos(dest);
+  getCell(src).setOccupant(nullptr);
+  td->update(getCell(src));
+  td->update(getCell(dest));
 }
 
-void Grid::removeEntity(Cell & remFrom) {
-  remFrom.getOccupant()->setCell(nullptr);
-  remFrom.setOccupant(nullptr);
-  td->update(remFrom);
+void Grid::placeEntity(shared_ptr<Entity> e, Posn placeHere) {
+  e->setPos(placeHere);
+  getCell(placeHere).setOccupant(e);
+  td->update(getCell(placeHere));
+}
+
+void Grid::removeEntity(Posn remFrom) {
+  getCell(remFrom).getOccupant()->setPos({-1, -1});
+  getCell(remFrom).setOccupant(nullptr);
+  td->update(getCell(remFrom));
 }
 
 int Grid::getWidth() const {
@@ -118,8 +123,8 @@ int Grid::getHeight() const {
   return theGrid.size();
 }
 
-Cell & Grid::getCell(int row, int col) {
-  return theGrid[row][col];
+Cell & Grid::getCell(Posn p) {
+  return theGrid[p.r][p.c];
 }
 
 ostream &operator<<(ostream &out, const Grid &g) {

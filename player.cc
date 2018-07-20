@@ -2,7 +2,7 @@
 #include "cell.h"
 using namespace std;
 
-Player::Player(): Creature(nullptr, '@'), gold{0} {}
+Player::Player(): Creature({-1, -1}, '@'), gold{0} {}
 
 /*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);
@@ -48,10 +48,10 @@ atkStatus Player::wasAttacked(Creature *aggressor) {
 }
 
 
-void Player::move(Cell *target) {
-  this->setCell(target);
+void Player::move(Posn target) {
+  this->setPos(target);
 } 
 
 void Player::die() {
-  cell = nullptr;
+  pos = {-1,-1};
 }

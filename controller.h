@@ -14,6 +14,7 @@ public:
   void getCommand();
   void sendRace(Game &g);
   void sendCommand(Game &g);
+  void requestDisplay(Game &g);
 };
 
 #endif

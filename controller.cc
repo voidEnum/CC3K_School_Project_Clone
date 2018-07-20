@@ -15,3 +15,7 @@ void Controller::sendRace(Game &g) {
 void Controller::sendCommand(Game &g) {
   g.processTurn(toSend);
 }
+
+void Controller::requestDisplay(Game &g) {
+  g.print();
+}

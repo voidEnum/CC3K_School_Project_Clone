@@ -15,7 +15,7 @@ void TextDisplay::buildDisplay(Grid &g) {
     theDisplay.push_back(vector<char>());
     vector<char> &c = theDisplay.back();
     for (int j = 0; j < w; j++) {
-      c.push_back(g.getCell(i, j).getSymbol());   
+      c.push_back(g.getCell({i, j}).getSymbol());   
     }
   }
 }
