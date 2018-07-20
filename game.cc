@@ -2,7 +2,7 @@
 
 #include "cell.h"
 #include "player.h"
-
+#include "invalid_behave.h"
 #include <sstream>
 #include <iostream>
 #include <memory>
@@ -81,11 +81,11 @@ void Game::generatePlayer(const string &race) {
 
   vector<vector<Cell *>> &cha = theGrid->getChambers();
   int numChambers = cha.size();
-  int selectedChamberIdx = rand() % numChambers - 1;
+  int selectedChamberIdx = rand() % (numChambers - 1);
 
   vector<Cell *> &cha2 = cha[selectedChamberIdx];
   int numCells = cha2.size();
-  int selectedCellIdx = rand() % numCells -1;
+  int selectedCellIdx = rand() % (numCells -1);
 
   Cell &selected = *(cha2[selectedCellIdx]);
 
@@ -174,7 +174,16 @@ Posn dir_to_posn(Cell &cur_cell, string direction) {
 
 void Game::movePlayer(const string &direction) {
   Posn player_Posn = player->getPosn();
-  theGrid->moveEntity(player_Posn, dir_to_posn(theGrid->getCell(player_Posn), direction));
+  Posn heading_dir = dir_to_posn(theGrid->getCell(player_Posn), direction);
+  char heading_tile = theGrid->getCell(heading_dir).getSymbol();
+  if (heading_tile != '|' && heading_tile != '-' &&
+      heading_tile != ' ') { 
+    cout << heading_tile << endl;
+    theGrid->moveEntity(player_Posn, heading_dir);
+  }
+  else {
+    throw Invalid_behave("");
+  }
 }
 
 /*void Game::PlayerAttack(string direction) {
@@ -210,6 +219,7 @@ bool valid_dir(string dir) {
     return true;
   }
   else {
+    throw Invalid_behave("");
     return false;
   }
 }
@@ -235,7 +245,7 @@ bool Game::processTurn(const string &command) {
   }
   else if (s == "f") {
     //freeze();
-  }*/
+  }*/ 
   if (valid_dir(s)) {
     movePlayer(s);
   } 
