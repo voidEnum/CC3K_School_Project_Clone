@@ -9,6 +9,7 @@
 #include "player.h"
 #include "game.h"
 #include "controller.h"
+#include "invalid_behave.h"
 using namespace std;
 
 int main() {
@@ -24,9 +25,15 @@ int main() {
   theController.requestDisplay(theGame);
 
   while (true) {
-    theController.getCommand();
-    theController.sendCommand(theGame);
-    theController.requestDisplay(theGame);
+    try {
+      theController.getCommand();
+      theController.sendCommand(theGame);
+      theController.requestDisplay(theGame);
+    }
+    catch (Invalid_behave& ib) {
+      cout << ib.what() << " Please try another command." << endl;
+      continue;
+    }
   }
 }
 

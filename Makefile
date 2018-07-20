@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-std=c++14 -Wextra -Wpedantic -Wall -Werror -MMD -g
-OBJECTS=main.o cell.o grid.o textdisplay.o entity.o creature.o player.o controller.o game.o
+OBJECTS=main.o cell.o grid.o textdisplay.o entity.o creature.o player.o controller.o game.o invalid_behave.o
 DEPENDS=${OBJECTS:.o=.d}
 EXEC=cc3k
 
