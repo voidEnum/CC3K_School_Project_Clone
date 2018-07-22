@@ -1,6 +1,7 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include <string>
 #include "posn.h"
 
 class Creature;
@@ -12,8 +13,9 @@ class Entity {
 protected:
   Posn pos;
   char symbol;
+  std::string name;
 public:
-  Entity(char sym = 'Y');
+  Entity(char sym = 'Y', std::string name = "Entity");
   virtual atkStatus wasAttacked(Creature *aggressor);
   //virtual atkStatus wasAttacked(Player *aggressor);
   template<typename T> 
