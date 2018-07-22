@@ -21,17 +21,17 @@ class Game {
  public:
   Game();
   bool startRound(const std::string &race);
-  bool processTurn(const std::string &command);
-  void print();
+  std::string processTurn(const std::string &command);
+  void print(std::string printing_msg);
  private:
   void generateEnemies(std::vector<std::vector<Cell *>> &vcham);
   void generatePotions(std::vector<std::vector<Cell *>> &vcham);
   void generateTreasures(std::vector<std::vector<Cell *>> &vcham); // all normal treasures for now
   void generatePlayer(const std::string &race, std::vector<std::vector<Cell *>> &vvc); // generic player for now
-  void moveEnemies();
+  std::string moveEnemies();
   //void changeFloor();
   //void update_display();
-  void movePlayer(const std::string &direction);
+  std::string movePlayer(const std::string &direction);
   void PlayerAttack(std::string direction);
   //void enemyAttack();
   //void Player_usePotion();

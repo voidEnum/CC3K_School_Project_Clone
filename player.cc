@@ -1,3 +1,4 @@
+#include <iostream>
 #include "player.h"
 #include "cell.h"
 #include "enemy.h"
@@ -45,9 +46,11 @@ atkStatus Player::wasAttacked(Creature *aggressor) {
     if (hp <= 0) {
       return atkStatus::Kill;
     }
+    //cout << "hit" <<endl;
     return atkStatus::Hit;
   }
   else {
+    //cout << "miss" <<endl;
     return atkStatus::Miss;
   }
 }

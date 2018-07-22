@@ -5,7 +5,8 @@
 #include "player.h"
 using namespace std;
 
-Enemy::Enemy(): Creature( 'E') {} 
+Enemy::Enemy(string name, int hp, int atk, int def): 
+  Creature('E', name, hp, atk, def) {} 
 
 Enemy::~Enemy(){}
 
@@ -40,7 +41,9 @@ string Enemy::actionText(shared_ptr<Player>p) {
   if(wasAttacked(p) == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), p->getDef()));
     string heroHpAsString = to_string(p->getHp());
-    newActionText = getSymbol() + " deals " + atkAsString + " damage to PC " + "(" + heroHpAsString + "). ";
+    //cout << "the symbol: " << getSymbol() << endl;
+    //cout << getPosn().r << " " << getPosn().c << endl;
+    newActionText = " " + getName() + " deals " + atkAsString + " damage to PC " + "(" + heroHpAsString + ")";
   } else {
     newActionText = p->getSymbol() + "attacks you but it missed";
   }

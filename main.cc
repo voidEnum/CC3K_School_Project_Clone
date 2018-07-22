@@ -23,13 +23,13 @@ int main() {
   
   theController.getCommand();
   theController.sendRace(theGame);
-  theController.requestDisplay(theGame);
+  theController.requestDisplay(theGame, "The player entered the dungeon");
 
   while (true) {
     try {
       theController.getCommand();
-      theController.sendCommand(theGame);
-      theController.requestDisplay(theGame);
+      string print_msg = theController.sendCommand(theGame);
+      theController.requestDisplay(theGame, print_msg);
     }
     catch (Invalid_behave& ib) {
       continue;

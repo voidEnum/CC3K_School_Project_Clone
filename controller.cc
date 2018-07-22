@@ -12,10 +12,11 @@ void Controller::sendRace(Game &g) {
   g.startRound(toSend);
 }
 
-void Controller::sendCommand(Game &g) {
-  g.processTurn(toSend);
+std::string Controller::sendCommand(Game &g) {
+  return g.processTurn(toSend);
 }
 
-void Controller::requestDisplay(Game &g) {
-  g.print();
+void Controller::requestDisplay(Game &g, std::string print_msg) {
+  //std::cout << "controller p_msg: " << print_msg << std::endl;
+  g.print(print_msg);
 }
