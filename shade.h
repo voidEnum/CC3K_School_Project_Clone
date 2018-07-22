@@ -9,6 +9,4 @@ class Shade: public Player {
   int finalScore();
 };    
 
-
-
 #endif

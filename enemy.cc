@@ -25,6 +25,9 @@ atkStatus Enemy::wasAttacked(shared_ptr<Creature>player) {
   int randomAction = rand() % 2;
   if (randomAction == 0) {
     hp -= damage(player->getAtk(), getDef());
+    if (hp <= 0) {
+      return atkStatus::Kill;
+    }
     return atkStatus::Hit;
   }
   else {

@@ -1,5 +1,6 @@
 #include "player.h"
 #include "cell.h"
+#include "enemy.h"
 using namespace std;
 
 Player::Player(string name, int hp, int atk, int def): 
@@ -22,17 +23,28 @@ void Player::addGold(int reward) {
   gold += reward;
 }
 
-/*atkStatus Player::attack(Cell &target) {
+atkStatus Player::attack(Cell &target) {
   if (target.getOccupant() == nullptr) {
     return atkStatus::EmptyTarget;
   }
-  return target.getOccupant()->wasAttacked<Player *>(this);
-}*/
+  char entity_sym = target.getOccupant()->getSymbol();
+  if (entity_sym == 'E' || entity_sym == 'M' ||
+      entity_sym == 'H' || entity_sym == 'E' ||
+      entity_sym == 'W' || entity_sym == 'D') {
+    shared_ptr<Enemy> enemy = static_pointer_cast<Enemy>(target.getOccupant());
+    shared_ptr<Player> player(this);
+    return enemy->wasAttacked(player);
+  }
+  return atkStatus::InvalidTarget;
+}
 
 atkStatus Player::wasAttacked(Creature *aggressor) {
   int randomAction = rand() % 2;
   if (randomAction == 0) { 
     hp -= damage(aggressor->getAtk(), getDef());
+    if (hp <= 0) {
+      return atkStatus::Kill;
+    }
     return atkStatus::Hit;
   }
   else {
