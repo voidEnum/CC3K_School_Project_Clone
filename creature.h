@@ -8,7 +8,6 @@ class Cell;
 class Creature : public Entity {
 protected:
   int hp, atk, def;
-  bool isAlive;
 public:
   Creature(char sym = 'C', std::string name = "Creature", int h = 100, 
            int a = 50, int d = 50);

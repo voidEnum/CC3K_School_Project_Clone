@@ -8,7 +8,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   int gold;
   int maxHp;
  public:
-  Player(int maxHp);
+  Player();
   atkStatus attack(Cell &target);
   atkStatus wasAttacked(Creature *aggressor);
   void move(Posn p);
