@@ -7,9 +7,10 @@ class Cell;
 
 class Creature : public Entity {
 protected:
-  int maxHp, hp, atk, def;
+  int hp, atk, def;
+  bool isAlive;
 public:
-  Creature(char sym = 'C', int mhp = 100, int h = 100, 
+  Creature(char sym = 'C', int h = 100, 
            int a = 50, int d = 50);
   virtual void beginTurn();
   virtual void endTurn();
@@ -19,6 +20,7 @@ public:
   virtual int damage(int atk, int def);
  private:
   int ceil_divide(int numerator, int denom);
+  void die();
 };
 
 #endif

@@ -15,6 +15,10 @@ int Cell::getCol() const {
   return col;
 }
 
+Posn Cell::getPosn() const {
+  return {getRow(), getCol()};
+}
+
 Terrain Cell::getTerrain() const {
   return tile;
 }

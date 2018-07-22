@@ -1,7 +1,7 @@
 #include "creature.h"
 
-Creature::Creature(char sym, int mhp, int h, int a, int d):
-                   Entity(sym), maxHp{mhp}, hp{h}, atk{a}, def{d} {}
+Creature::Creature(char sym, int h, int a, int d):
+                   Entity(sym), hp{h}, atk{a}, def{d}, isAlive{true} {}
 
 void Creature::beginTurn() {}
 
@@ -29,4 +29,8 @@ int Creature::ceil_divide(int numerator, int denom) {
 
 int Creature::damage(int atk, int def) {
   return ceil_divide(100 * atk, 100 + def);
+}
+
+void Creature::die() {
+  isAlive = false;
 }

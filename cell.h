@@ -4,7 +4,7 @@
 #include <memory>
 
 class Entity;
-
+struct Posn;
 enum class Terrain {VertWall, HoriWall, ChamFloor,
                     PassFloor, Door, Stair, Empty};
 
@@ -20,6 +20,7 @@ public:
   Cell(size_t r, size_t c, Terrain t);
   int getRow() const;
   int getCol() const;
+  Posn getPosn() const;
   int getChamber() const;
   std::shared_ptr<Entity> getOccupant() const;
   void setOccupant(std::shared_ptr<Entity> e);
