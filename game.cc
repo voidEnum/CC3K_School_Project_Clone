@@ -2,6 +2,15 @@
 
 #include "cell.h"
 #include "player.h"
+
+#include "human.h"
+#include "dwarf.h"
+#include "elf.h"
+#include "merchant.h"
+
+#include "halfling.h"
+#include "orc.h"
+
 #include "treasure.h"
 #include "treasure_normal.h"
 #include "invalid_behave.h"
@@ -27,10 +36,33 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     vector<Cell *> &vc = vcham[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % (numCells);
+    int enemyType = rand() % 18 + 1;
     Cell &selected = *(vc[selectedCellIdx]);
-    shared_ptr<Enemy> enemy(new Enemy());
-    theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
-    enemies.emplace_back(enemy);
+    if(enemyType >= 1 && enemyType <= 4) {
+      shared_ptr<Human> H(new Human());
+      theGrid->placeEntity(H, {selected.getRow(), selected.getCol()});
+      enemies.emplace_back(H);
+    } else if(enemyType >= 5 && enemyType <= 7) {
+      shared_ptr<Dwarf> D(new Dwarf());
+      theGrid->placeEntity(D, {selected.getRow(), selected.getCol()});
+      enemies.emplace_back(D);
+    } else if(enemyType >= 8 && enemyType <= 12) {
+      shared_ptr<Halfling> Ha(new Halfling());
+      theGrid->placeEntity(Ha, {selected.getRow(), selected.getCol()});
+      enemies.emplace_back(Ha);
+    } else if(enemyType >= 13 && enemyType <= 14) {
+      shared_ptr<Elf> E(new Elf());
+      theGrid->placeEntity(E, {selected.getRow(), selected.getCol()});
+      enemies.emplace_back(E);
+    } else if(enemyType >= 15 && enemyType <= 16) {
+      shared_ptr<Orc> O(new Orc());
+      theGrid->placeEntity(O, {selected.getRow(), selected.getCol()});
+      enemies.emplace_back(O);
+    } else {
+      shared_ptr<Merchant> M(new Merchant());
+      theGrid->placeEntity(M, {selected.getRow(), selected.getCol()});
+      enemies.emplace_back(M);
+    }
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
