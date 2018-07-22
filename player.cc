@@ -21,12 +21,12 @@ void Player::addGold(int reward) {
   gold += reward;
 }
 
-atkStatus Player::attack(Cell &target) {
+/*atkStatus Player::attack(Cell &target) {
   if (target.getOccupant() == nullptr) {
     return atkStatus::EmptyTarget;
   }
   return target.getOccupant()->wasAttacked<Player *>(this);
-}
+}*/
 
 /*int ceil_divide(int numerator, int denom) {
   if (numerator % denom == 0) {

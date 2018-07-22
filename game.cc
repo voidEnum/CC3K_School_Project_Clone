@@ -5,10 +5,12 @@
 #include "treasure.h"
 #include "treasure_normal.h"
 #include "invalid_behave.h"
+#include "posn.h"
 
 #include <sstream>
 #include <iostream>
 #include <iterator>
+#include <algorithm>
 
 using namespace std;
 
@@ -16,21 +18,20 @@ Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{
   theGrid->init("maps/basicFloor.txt", 1);
 }
 
-void Game::generateEnemies() {
-  vector<vector<Cell *>> &cha = theGrid->getChambers();
+void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
   for (int i = 0; i < 20; ++i) {
-    int numChambers = cha.size();
+    int numChambers = vcham.size();
     int selectedChamberIdx = rand() % (numChambers);
-    vector<Cell *> &cha2 = cha[selectedChamberIdx];
-    int numCells = cha2.size();
+    vector<Cell *> &vc = vcham[selectedChamberIdx];
+    int numCells = vc.size();
     int selectedCellIdx = rand() % (numCells);
 
-    Cell &selected = *(cha2[selectedCellIdx]);
+    Cell &selected = *(vc[selectedCellIdx]);
 
     shared_ptr<Enemy> enemy(new Enemy());
     theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
     enemies.emplace_back(enemy);
-    cha2.erase(cha2.begin() + selectedCellIdx);
+    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
   /*int size = theGrid.size();
@@ -75,12 +76,12 @@ void Game::generateEnemies() {
 }  
 */ 
  
-void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
+void Game::generateTreasures(vector<vector<Cell *>> &vcham) {
   for (int i = 0; i < NUM_TREASURE_SPAWN; i++) {
-    int numChambers = vvc.size();
+    int numChambers = vcham.size();
     int selectedChamberIdx = rand() % numChambers;
 
-    vector<Cell *> &vc = vvc[selectedChamberIdx];
+    vector<Cell *> &vc = vcham[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % numCells;
 
@@ -121,7 +122,7 @@ bool Game::startRound(const string &race) {
   //generatePotions();
   generatePlayer(race, candidateCells);
   generateTreasures(candidateCells);
-  generateEnemies();
+  generateEnemies(candidateCells);
   return true;
 }
 
@@ -189,9 +190,9 @@ void Game::movePlayer(const string &direction) {
 
 /*void Game::PlayerAttack(string direction) {
   player.attack(dir_to_cell(player.cell, direction));
-}
+}*/
 
-void Game::enemyAttack() {}
+/*void Game::enemyAttack() {}
   
   
 void Game::Player_usePotion(string direction) {
@@ -230,12 +231,12 @@ bool Game::processTurn(const string &command) {
   string s;
   iss >> s;
   /*if (s == "a") {
-    //iss >> s;
-    //if (valid_dir(s)) {
-    //  PlayerAttack(s);
-    //}
-  }
-  else if (s == "use") {
+    iss >> s;
+    if (valid_dir(s)) {
+      PlayerAttack(s);
+    }
+  }*/
+  /*else if (s == "use") {
     //iss >> s;
     //if (valid_dir(s)) {
     //  Player_usePotion(s);
@@ -258,5 +259,30 @@ bool Game::processTurn(const string &command) {
 
 void Game::print() {
   cout << *theGrid;
+  cout << "Race: " << "Player " << "Gold: " << to_string(player->finalScore()) << endl;
+  cout << "HP: " << to_string(player->getHp()) << endl;
+  cout << "Atk: " << to_string(player->getAtk()) << endl;
+  cout << "Def: " << to_string(player->getDef()) << endl;
+  cout << "Action: " << endl; 
 }
 
+bool Game::sort_function(shared_ptr<Enemy>e1, shared_ptr<Enemy>e2) {
+  if ((e1->getPosn()).r < (e2->getPosn()).r) {
+    return true;
+  }
+  else if ((e1->getPosn()).r == (e2->getPosn()).r &&
+           (e1->getPosn()).c < (e2->getPosn()).c) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemies) {
+  sort(enemies.begin(), enemies.end(), &sort_function);
+} 
+
+/*void check_neighbor() {
+  for (int i = -1; i < 1; ++i) {
+    for (int j = -1; j < 1; ++j) {*/
