@@ -60,3 +60,6 @@ string Player::actionText(Creature *aggressor) {
 int Player::getGold() {
   return gold;
 }
+
+void Player::beginTurn() {
+}

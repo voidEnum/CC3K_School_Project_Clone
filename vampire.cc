@@ -1,13 +1,13 @@
-#ifndef _SHADE_H_
-#define _SHAdE_H_
+#include "vampire.h"
+#include "cell.h"
 
-#include <memory>
-#include "player.h"
+Vampire::Vampire(): Player("Vampire", 50, 25, 25) {}
 
-class Vampire: public Player {
-  Vampire();
-  
-};
-
-#endif
+atkStatus Vampire::attack(Cell &target) {
+  if (target.getOccupant() == nullptr) {
+    return atkStatus::EmptyTarget;
+  }
+  hp += 5;
+  return target.getOccupant()->wasAttacked<Player *>(this);
+}
 
