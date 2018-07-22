@@ -3,7 +3,7 @@
 using namespace std;
 
 Player::Player(string name, int hp, int atk, int def): 
-  Creature('@', name, hp, hp, atk, def), gold{0} {}
+  Creature('@', name, hp, atk, def), gold{0}, maxHp{hp} {}
 
 /*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);
