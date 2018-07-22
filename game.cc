@@ -18,21 +18,18 @@ Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{
   theGrid->init("maps/basicFloor.txt", 1);
 }
 
-void Game::generateEnemies() {
-  vector<vector<Cell *>> &cha = theGrid->getChambers();
+void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
   for (int i = 0; i < 20; ++i) {
-    int numChambers = cha.size();
+    int numChambers = vcham.size();
     int selectedChamberIdx = rand() % (numChambers);
-    vector<Cell *> &cha2 = cha[selectedChamberIdx];
-    int numCells = cha2.size();
+    vector<Cell *> &vc = vcham[selectedChamberIdx];
+    int numCells = vc.size();
     int selectedCellIdx = rand() % (numCells);
-
-    Cell &selected = *(cha2[selectedCellIdx]);
-
+    Cell &selected = *(vc[selectedCellIdx]);
     shared_ptr<Enemy> enemy(new Enemy());
     theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
     enemies.emplace_back(enemy);
-    cha2.erase(cha2.begin() + selectedCellIdx);
+    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
   /*int size = theGrid.size();
@@ -123,7 +120,7 @@ bool Game::startRound(const string &race) {
   //generatePotions();
   generatePlayer(race, candidateCells);
   generateTreasures(candidateCells);
-  generateEnemies();
+  generateEnemies(candidateCells);
   return true;
 }
 
@@ -132,7 +129,8 @@ void Game::moveEnemies() {
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
     if (isInAttackRange(e_Posn)) e->attack(player);
-    if (isAnyValidNeighbour(e_Posn)) theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+    else if (isAnyValidNeighbour(e_Posn)) theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+    else if (isInAttackRange(e_Posn)) e->attack(player); 
   }
   /*int size = enemies.size();
   int randomrange = 0;
@@ -315,5 +313,10 @@ bool Game::processTurn(const string &command) {
 
 void Game::print() {
   cout << *theGrid;
+  cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) << endl;
+  cout << "HP: " << to_string(player->getHp()) << endl;
+  cout << "Atk: " << to_string(player->getAtk()) << endl;
+  cout << "Def: " << to_string(player->getDef()) << endl;
+  cout << "Action: " << endl; 
 }
 

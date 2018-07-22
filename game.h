@@ -23,7 +23,7 @@ class Game {
   bool processTurn(const std::string &command);
   void print();
  private:
-  void generateEnemies();
+  void generateEnemies(std::vector<std::vector<Cell *>> &vcham);
   //void generatePotions();
   void generateTreasures(std::vector<std::vector<Cell *>> &vvc); // all normal treasures for now
   void generatePlayer(const std::string &race, std::vector<std::vector<Cell *>> &vvc); // generic player for now

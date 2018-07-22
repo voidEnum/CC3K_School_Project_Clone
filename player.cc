@@ -2,7 +2,7 @@
 #include "cell.h"
 using namespace std;
 
-Player::Player(int maxhp): Creature('@'), gold{0}, maxHp{maxhp} {}
+Player::Player(int maxhp): Creature('@', "Player"), gold{0}, maxHp{maxhp} {}
 
 /*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);
@@ -21,12 +21,12 @@ void Player::addGold(int reward) {
   gold += reward;
 }
 
-atkStatus Player::attack(Cell &target) {
+/*atkStatus Player::attack(Cell &target) {
   if (target.getOccupant() == nullptr) {
     return atkStatus::EmptyTarget;
   }
   return target.getOccupant()->wasAttacked<Player *>(this);
-}
+}*/
 
 atkStatus Player::wasAttacked(Creature *aggressor) {
   int randomAction = rand() % 2;

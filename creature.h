@@ -10,13 +10,14 @@ protected:
   int hp, atk, def;
   bool isAlive;
 public:
-  Creature(char sym = 'C', int h = 100, 
+  Creature(char sym = 'C', std::string name = "Creature", int h = 100, 
            int a = 50, int d = 50);
   virtual void beginTurn();
   virtual void endTurn();
   virtual int getAtk() const;
   virtual int getDef() const;
   virtual int getHp() const;
+  virtual std::string getName() const;
   virtual int damage(int atk, int def);
  private:
   int ceil_divide(int numerator, int denom);

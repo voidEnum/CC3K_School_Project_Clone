@@ -29,5 +29,6 @@ public:
   char getSymbol() const;
 
   void setChamber(int n);
+  void makeStairs();
 };
 #endif

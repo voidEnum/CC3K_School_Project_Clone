@@ -1,7 +1,8 @@
 #include "creature.h"
+using namespace std;
 
-Creature::Creature(char sym, int h, int a, int d):
-                   Entity(sym), hp{h}, atk{a}, def{d}, isAlive{true} {}
+Creature::Creature(char sym, string name, int h, int a, int d):
+                   Entity(sym, name), hp{h}, atk{a}, def{d} {}
 
 void Creature::beginTurn() {}
 
@@ -20,6 +21,10 @@ int Creature::getHp() const{
   return hp;
 }
 
+string Creature::getName() const{
+  return name;
+}
+
 int Creature::ceil_divide(int numerator, int denom) {
   if (numerator % denom == 0) {
     return numerator / denom;
@@ -32,5 +37,4 @@ int Creature::damage(int atk, int def) {
 }
 
 void Creature::die() {
-  isAlive = false;
 }
