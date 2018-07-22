@@ -7,6 +7,11 @@
 #include "invalid_behave.h"
 #include "posn.h"
 #include "potion_rh.h"
+#include "potion_ph.h"
+#include "potion_ba.h"
+#include "potion_wa.h"
+#include "potion_bd.h"
+#include "potion_wd.h"
 
 #include <sstream>
 #include <iostream>
@@ -18,6 +23,24 @@ using namespace std;
 
 Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
   theGrid->init("maps/basicFloor.txt", 1);
+}
+
+Game::PotionFactory & Game::PotionFactory::getInstance() {
+  static PotionFactory theFactory;
+  return theFactory;
+}
+
+shared_ptr<Potion> Game::PotionFactory::makePotion() {
+  int pType = rand() % 6;
+  switch (pType) {
+    case 0 : return make_shared<Potion_RH>();
+    case 1 : return make_shared<Potion_PH>();
+    case 2 : return make_shared<Potion_BA>();
+    case 3 : return make_shared<Potion_WA>();
+    case 4 : return make_shared<Potion_BD>();
+    case 5 : return make_shared<Potion_WD>();
+    default: return nullptr; // should not happen
+  }
 }
 
 void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
@@ -55,15 +78,18 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
 }*/  
     
 void Game::generatePotions(vector<vector<Cell *>> &vcham) {
+  Game::PotionFactory pf = Game::PotionFactory::getInstance(); // get factory
   for (int i = 0; i < NUM_POTION_SPAWN; i++) {
-    vector<Cell*> &vc = vcham[rand() % vcham.size()];
+    vector<Cell*> &vc = vcham[rand() % vcham.size()]; // select rand chamber
 
-    int selectedCellIdx = rand() % vc.size();
+    int selectedCellIdx = rand() % vc.size(); // get random cell index
+    Cell &selected = *(vc[selectedCellIdx]);  // select random cell
+    vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
 
-    Cell &selected = *(vc[selectedCellIdx]);
-    vc.erase(vc.begin() + selectedCellIdx);
-    theGrid->placeEntity(make_shared<Potion_RH>(),
-                         {selected.getRow(), selected.getCol()});
+    shared_ptr<Potion> to_place = pf.makePotion(); // make a random potion
+    
+    // place the random potion in the selected cell
+    theGrid->placeEntity(to_place, {selected.getRow(), selected.getCol()});
   }
 }  
  
