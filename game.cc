@@ -5,6 +5,8 @@
 #include "treasure.h"
 #include "treasure_normal.h"
 #include "invalid_behave.h"
+#include "posn.h"
+#include "potion_rh.h"
 
 #include <sstream>
 #include <iostream>
@@ -52,27 +54,19 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
   }
 }*/  
     
-/*void Game::generatePotions() {
-  int size = theGrid.size();
-  int randomrange = 0;
-  int randomnumber = 0;
-  Vector<Cell>candidates;
-  for (int i = 0; i < size; ++i) {
-    for (int j = 0; j < size; ++j) {
-      if (theGrid[i][j].cell.tile == Terrain::Chamfloor) {
-        ++randomrange;
-        candidates.emplace_back(theGrid[i][j]);
-      }
-    }
-  }
-  for (int k = 0; k < 10; ++k) {
-    randomnumber = rand() % randomrange;
-    Potion &p = Potion{&candidates[randomnumber]};
-    placeEntity(p, candidates[randomnumber]);
-    potions.emplace_back(p);
+void Game::generatePotions(vector<vector<Cell *>> &vcham) {
+  for (int i = 0; i < NUM_POTION_SPAWN; i++) {
+    vector<Cell*> &vc = vcham[rand() % vcham.size()];
+
+    int selectedCellIdx = rand() % vc.size();
+
+    Cell &selected = *(vc[selectedCellIdx]);
+    vc.erase(vc.begin() + selectedCellIdx);
+    theGrid->placeEntity(make_shared<Potion_RH>(),
+                         {selected.getRow(), selected.getCol()});
   }
 }  
-*/ 
+ 
  
 void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
   for (int i = 0; i < NUM_TREASURE_SPAWN; i++) {
@@ -121,9 +115,8 @@ bool Game::startRound(const string &race) {
   // Copy the chamber layout
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
   
-  //generateEnemies();
-  //generatePotions();
   generatePlayer(race, candidateCells);
+  generatePotions(candidateCells);
   generateTreasures(candidateCells);
   generateEnemies(candidateCells);
   return true;
