@@ -38,6 +38,8 @@ public:
   void removeEntity(Posn remFrom);
   void placeEntity(std::shared_ptr<Entity> e, Posn placeHere);
 
+  void placeStairs(Posn placeHere);
+
   void printChambers();
 
   friend std::ostream &operator<<(std::ostream &out, const Grid &g);

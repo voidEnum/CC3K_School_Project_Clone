@@ -87,8 +87,11 @@ void Game::generateTreasures(vector<vector<Cell *>> &vcham) {
 
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-    shared_ptr<Treasure> toPlace(new Treasure_Normal()); 
-    theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
+    // shared_ptr<Treasure> toPlace(new Treasure_Normal()); 
+    // theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
+    theGrid->placeEntity(make_shared<Treasure_Normal>(), 
+                         {selected.getRow(), selected.getCol()});
+
   }
 }
 
@@ -106,10 +109,21 @@ void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   Cell &selected = *(vc[selectedCellIdx]);
   vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
 
-  shared_ptr<Player> test(new Player());
+  //shared_ptr<Player> test(new Player());
+  //player = test;
 
-  player = test;
-  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()}); 
+  player = make_shared<Player>();
+  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
+
+  int stairChamberIdx = rand() % (numChambers - 1);
+  if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
+
+  vector<Cell *> &stairChamber = vvc[stairChamberIdx];
+  int stairIdx = rand() % stairChamber.size();
+  Cell &stairway = *(stairChamber[stairIdx]);
+  stairChamber.erase(stairChamber.begin() + stairIdx);
+
+  theGrid->placeStairs({stairway.getRow(), stairway.getCol()});
 }       
 
 
