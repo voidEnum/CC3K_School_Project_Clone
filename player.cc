@@ -2,7 +2,8 @@
 #include "cell.h"
 using namespace std;
 
-Player::Player(): Creature('@', "Player"), gold{0}, maxHp{hp} {}
+Player::Player(string name, int hp, int atk, int def): 
+  Creature('@', name, hp, atk, def), gold{0}, maxHp{hp} {}
 
 /*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);
@@ -56,3 +57,6 @@ string Player::actionText(Creature *aggressor) {
   return newActionText; 
 }
   
+int Player::getGold() {
+  return gold;
+}

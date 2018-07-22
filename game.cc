@@ -97,8 +97,9 @@ void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   
   //shared_ptr<Player> test(new Player());
   //player = test;
+
+  player = make_shared<Player>("Player");
   
-  player = make_shared<Player>();
   theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
   int stairChamberIdx = rand() % (numChambers - 1);
   if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
