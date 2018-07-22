@@ -6,6 +6,7 @@
 
 class Player: public Creature, public std::enable_shared_from_this<Player> {
   int gold;
+  int maxHp;
  public:
   Player(std::string name, int hp = 100, int atk = 50, int def = 50);
   atkStatus attack(Cell &target);

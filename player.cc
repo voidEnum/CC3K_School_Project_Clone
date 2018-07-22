@@ -29,13 +29,6 @@ void Player::addGold(int reward) {
   return target.getOccupant()->wasAttacked<Player *>(this);
 }*/
 
-/*int ceil_divide(int numerator, int denom) {
-  if (numerator % denom == 0) {
-    return numerator / denom;
-  }
-  return (numerator / denom) + 1;
-}*/
-
 atkStatus Player::wasAttacked(Creature *aggressor) {
   int randomAction = rand() % 2;
   if (randomAction == 0) { 
@@ -50,10 +43,6 @@ atkStatus Player::wasAttacked(Creature *aggressor) {
 void Player::move(Posn target) {
   this->setPos(target);
 } 
-
-void Player::die() {
-  pos = {-1,-1};
-}
 
 string Player::actionText(Creature *aggressor) {
  string newActionText;
