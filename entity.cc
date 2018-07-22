@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include "posn.h"
+using namespace std;
 
 char Entity::getSymbol() const {
   return symbol;
@@ -11,7 +12,7 @@ atkStatus Entity::wasAttacked(Creature *aggressor) {
   return atkStatus::InvalidTarget;
 }
 
-Entity::Entity(char sym): pos{-1, -1}, symbol{sym} {}
+Entity::Entity(char sym, string name): pos{-1, -1}, symbol{sym}, name{name} {}
 
 void Entity::setPos(Posn p) {
   pos = p;

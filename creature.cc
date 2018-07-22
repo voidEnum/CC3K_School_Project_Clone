@@ -1,7 +1,8 @@
 #include "creature.h"
+using namespace std;
 
-Creature::Creature(char sym, int mhp, int h, int a, int d):
-                   Entity(sym), maxHp{mhp}, hp{h}, atk{a}, def{d} {}
+Creature::Creature(char sym, string name, int mhp, int h, int a, int d):
+                   Entity(sym, name), maxHp{mhp}, hp{h}, atk{a}, def{d} {}
 
 void Creature::beginTurn() {}
 
@@ -18,6 +19,10 @@ int Creature::getDef() const{
 
 int Creature::getHp() const{
   return hp;
+}
+
+string Creature::getName() const{
+  return name;
 }
 
 int Creature::ceil_divide(int numerator, int denom) {

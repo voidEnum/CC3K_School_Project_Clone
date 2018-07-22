@@ -259,7 +259,7 @@ bool Game::processTurn(const string &command) {
 
 void Game::print() {
   cout << *theGrid;
-  cout << "Race: " << "Player " << "Gold: " << to_string(player->finalScore()) << endl;
+  cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) << endl;
   cout << "HP: " << to_string(player->getHp()) << endl;
   cout << "Atk: " << to_string(player->getAtk()) << endl;
   cout << "Def: " << to_string(player->getDef()) << endl;
