@@ -13,8 +13,8 @@ public:
   Controller(std::istream &i);
   void getCommand();
   void sendRace(Game &g);
-  void sendCommand(Game &g);
-  void requestDisplay(Game &g);
+  std::string sendCommand(Game &g);
+  void requestDisplay(Game &g, std::string);
 };
 
 #endif
