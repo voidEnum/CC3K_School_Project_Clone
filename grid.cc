@@ -127,6 +127,11 @@ Cell & Grid::getCell(Posn p) {
   return theGrid[p.r][p.c];
 }
 
+void Grid::placeStairs(Posn p) {
+  getCell(p).makeStairs();
+  td->update(getCell(p));
+}
+
 ostream &operator<<(ostream &out, const Grid &g) {
   return out << *(g.td);
 }

@@ -35,6 +35,10 @@ void Cell::setChamber(int n) {
   chamber = n;
 }
 
+void Cell::makeStairs() {
+  tile = Terrain::Stair;
+}
+
 char Cell::getSymbol() const {
   if (occupant) {
     return occupant->getSymbol();
