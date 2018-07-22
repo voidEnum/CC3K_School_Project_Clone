@@ -1,0 +1,4 @@
+#include "shade.h"
+
+Shade() {}
+
