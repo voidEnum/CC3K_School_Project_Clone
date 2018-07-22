@@ -8,7 +8,7 @@ class Player;
 
 class Enemy : public Creature { //, public std::enable_shared_from_this<Player> {
   public:
-    Enemy(std::string, int hp = 150, int atk = 25, int def = 25);
+    Enemy(char sym, std::string name, int hp = 150, int atk = 25, int def = 25);
     ~Enemy();
     atkStatus attack(std::shared_ptr<Player> p);
     atkStatus wasAttacked(std::shared_ptr<Creature> player);

@@ -5,8 +5,8 @@
 #include "player.h"
 using namespace std;
 
-Enemy::Enemy(string name, int hp, int atk, int def): 
-  Creature('E', name, hp, atk, def) {} 
+Enemy::Enemy(char sym, string name, int hp, int atk, int def): 
+  Creature(sym, name, hp, atk, def) {} 
 
 Enemy::~Enemy(){}
 
