@@ -32,11 +32,11 @@ class Game {
   //void changeFloor();
   //void update_display();
   void movePlayer(const std::string &direction);
-  //void PlayerAttack(std::string direction);
+  void PlayerAttack(std::string direction);
   //void enemyAttack();
   //void Player_usePotion();
   //void freeze();
-  //void chackvalid();
+  void chackvalid();
   bool isAnyValidNeighbour(Posn p);
   Posn validRandomNeighbour(Posn p);
   bool validSpot(Cell cell);

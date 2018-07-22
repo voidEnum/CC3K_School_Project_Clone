@@ -5,6 +5,7 @@
 #include "player.h"
 
 class Vampire: public Player {
+ public:
   Vampire();
   atkStatus attack(Cell &target);
 };

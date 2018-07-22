@@ -21,3 +21,4 @@ void Entity::setPos(Posn p) {
 Posn Entity::getPosn() const {
   return pos;
 }
+

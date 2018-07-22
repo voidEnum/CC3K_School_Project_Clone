@@ -8,6 +8,12 @@
 #include "posn.h"
 #include "potion_rh.h"
 
+#include "shade.h"
+#include "drow.h"
+#include "vampire.h"
+#include "troll.h"
+#include "goblin.h"
+
 #include <sstream>
 #include <iostream>
 #include <iterator>
@@ -97,8 +103,22 @@ void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   
   //shared_ptr<Player> test(new Player());
   //player = test;
-
-  player = make_shared<Player>("Player");
+  if (race == "s") {
+    player = make_shared<Shade>();
+  }
+  else if (race == "d") {
+    player = make_shared<Drow>();
+  }
+  else if (race == "v") {
+    player = make_shared<Vampire>();
+  }
+  else if (race == "t") {
+    player = make_shared<Troll>();
+  }
+  else if (race == "g") {
+    player = make_shared<Goblin>();
+  }
+  else {player = make_shared<Player>("Player");}
   
   theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
   int stairChamberIdx = rand() % (numChambers - 1);
@@ -240,11 +260,12 @@ void Game::movePlayer(const string &direction) {
   }
 }
 
-/*void Game::PlayerAttack(string direction) {
-  player.attack(dir_to_cell(player.cell, direction));
+void Game::PlayerAttack(string direction) {
+  Posn player_Posn = player->getPosn();
+  player->attack(theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn), direction )));
 }
 
-void Game::enemyAttack() {}
+/*void Game::enemyAttack() {}
   
   
 void Game::Player_usePotion(string direction) {
@@ -261,9 +282,9 @@ void Game::Player_usePotion(string direction) {
       return;
     }
   }
-}
+}*/
 
-void Game::freeze() {
+/*void Game::freeze() {
   frozen = !frozen;
 }*/
 
@@ -282,12 +303,13 @@ bool Game::processTurn(const string &command) {
   istringstream iss(command);
   string s;
   iss >> s;
-  /*if (s == "a") {
-    //iss >> s;
-    //if (valid_dir(s)) {
-    //  PlayerAttack(s);
-    //}
+  if (s == "a") {
+    iss >> s;
+    if (valid_dir(s)) {
+      PlayerAttack(s);
+    }
   }
+  /*
   else if (s == "use") {
     //iss >> s;
     //if (valid_dir(s)) {
