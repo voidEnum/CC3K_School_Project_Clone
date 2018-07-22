@@ -17,12 +17,17 @@
 #include "posn.h"
 #include "potion_rh.h"
 
+#include "shade.h"
+#include "drow.h"
+#include "vampire.h"
+#include "troll.h"
+#include "goblin.h"
+
 #include <sstream>
 #include <iostream>
 #include <iterator>
 #include <algorithm>
 #include <stdlib.h>
-
 using namespace std;
 
 Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
@@ -38,6 +43,12 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     int selectedCellIdx = rand() % (numCells);
     int enemyType = rand() % 18 + 1;
     Cell &selected = *(vc[selectedCellIdx]);
+/*<<<<<<< HEAD
+    shared_ptr<Enemy>enemy = make_shared<Enemy>("Enemy");
+    //shared_ptr<Enemy> enemy(new Enemy("Enemy"));
+    theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
+    enemies.emplace_back(enemy);
+=======*/
     if(enemyType >= 1 && enemyType <= 4) {
       shared_ptr<Human> H(new Human());
       theGrid->placeEntity(H, {selected.getRow(), selected.getCol()});
@@ -63,6 +74,7 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
       theGrid->placeEntity(M, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(M);
     }
+//>>>>>>> master
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
@@ -129,8 +141,22 @@ void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   
   //shared_ptr<Player> test(new Player());
   //player = test;
-
-  player = make_shared<Player>("Player");
+  if (race == "s") {
+    player = make_shared<Shade>();
+  }
+  else if (race == "d") {
+    player = make_shared<Drow>();
+  }
+  else if (race == "v") {
+    player = make_shared<Vampire>();
+  }
+  else if (race == "t") {
+    player = make_shared<Troll>();
+  }
+  else if (race == "g") {
+    player = make_shared<Goblin>();
+  }
+  else {player = make_shared<Player>("Player");}
   
   theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
   int stairChamberIdx = rand() % (numChambers - 1);
@@ -155,14 +181,19 @@ bool Game::startRound(const string &race) {
   return true;
 }
 
-void Game::moveEnemies() {
+string Game::moveEnemies() {
   enemy_sort(enemies);
+  string full_action_text = "";
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
-    if (isInAttackRange(e_Posn)) e->attack(player);
+    if (isInAttackRange(e_Posn)) {
+      e->attack(player);
+      //cout << "after_attacking player: " << e->actionText(player) <<endl;
+      full_action_text += e->actionText(player);
+    }
     else if (isAnyValidNeighbour(e_Posn)) theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
-    else if (isInAttackRange(e_Posn)) e->attack(player); 
   }
+  return full_action_text;
   /*int size = enemies.size();
   int randomrange = 0;
   int randomnumber = 0;
@@ -258,25 +289,28 @@ Posn dir_to_posn(Cell &cur_cell, string direction) {
   else return {-1, -1};
 }
 
-void Game::movePlayer(const string &direction) {
+string Game::movePlayer(const string &direction) {
+  string full_action_text = "";
   Posn player_Posn = player->getPosn();
   Posn heading_dir = dir_to_posn(theGrid->getCell(player_Posn), direction);
   char heading_tile = theGrid->getCell(heading_dir).getSymbol();
   if (heading_tile == '#' || heading_tile == '.' ||
       heading_tile == '\\' || heading_tile == '+') { 
-    cout << heading_tile << endl;
     theGrid->moveEntity(player_Posn, heading_dir);
+    full_action_text += player->getName() + " moves " + direction;
   }
   else {
     throw Invalid_behave("");
   }
+  return full_action_text;
 }
 
-/*void Game::PlayerAttack(string direction) {
-  player.attack(dir_to_cell(player.cell, direction));
+void Game::PlayerAttack(string direction) {
+  Posn player_Posn = player->getPosn();
+  player->attack(theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn), direction )));
 }
 
-void Game::enemyAttack() {}
+/*void Game::enemyAttack() {}
   
   
 void Game::Player_usePotion(string direction) {
@@ -293,9 +327,9 @@ void Game::Player_usePotion(string direction) {
       return;
     }
   }
-}
+}*/
 
-void Game::freeze() {
+/*void Game::freeze() {
   frozen = !frozen;
 }*/
 
@@ -310,16 +344,18 @@ bool valid_dir(string dir) {
   }
 }
 
-bool Game::processTurn(const string &command) {
+string Game::processTurn(const string &command) {
+  string full_printing_msg = "";
   istringstream iss(command);
   string s;
   iss >> s;
-  /*if (s == "a") {
-    //iss >> s;
-    //if (valid_dir(s)) {
-    //  PlayerAttack(s);
-    //}
+  if (s == "a") {
+    iss >> s;
+    if (valid_dir(s)) {
+      PlayerAttack(s);
+    }
   }
+  /*
   else if (s == "use") {
     //iss >> s;
     //if (valid_dir(s)) {
@@ -333,21 +369,21 @@ bool Game::processTurn(const string &command) {
     //freeze();
   }*/ 
   if (valid_dir(s)) {
-    movePlayer(s);
-    moveEnemies();
+    full_printing_msg += movePlayer(s);
+    full_printing_msg += moveEnemies();
   } 
   /*else if (!frozen) {
    // moveEnemies(enemies);
   }*/
-  return true;
+  return full_printing_msg;
 }
 
-void Game::print() {
+void Game::print(string printing_msg) {
   cout << *theGrid;
   cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) << endl;
   cout << "HP: " << to_string(player->getHp()) << endl;
   cout << "Atk: " << to_string(player->getAtk()) << endl;
   cout << "Def: " << to_string(player->getDef()) << endl;
-  cout << "Action: " << endl; 
+  cout << "Action: " << printing_msg << "." << endl; 
 }
 
