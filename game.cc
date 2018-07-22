@@ -93,22 +93,27 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
 
 void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   (void)race;
-
   int numChambers = vvc.size();
   int selectedChamberIdx = rand() % numChambers;
-
   vector<Cell *> &vc = vvc[selectedChamberIdx];
   int numCells = vc.size();
   int selectedCellIdx = rand() % numCells;
-
   Cell &selected = *(vc[selectedCellIdx]);
   vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-
-  shared_ptr<Player> test(new Player(100));
-
-  player = test;
-  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()}); 
-}       
+  
+  //shared_ptr<Player> test(new Player());
+  //player = test;
+  
+  player = make_shared<Player>(100);
+  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
+  int stairChamberIdx = rand() % (numChambers - 1);
+  if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
+  vector<Cell *> &stairChamber = vvc[stairChamberIdx];
+  int stairIdx = rand() % stairChamber.size();
+  Cell &stairway = *(stairChamber[stairIdx]);
+  stairChamber.erase(stairChamber.begin() + stairIdx);
+  theGrid->placeStairs({stairway.getRow(), stairway.getCol()});
+}         
 
 
 
