@@ -5,12 +5,12 @@
 #include "treasure.h"
 #include "treasure_normal.h"
 #include "invalid_behave.h"
-#include "posn.h"
 
 #include <sstream>
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -25,9 +25,7 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     vector<Cell *> &vc = vcham[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % (numCells);
-
     Cell &selected = *(vc[selectedCellIdx]);
-
     shared_ptr<Enemy> enemy(new Enemy());
     theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
     enemies.emplace_back(enemy);
@@ -76,55 +74,46 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
 }  
 */ 
  
-void Game::generateTreasures(vector<vector<Cell *>> &vcham) {
+void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
   for (int i = 0; i < NUM_TREASURE_SPAWN; i++) {
-    int numChambers = vcham.size();
+    int numChambers = vvc.size();
     int selectedChamberIdx = rand() % numChambers;
 
-    vector<Cell *> &vc = vcham[selectedChamberIdx];
+    vector<Cell *> &vc = vvc[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % numCells;
 
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-    // shared_ptr<Treasure> toPlace(new Treasure_Normal()); 
-    // theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
-    theGrid->placeEntity(make_shared<Treasure_Normal>(), 
-                         {selected.getRow(), selected.getCol()});
-
+    shared_ptr<Treasure> toPlace(new Treasure_Normal()); 
+    theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
   }
 }
 
 
 void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   (void)race;
-
   int numChambers = vvc.size();
   int selectedChamberIdx = rand() % numChambers;
-
   vector<Cell *> &vc = vvc[selectedChamberIdx];
   int numCells = vc.size();
   int selectedCellIdx = rand() % numCells;
-
   Cell &selected = *(vc[selectedCellIdx]);
   vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-
+  
   //shared_ptr<Player> test(new Player());
   //player = test;
-
+  
   player = make_shared<Player>();
   theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
-
   int stairChamberIdx = rand() % (numChambers - 1);
   if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
-
   vector<Cell *> &stairChamber = vvc[stairChamberIdx];
   int stairIdx = rand() % stairChamber.size();
   Cell &stairway = *(stairChamber[stairIdx]);
   stairChamber.erase(stairChamber.begin() + stairIdx);
-
   theGrid->placeStairs({stairway.getRow(), stairway.getCol()});
-}       
+}         
 
 
 
@@ -140,9 +129,15 @@ bool Game::startRound(const string &race) {
   return true;
 }
 
-/*
-void Game::moveEnemies(vector<shared_ptr<Enemy>>enemies) {
-  int size = enemies.size();
+void Game::moveEnemies() {
+  enemy_sort(enemies);
+  for(auto e : enemies) {
+    Posn e_Posn = e->getPosn();
+    if (isInAttackRange(e_Posn)) e->attack(player);
+    else if (isAnyValidNeighbour(e_Posn)) theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+    else if (isInAttackRange(e_Posn)) e->attack(player); 
+  }
+  /*int size = enemies.size();
   int randomrange = 0;
   int randomnumber = 0;
   vector<Cell>candidates;
@@ -162,9 +157,58 @@ void Game::moveEnemies(vector<shared_ptr<Enemy>>enemies) {
     theGrid.moveEntity(enemies.at(i).cell, candidates.at(randomnumber));
     randomnumber = 0;
     randomrange = 0;
+  }*/
+}
+
+bool Game::isAnyValidNeighbour(Posn p) {
+  for (int i = p.r - 1; i <= p.r + 1; ++i) {
+    for (int j = p.c - 1; j <= p.c + 1; ++j) {
+      if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) return true;
+    }
+  }
+  return false;
+}
+
+Posn Game::validRandomNeighbour(Posn p) {
+  std::vector<Cell>candidates;
+  int candidatesize = 0;
+  for (int i = p.r - 1; i <= p.r + 1; ++i) {
+    for (int j = p.c - 1; j <= p.c + 1; ++j) {
+      if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) {
+        candidatesize++;
+        candidates.emplace_back(theGrid->getCell({i,j}));
+      }
+    }
+  }
+  int randNum = rand()%candidatesize;
+  return candidates[randNum].getPosn();
+}
+
+bool Game::validSpot(Cell cell) {
+  return cell.getTerrain() == Terrain::ChamFloor && cell.getOccupant() == nullptr;
+}
+
+bool Game::isInAttackRange(Posn p) {
+  return (abs(p.r - player->getPosn().r) <= 1 && abs(p.c - player->getPosn().c) <= 1);
+}
+
+bool Game::sort_function(shared_ptr<Enemy>e1, shared_ptr<Enemy>e2) {
+  if ((e1->getPosn()).r < (e2->getPosn()).r) {
+    return true;
+  }
+  else if ((e1->getPosn()).r == (e2->getPosn()).r &&
+           (e1->getPosn()).c < (e2->getPosn()).c) {
+    return true;
+  }
+  else {
+    return false;
   }
 }
 
+void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemies) {
+  sort(enemies.begin(), enemies.end(), &sort_function);
+}
+/*
 void Game::changeFloor() {
   theGrid.init();
 }
@@ -204,9 +248,9 @@ void Game::movePlayer(const string &direction) {
 
 /*void Game::PlayerAttack(string direction) {
   player.attack(dir_to_cell(player.cell, direction));
-}*/
+}
 
-/*void Game::enemyAttack() {}
+void Game::enemyAttack() {}
   
   
 void Game::Player_usePotion(string direction) {
@@ -245,12 +289,12 @@ bool Game::processTurn(const string &command) {
   string s;
   iss >> s;
   /*if (s == "a") {
-    iss >> s;
-    if (valid_dir(s)) {
-      PlayerAttack(s);
-    }
-  }*/
-  /*else if (s == "use") {
+    //iss >> s;
+    //if (valid_dir(s)) {
+    //  PlayerAttack(s);
+    //}
+  }
+  else if (s == "use") {
     //iss >> s;
     //if (valid_dir(s)) {
     //  Player_usePotion(s);
@@ -264,6 +308,7 @@ bool Game::processTurn(const string &command) {
   }*/ 
   if (valid_dir(s)) {
     movePlayer(s);
+    moveEnemies();
   } 
   /*else if (!frozen) {
    // moveEnemies(enemies);
@@ -280,23 +325,3 @@ void Game::print() {
   cout << "Action: " << endl; 
 }
 
-bool Game::sort_function(shared_ptr<Enemy>e1, shared_ptr<Enemy>e2) {
-  if ((e1->getPosn()).r < (e2->getPosn()).r) {
-    return true;
-  }
-  else if ((e1->getPosn()).r == (e2->getPosn()).r &&
-           (e1->getPosn()).c < (e2->getPosn()).c) {
-    return true;
-  }
-  else {
-    return false;
-  }
-}
-
-void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemies) {
-  sort(enemies.begin(), enemies.end(), &sort_function);
-} 
-
-/*void check_neighbor() {
-  for (int i = -1; i < 1; ++i) {
-    for (int j = -1; j < 1; ++j) {*/

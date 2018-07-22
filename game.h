@@ -25,20 +25,23 @@ class Game {
  private:
   void generateEnemies(std::vector<std::vector<Cell *>> &vcham);
   //void generatePotions();
-  void generateTreasures(std::vector<std::vector<Cell *>> &vcham); // all normal treasures for now
+  void generateTreasures(std::vector<std::vector<Cell *>> &vvc); // all normal treasures for now
   void generatePlayer(const std::string &race, std::vector<std::vector<Cell *>> &vvc); // generic player for now
-  //void moveEnemies(std::vector<Enemy *>enemies);
+  void moveEnemies();
   //void changeFloor();
   //void update_display();
   void movePlayer(const std::string &direction);
-  void PlayerAttack(std::string direction);
+  //void PlayerAttack(std::string direction);
   //void enemyAttack();
   //void Player_usePotion();
   //void freeze();
   //void chackvalid();
+  bool isAnyValidNeighbour(Posn p);
+  Posn validRandomNeighbour(Posn p);
+  bool validSpot(Cell cell);
+  bool isInAttackRange(Posn p);
   static bool sort_function(std::shared_ptr<Enemy>e1, std::shared_ptr<Enemy>e2);
   void enemy_sort(std::vector<std::shared_ptr<Enemy>>&enemies);
-  void check_neighbor();
 };
 
 #endif 
