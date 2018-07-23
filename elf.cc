@@ -7,11 +7,10 @@ Elf::Elf():
 
 
 atkStatus Elf::attack(std::shared_ptr<Player> p) {
-   std::shared_ptr<Enemy> enemy(this);
-   if(std::dynamic_pointer_cast<Drow>(p))return p->wasAttacked(enemy,1);
+   if(std::dynamic_pointer_cast<Drow>(p))return p->wasAttacked(shared_from_this(),1);
    else {
-     p->wasAttacked(enemy,1);
-     return p->wasAttacked(enemy,1);
+     p->wasAttacked(shared_from_this(),1);
+     return p->wasAttacked(shared_from_this(),1);
    }
 }
 
