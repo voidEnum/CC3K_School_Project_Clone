@@ -30,18 +30,20 @@ atkStatus Player::attack(Cell &target) {
   }
   char entity_sym = target.getOccupant()->getSymbol();
   if (entity_sym == 'E' || entity_sym == 'M' ||
-      entity_sym == 'H' || entity_sym == 'E' ||
-      entity_sym == 'W' || entity_sym == 'D') {
+      entity_sym == 'H' || entity_sym == 'O' ||
+      entity_sym == 'W' || entity_sym == 'D' ||
+      entity_sym == 'L') {
     shared_ptr<Enemy> enemy = static_pointer_cast<Enemy>(target.getOccupant());
-    shared_ptr<Player> player(this);
-    return enemy->wasAttacked(player);
+    //shared_ptr<Player> player(this);
+    return enemy->wasAttacked(shared_from_this());
   }
   return atkStatus::InvalidTarget;
 }
 
-atkStatus Player::wasAttacked(Creature *aggressor) {
+atkStatus Player::wasAttacked(shared_ptr<Enemy> aggressor) {
   int randomAction = rand() % 2;
   if (randomAction == 0) { 
+    //cout << damage(aggressor->getAtk(), getDef()) << endl;
     hp -= damage(aggressor->getAtk(), getDef());
     if (hp <= 0) {
       return atkStatus::Kill;
@@ -59,14 +61,18 @@ void Player::move(Posn target) {
   this->setPos(target);
 } 
 
-string Player::actionText(Creature *aggressor) {
+string Player::actionText(shared_ptr<Enemy>aggressor, atkStatus as) {
  string newActionText;
-  if(wasAttacked(aggressor) == atkStatus::Hit) {
+  if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
-    string enemyHpAsString = to_string(aggressor->getHp());
-    newActionText = getSymbol() + " deals " + atkAsString + " damage to PC " + "(" + enemyHpAsString + "). ";
-  } else {
-    newActionText = aggressor->getSymbol() + "attacks you but it missed";
+    string EnemyHpAsString = to_string(aggressor->getHp());
+    newActionText = getName() + " deals " + atkAsString + " damage to " + aggressor->getName() + "(" + EnemyHpAsString + ").";
+  } 
+  else if (as == atkStatus::Kill) {
+    newActionText = getName() + " killed " + aggressor->getName() + ".";
+  }
+  else {
+    newActionText = getName() + " attacks " + aggressor->getName() +  " but it missed.";
   }
   //p->actionText(newActionText);
   return newActionText; 

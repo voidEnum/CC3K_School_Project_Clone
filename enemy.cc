@@ -18,34 +18,33 @@ atkStatus Enemy::attack(shared_ptr<Player> p) {
       int damage = damage(PlayerDef, atkStatus::Hit);
       p->setHp(PlayerHp - damage);
    }*/
-  return p->wasAttacked(this);
+  //shared_ptr<Enemy> enemy(make_shared_from_this());
+  return p->wasAttacked(shared_from_this());
   //attackText(p,atkStatus); 
 }
 
 atkStatus Enemy::wasAttacked(shared_ptr<Creature>player) {
-  int randomAction = rand() % 2;
-  if (randomAction == 0) {
-    hp -= damage(player->getAtk(), getDef());
-    if (hp <= 0) {
-      return atkStatus::Kill;
-    }
-    return atkStatus::Hit;
+  hp -= damage(player->getAtk(), getDef());
+  if (hp <= 0) {
+    return atkStatus::Kill;
   }
-  else {
-    return atkStatus::Miss;
-  }
+  return atkStatus::Hit;
 }
 
-string Enemy::actionText(shared_ptr<Player>p) {
+string Enemy::actionText(shared_ptr<Player>p, atkStatus as) {
   string newActionText;
-  if(wasAttacked(p) == atkStatus::Hit) {
+  if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), p->getDef()));
-    string heroHpAsString = to_string(p->getHp());
+    string PlayerHpAsString = to_string(p->getHp());
     //cout << "the symbol: " << getSymbol() << endl;
     //cout << getPosn().r << " " << getPosn().c << endl;
-    newActionText = " " + getName() + " deals " + atkAsString + " damage to PC " + "(" + heroHpAsString + ")";
-  } else {
-    newActionText = p->getSymbol() + "attacks you but it missed";
+    newActionText = " " + getName() + " deals " + atkAsString + " damage to " + p->getName() + "(" + PlayerHpAsString + ").";
+  } 
+  else if (as == atkStatus::Kill) {
+    newActionText = " " + getName() + " killed the player.";
+  }
+  else {
+    newActionText = " " +  getName() + " attacks you but it missed.";
   }
   //p->actionText(newActionText);
   return newActionText;

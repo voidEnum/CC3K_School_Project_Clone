@@ -1,6 +1,7 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include <memory>
 #include <string>
 #include "posn.h"
 
@@ -24,6 +25,7 @@ public:
     return atkStatus::InvalidTarget;
   }
   virtual char getSymbol() const;
+  virtual std::string getName() const;
   void setPos(Posn p);
   Posn getPosn() const;
 };

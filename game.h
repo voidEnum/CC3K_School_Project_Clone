@@ -42,17 +42,17 @@ class Game {
   //void changeFloor();
   //void update_display();
   std::string movePlayer(const std::string &direction);
-  void PlayerAttack(std::string direction);
+  std::string PlayerAttack(std::string direction);
   //void enemyAttack();
   //void Player_usePotion();
   //void freeze();
   void chackvalid();
   bool isAnyValidNeighbour(Posn p);
   Posn validRandomNeighbour(Posn p);
-  bool validSpot(Cell cell);
+  bool validSpot(Cell &cell);
   bool isInAttackRange(Posn p);
   static bool sort_function(std::shared_ptr<Enemy>e1, std::shared_ptr<Enemy>e2);
-  void enemy_sort(std::vector<std::shared_ptr<Enemy>>&enemies);
+  void enemy_sort(std::vector<std::shared_ptr<Enemy>>&enemy_vector);
 };
 
 #endif 

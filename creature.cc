@@ -21,10 +21,6 @@ int Creature::getHp() const{
   return hp;
 }
 
-string Creature::getName() const{
-  return name;
-}
-
 int Creature::ceil_divide(int numerator, int denom) {
   if (numerator % denom == 0) {
     return numerator / denom;
@@ -38,3 +34,4 @@ int Creature::damage(int atk, int def) {
 
 void Creature::die() {
 }
+
