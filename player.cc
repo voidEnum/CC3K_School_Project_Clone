@@ -1,5 +1,6 @@
 #include <iostream>
 #include "player.h"
+#include "player_decorators.h"
 #include "cell.h"
 #include "enemy.h"
 using namespace std;
@@ -20,9 +21,9 @@ shared_ptr<Player>Player::withoutBuffs() {
   return shared_from_this();
 }
 
-bool Player::useEntity(Entity &e) {
-  return e.wasUsed(*this);
-}
+//bool Player::useEntity(Entity &e) {
+//  return e.wasUsed(&(shared_from_this()));
+//}
 
 void Player::addGold(int reward) {
   gold += reward;
@@ -81,4 +82,33 @@ int Player::getGold() {
 }
 
 void Player::beginTurn() {
+}
+
+// useEntity overloads for visitor pattern
+/*
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion> p) {
+  (void)p;
+  cout << "this is getting called because everyone hates me" << endl;
+  return shared_from_this();
+}*/
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion_RH> p) {
+  modifyHp(p->getPotency());
+  cout << "my hp is " << getHp() << endl;
+  return shared_from_this();
+}
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion_PH> p) {
+  modifyHp(-(p->getPotency()));
+  return shared_from_this();
+}
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion_BA> p) {
+  return make_shared<PlayerDecoratorAtk>(shared_from_this(), p->getPotency());
+}
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion_WA> p) {
+  return make_shared<PlayerDecoratorAtk>(shared_from_this(), -(p->getPotency()));
+}
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion_BD> p) {
+  return make_shared<PlayerDecoratorDef>(shared_from_this(), p->getPotency());
+}
+shared_ptr<Player> Player::useEntity(shared_ptr<Potion_WD> p) {
+  return make_shared<PlayerDecoratorDef>(shared_from_this(), -(p->getPotency()));
 }

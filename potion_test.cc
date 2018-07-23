@@ -23,9 +23,17 @@ int main() {
 
   shared_ptr<Player> player = make_shared<Player>("player");
   cout << "player's hp is " << player->getHp() << endl;
-  player->useEntity(*RH1);
+  player = RH1->beUsedBy(player);
   cout << "after using RH1 player's hp is " << player->getHp() << endl;
-  player->useEntity(*PH1);
+  player = PH1->beUsedBy(player);
   cout << "after using PH1 player's hp is " << player->getHp() << endl;
   cout << "PH1 is Revealed now returns: " << PH1->isRevealed() << endl;
+
+  shared_ptr<Potion> BA1 = make_shared<Potion_BA>();
+  cout << "player's attack is " << player->getAtk() << endl;
+  player = BA1->beUsedBy(player);
+  cout << "after using BA1 player's atk is " << player->getAtk() << endl;
+
+  player = player->withoutBuffs();
+  cout << "after using withoutBuffs playyer's atk is " << player ->getAtk() << endl;
 }

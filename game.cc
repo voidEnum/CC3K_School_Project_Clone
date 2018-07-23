@@ -310,6 +310,20 @@ Posn dir_to_posn(Cell &cur_cell, string direction) {
   else return {-1, -1};
 }
 
+Posn dir_to_posn(Posn startPosn, string direction) {
+  int row = startPosn.r;
+  int col = startPosn.c;
+  if (direction == "ea") return {row, col + 1};
+  else if (direction == "no") return {row - 1, col};
+  else if (direction == "we") return {row, col - 1};
+  else if (direction == "so") return {row + 1, col};
+  else if (direction == "nw") return {row - 1, col - 1};
+  else if (direction == "ne") return {row - 1, col + 1};
+  else if (direction == "sw") return {row + 1, col - 1};
+  else if (direction == "se") return {row + 1, col + 1};
+  else return {-1, -1};
+}
+
 string Game::movePlayer(const string &direction) {
   string full_action_text = "";
   Posn player_Posn = player->getPosn();
@@ -365,6 +379,12 @@ bool valid_dir(string dir) {
   }
 }
 
+void useTogether(shared_ptr<Player> user, shared_ptr<Entity> used) {
+  (void)used;
+  (void)user;
+  used->beUsedBy(user.get());
+}
+
 string Game::processTurn(const string &command) {
   string full_printing_msg = "";
   istringstream iss(command);
@@ -376,13 +396,16 @@ string Game::processTurn(const string &command) {
       PlayerAttack(s);
     }
   }
-  /*
+  
   else if (s == "use") {
-    //iss >> s;
-    //if (valid_dir(s)) {
-    //  Player_usePotion(s);
-    //}
-  }
+    iss >> s;
+    if (valid_dir(s)) {
+      Posn target = dir_to_posn(player->getPosn(), s);
+      if (theGrid->hasUsable(target)) { // if the occupant of target can be used
+        useTogether(player, theGrid->getCell(target).getOccupant());
+      }
+    }
+  }/*
   else if (s == "restart") {
     //changeFloor();
   }

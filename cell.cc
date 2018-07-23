@@ -58,3 +58,12 @@ char Cell::getSymbol() const {
     }
   }
 }
+
+bool Cell::hasUsable() const {
+  if (!occupant) {
+    return false;
+  }else {
+    return occupant->isUsable();
+  }
+}
+
