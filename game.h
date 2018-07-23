@@ -9,9 +9,19 @@
 
 class Player;
 
+class Potion;
+
 class Game {
   static const int NUM_TREASURE_SPAWN = 10;
   static const int NUM_POTION_SPAWN = 10;
+  
+  class PotionFactory {
+    PotionFactory() = default;
+  public:
+    static PotionFactory& getInstance();
+    std::shared_ptr<Potion> makePotion();
+  };
+    
   std::unique_ptr<Grid> theGrid;
   std::shared_ptr<Player> player;
   std::vector<std::shared_ptr<Enemy>>enemies;
