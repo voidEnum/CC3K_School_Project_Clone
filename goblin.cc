@@ -31,3 +31,4 @@ string Goblin::actionText(shared_ptr<Enemy>aggressor, atkStatus as) {
   //p->actionText(newActionText);
   return newActionText;
 } 
+

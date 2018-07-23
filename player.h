@@ -4,6 +4,7 @@
 #include "enemy.h"
 #include <memory>
 #include <string>
+#include "enemy.h"
 
 class Player: public Creature, public std::enable_shared_from_this<Player> {
   int gold;

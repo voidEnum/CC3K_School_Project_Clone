@@ -51,3 +51,4 @@ int Creature::damage(int atk, int def) {
 
 void Creature::die() {
 }
+
