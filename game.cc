@@ -66,12 +66,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     int selectedCellIdx = rand() % (numCells);
     int enemyType = rand() % 18 + 1;
     Cell &selected = *(vc[selectedCellIdx]);
-/*<<<<<<< HEAD
-    shared_ptr<Enemy>enemy = make_shared<Enemy>("Enemy");
-    //shared_ptr<Enemy> enemy(new Enemy("Enemy"));
-    theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
-    enemies.emplace_back(enemy);
-=======*/
     if(enemyType >= 1 && enemyType <= 4) {
       shared_ptr<Human> H(new Human());
       theGrid->placeEntity(H, {selected.getRow(), selected.getCol()});
@@ -97,7 +91,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
       theGrid->placeEntity(M, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(M);
     }
-//>>>>>>> master
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
@@ -213,7 +206,16 @@ string Game::moveEnemies() {
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
     //cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
-    if (isInAttackRange(e_Posn)) {
+    if (dynamic_pointer_cast<Merchant>(e)&& isInAttackRange(e_Posn)) {
+      auto m = static_pointer_cast<Merchant>(e);
+      if (m->checkHostile()){
+        atkStatus as = m->attack(player);
+        full_action_text += m->actionText(player, as);
+      }else if (isAnyValidNeighbour(e_Posn)) {
+        theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+      }
+    }
+    else if (isInAttackRange(e_Posn)) {
       atkStatus as = e->attack(player);
       //cout << "after_attacking player: " << e->actionText(player) <<endl;
       full_action_text += e->actionText(player, as);
@@ -305,7 +307,6 @@ void Game::update_display() {
   theGrid.td.update();
 }*/
 
-
 Posn dir_to_posn(Cell &cur_cell, string direction) {
   int row = cur_cell.getRow();
   int col = cur_cell.getCol();
@@ -338,14 +339,33 @@ string Game::movePlayer(const string &direction) {
 
 string Game::PlayerAttack(string direction) {
   Posn player_Posn = player->getPosn();
-  Cell &target_cell = theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn), direction));
-  atkStatus as = player->attack(target_cell);
-  return player->actionText(static_pointer_cast<Enemy>(target_cell.getOccupant()), as);
+  Cell &target_cell = theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn),direction));
+  if(target_cell.getOccupant() == nullptr) {
+    return "There is no enemy at that direction.";
+  } else {
+    char entity_sym = target_cell.getOccupant()->getSymbol();
+    auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
+    if (entity_sym == 'E' || entity_sym == 'L' ||
+        entity_sym == 'H' || entity_sym == 'O' ||
+        entity_sym == 'W' || entity_sym == 'D' ) {
+      atkStatus as = player->attack(e);
+      return player->actionText(e, as);
+    } else if (entity_sym == 'M') {
+      auto mt  = static_pointer_cast<Merchant>(e);
+      if(!mt->checkHostile()) {
+        for (auto en : enemies) {
+          if (dynamic_pointer_cast<Merchant>(en)) {
+            auto m = static_pointer_cast<Merchant>(en);
+            m->turnHostile();
+          }
+        }
+      }
+      atkStatus as = player->attack(e);
+      return player->actionText(e, as);
+    }else return player->actionText(e, atkStatus::InvalidTarget);
+  }
 }
-
-/*void Game::enemyAttack() {}
-  
-  
+/*  
 void Game::Player_usePotion(string direction) {
   int size = potions.size();
   int target_row = target.getRow();
@@ -360,9 +380,9 @@ void Game::Player_usePotion(string direction) {
       return;
     }
   }
-}*/
+}
 
-/*void Game::freeze() {
+void Game::freeze() {
   frozen = !frozen;
 }*/
 
@@ -386,7 +406,6 @@ string Game::processTurn(const string &command) {
   if (s == "a") {
     iss >> s;
     if (valid_dir(s)) {
-      //cout << "wtffff" << endl;
       full_printing_msg += PlayerAttack(s);
     }
   }
