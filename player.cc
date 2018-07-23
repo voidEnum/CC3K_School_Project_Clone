@@ -65,7 +65,7 @@ string Player::actionText(shared_ptr<Enemy> aggressor, atkStatus as) {
     newActionText = getName() + " deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + ").";
   } else if (as == atkStatus::Kill){
       newActionText = getName() + " killed " + aggressor->getName() + ".";
-    } else newActionText = getName() + " attacks " + aggressor->getName() + "  but it missed.";
+    } else newActionText = getName() + " attacks " + aggressor->getName() + " but it missed.";
   return newActionText; 
 }
   
