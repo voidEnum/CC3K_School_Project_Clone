@@ -24,6 +24,9 @@ public:
     return atkStatus::InvalidTarget;
   }
   virtual char getSymbol() const;
+  // returns true when used successfully, false when entity cannot be used
+  // or was otherwise not able to be used for some reason.
+  virtual bool wasUsed(Player &user);
   void setPos(Posn p);
   Posn getPosn() const;
 };

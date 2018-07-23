@@ -15,12 +15,7 @@
 #include "treasure_normal.h"
 #include "invalid_behave.h"
 #include "posn.h"
-#include "potion_rh.h"
-#include "potion_ph.h"
-#include "potion_ba.h"
-#include "potion_wa.h"
-#include "potion_bd.h"
-#include "potion_wd.h"
+#include "potion.h"
 
 #include "shade.h"
 #include "drow.h"

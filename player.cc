@@ -20,6 +20,10 @@ shared_ptr<Player>Player::withoutBuffs() {
   return shared_from_this();
 }
 
+bool Player::useEntity(Entity &e) {
+  return e.wasUsed(*this);
+}
+
 void Player::addGold(int reward) {
   gold += reward;
 }

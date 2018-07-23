@@ -9,6 +9,10 @@ void Creature::beginTurn() {}
 
 void Creature::endTurn() {}
 
+void Creature::modifyHp(int delta) {
+  hp += delta;
+}
+
 int Creature::getAtk() const{
   return atk;
 }

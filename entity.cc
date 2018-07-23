@@ -22,3 +22,7 @@ Posn Entity::getPosn() const {
   return pos;
 }
 
+bool Entity::wasUsed(Player &user) {
+  (void)user;
+  return false; // defaults to return false. ovrride for usable entities
+}

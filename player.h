@@ -15,7 +15,8 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   //virtual void beginTurn();
   //virtual void endTurn();
   void addGold(int reward);
-  //bool usePotion(Cell &cell);
+  //bool useEntity(Cell &cell);
+  bool useEntity(Entity &e);
   int finalScore();
   std::shared_ptr<Player>withoutBuffs();
   std::string actionText(Creature *aggressor);
