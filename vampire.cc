@@ -8,6 +8,6 @@ atkStatus Vampire::attack(Cell &target) {
     return atkStatus::EmptyTarget;
   }
   this->setHp(this->getHp() + 5);
-  return target.getOccupant()->wasAttacked<Player *>(this);
+  return target.getOccupant()->wasAttacked(shared_from_this());
 }
 
