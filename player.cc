@@ -33,15 +33,16 @@ atkStatus Player::attack(Cell &target) {
       entity_sym == 'H' || entity_sym == 'E' ||
       entity_sym == 'W' || entity_sym == 'D') {
     shared_ptr<Enemy> enemy = static_pointer_cast<Enemy>(target.getOccupant());
-    shared_ptr<Player> player(this);
-    return enemy->wasAttacked(player);
+    //shared_ptr<Player> player(this);
+    return enemy->wasAttacked(shared_from_this());
   }
   return atkStatus::InvalidTarget;
 }
 
-atkStatus Player::wasAttacked(Creature *aggressor) {
+atkStatus Player::wasAttacked(shared_ptr<Enemy> aggressor) {
   int randomAction = rand() % 2;
   if (randomAction == 0) { 
+    cout << damage(aggressor->getAtk(), getDef()) << endl;
     hp -= damage(aggressor->getAtk(), getDef());
     if (hp <= 0) {
       return atkStatus::Kill;
@@ -59,14 +60,14 @@ void Player::move(Posn target) {
   this->setPos(target);
 } 
 
-string Player::actionText(Creature *aggressor) {
+string Player::actionText(shared_ptr<Enemy>aggressor, atkStatus as) {
  string newActionText;
-  if(wasAttacked(aggressor) == atkStatus::Hit) {
-    string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
-    string enemyHpAsString = to_string(aggressor->getHp());
-    newActionText = getSymbol() + " deals " + atkAsString + " damage to PC " + "(" + enemyHpAsString + "). ";
+  if(as == atkStatus::Hit) {
+    string atkAsString = to_string(damage(aggressor->getAtk(), getDef()));
+    string PlayerHpAsString = to_string(getHp());
+    newActionText = " " + aggressor->getName() + " deals " + atkAsString + " damage to PC " + "(" + PlayerHpAsString + ").";
   } else {
-    newActionText = aggressor->getSymbol() + "attacks you but it missed";
+    newActionText = " " + aggressor->getName() + " attacks you but it missed.";
   }
   //p->actionText(newActionText);
   return newActionText; 

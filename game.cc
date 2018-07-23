@@ -186,12 +186,15 @@ string Game::moveEnemies() {
   string full_action_text = "";
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
+    cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
     if (isInAttackRange(e_Posn)) {
-      e->attack(player);
+      atkStatus as = e->attack(player);
       //cout << "after_attacking player: " << e->actionText(player) <<endl;
-      full_action_text += e->actionText(player);
+      full_action_text += player->actionText(e, as);
     }
-    else if (isAnyValidNeighbour(e_Posn)) theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+    else if (isAnyValidNeighbour(e_Posn)) {
+      theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+    }
   }
   return full_action_text;
   /*int size = enemies.size();
@@ -220,6 +223,7 @@ string Game::moveEnemies() {
 bool Game::isAnyValidNeighbour(Posn p) {
   for (int i = p.r - 1; i <= p.r + 1; ++i) {
     for (int j = p.c - 1; j <= p.c + 1; ++j) {
+      cout << "i: " << i << " j: " << j << endl;
       if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) return true;
     }
   }
@@ -227,21 +231,22 @@ bool Game::isAnyValidNeighbour(Posn p) {
 }
 
 Posn Game::validRandomNeighbour(Posn p) {
-  std::vector<Cell>candidates;
+  vector<Cell *>candidates;
   int candidatesize = 0;
   for (int i = p.r - 1; i <= p.r + 1; ++i) {
     for (int j = p.c - 1; j <= p.c + 1; ++j) {
       if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) {
         candidatesize++;
-        candidates.emplace_back(theGrid->getCell({i,j}));
+        candidates.emplace_back(&(theGrid->getCell({i,j})));
       }
     }
   }
-  int randNum = rand()%candidatesize;
-  return candidates[randNum].getPosn();
+  int randNum = rand() % candidatesize;
+  cout << "candidate_pos: " << candidates[randNum]->getPosn().r << ", " << candidates[randNum]->getPosn().c << endl;
+  return candidates[randNum]->getPosn();
 }
 
-bool Game::validSpot(Cell cell) {
+bool Game::validSpot(Cell &cell) {
   return cell.getTerrain() == Terrain::ChamFloor && cell.getOccupant() == nullptr;
 }
 
@@ -262,8 +267,8 @@ bool Game::sort_function(shared_ptr<Enemy>e1, shared_ptr<Enemy>e2) {
   }
 }
 
-void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemies) {
-  sort(enemies.begin(), enemies.end(), &sort_function);
+void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemy_vector) {
+  sort(enemy_vector.begin(), enemy_vector.end(), &sort_function);
 }
 /*
 void Game::changeFloor() {
@@ -297,7 +302,7 @@ string Game::movePlayer(const string &direction) {
   if (heading_tile == '#' || heading_tile == '.' ||
       heading_tile == '\\' || heading_tile == '+') { 
     theGrid->moveEntity(player_Posn, heading_dir);
-    full_action_text += player->getName() + " moves " + direction;
+    full_action_text += player->getName() + " moves " + direction + ".";
   }
   else {
     throw Invalid_behave("");
@@ -384,6 +389,7 @@ void Game::print(string printing_msg) {
   cout << "HP: " << to_string(player->getHp()) << endl;
   cout << "Atk: " << to_string(player->getAtk()) << endl;
   cout << "Def: " << to_string(player->getDef()) << endl;
-  cout << "Action: " << printing_msg << "." << endl; 
+  cout << "Action: " << printing_msg << endl; 
+
 }
 
