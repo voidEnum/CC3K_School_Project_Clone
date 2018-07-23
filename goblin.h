@@ -8,7 +8,7 @@ class Goblin: public Player {
  public:
   Goblin();
   //atkStatus attack(Cell &target);
-  std::string actionText(std::shared_ptr<Enemy>aggressor, atkStatus as);
+  std::string actionText(std::shared_ptr<Enemy>aggressor, atkStatus as) override;
 };
 
 #endif
