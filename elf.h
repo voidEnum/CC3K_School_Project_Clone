@@ -8,6 +8,6 @@ class Player;
 class Elf: public Enemy {
  public:
    Elf();
-   atkStatus attack(std::shared_ptr<Player> p) override;
+   std::string actionText(std::shared_ptr<Player>p, atkStatus as) override;
 };
 #endif

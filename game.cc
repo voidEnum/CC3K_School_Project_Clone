@@ -66,12 +66,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     int selectedCellIdx = rand() % (numCells);
     int enemyType = rand() % 18 + 1;
     Cell &selected = *(vc[selectedCellIdx]);
-/*<<<<<<< HEAD
-    shared_ptr<Enemy>enemy = make_shared<Enemy>("Enemy");
-    //shared_ptr<Enemy> enemy(new Enemy("Enemy"));
-    theGrid->placeEntity(enemy, {selected.getRow(), selected.getCol()});
-    enemies.emplace_back(enemy);
-=======*/
     if(enemyType >= 1 && enemyType <= 4) {
       shared_ptr<Human> H(new Human());
       theGrid->placeEntity(H, {selected.getRow(), selected.getCol()});
@@ -97,7 +91,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
       theGrid->placeEntity(M, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(M);
     }
-//>>>>>>> master
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
@@ -334,13 +327,21 @@ string Game::movePlayer(const string &direction) {
 string Game::PlayerAttack(string direction) {
   Posn player_Posn = player->getPosn();
   Cell &target_cell = theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn),direction));
-  atkStatus as = player->attack(target_cell);
-  return player->actionText(static_pointer_cast<Enemy>(target_cell.getOccupant()), as);
+  if(target_cell.getOccupant() == nullptr) {
+    return "There is no enemy at that direction.";
+  } else {
+    char entity_sym = target_cell.getOccupant()->getSymbol();
+    auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
+    if (entity_sym == 'E' || entity_sym == 'M' ||
+        entity_sym == 'H' || entity_sym == 'O' ||
+        entity_sym == 'W' || entity_sym == 'D' ||
+        entity_sym == 'L') {
+      atkStatus as = player->attack(e);
+      return player->actionText(e, as);
+    } else return player->actionText(e, atkStatus::InvalidTarget);
+  }
 }
-
-/*void Game::enemyAttack() {}
-  
-  
+/*  
 void Game::Player_usePotion(string direction) {
   int size = potions.size();
   int target_row = target.getRow();
@@ -355,9 +356,9 @@ void Game::Player_usePotion(string direction) {
       return;
     }
   }
-}*/
+}
 
-/*void Game::freeze() {
+void Game::freeze() {
   frozen = !frozen;
 }*/
 

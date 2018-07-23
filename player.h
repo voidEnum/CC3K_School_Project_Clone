@@ -10,7 +10,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   int maxHp;
  public:
   Player(std::string name, int hp = 100, int atk = 50, int def = 50);
-  atkStatus attack(Cell &target);
+  virtual atkStatus attack(std::shared_ptr<Enemy> aggressor);
   atkStatus wasAttacked(std::shared_ptr<Enemy> aggressor, int modifiedDamage);
   void move(Posn p);
   //virtual void beginTurn();
@@ -19,7 +19,8 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   //bool usePotion(Cell &cell);
   virtual int finalScore();
   std::shared_ptr<Player>withoutBuffs();
-  std::string actionText(std::shared_ptr<Enemy> aggressor, atkStatus as);
+  virtual std::string actionText(std::shared_ptr<Enemy> aggressor, atkStatus as);
+  int getMaxHp();
   int getGold();
   void beginTurn();
  private:

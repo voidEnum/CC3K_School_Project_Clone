@@ -12,7 +12,7 @@ class Enemy : public Creature , public std::enable_shared_from_this<Enemy> { //,
     ~Enemy();
     virtual atkStatus attack(std::shared_ptr<Player> p);
     virtual atkStatus wasAttacked(std::shared_ptr<Player> player);
-    std::string actionText(std::shared_ptr<Player>p, atkStatus as);
+    virtual std::string actionText(std::shared_ptr<Player>p, atkStatus as);
 };
 
 #endif

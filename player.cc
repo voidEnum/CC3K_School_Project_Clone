@@ -24,19 +24,8 @@ void Player::addGold(int reward) {
   gold += reward;
 }
 
-atkStatus Player::attack(Cell &target) {
-  if (target.getOccupant() == nullptr) {
-    return atkStatus::EmptyTarget;
-  }
-  char entity_sym = target.getOccupant()->getSymbol();
-  if (entity_sym == 'E' || entity_sym == 'M' ||
-      entity_sym == 'H' || entity_sym == 'O' ||
-      entity_sym == 'W' || entity_sym == 'D' ||
-      entity_sym == 'L') {
-    shared_ptr<Enemy> enemy = static_pointer_cast<Enemy>(target.getOccupant());
-    return enemy->wasAttacked(shared_from_this());
-  }
-  return atkStatus::InvalidTarget;
+atkStatus Player::attack(shared_ptr<Enemy> aggressor) {
+    return aggressor->wasAttacked(shared_from_this());
 }
 
 atkStatus Player::wasAttacked(shared_ptr<Enemy> aggressor, int modifiedDamage) {
@@ -58,19 +47,27 @@ void Player::move(Posn target) {
 } 
 
 string Player::actionText(shared_ptr<Enemy> aggressor, atkStatus as) {
- string newActionText;
+  string newActionText;
   if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
     string enemyHpAsString = to_string(aggressor->getHp());
     newActionText = getName() + " deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + ").";
   } else if (as == atkStatus::Kill){
       newActionText = getName() + " killed " + aggressor->getName() + ".";
-    } else newActionText = getName() + " attacks " + aggressor->getName() + " but it missed.";
+  } else if (as == atkStatus::Miss){
+      newActionText = getName() + " attacks " + aggressor->getName() + " but it missed.";
+  } else {
+      newActionText = "There is no enemy at that direction.";
+  }
   return newActionText; 
 }
   
 int Player::getGold() {
   return gold;
+}
+
+int Player::getMaxHp() {
+  return maxHp;
 }
 
 void Player::beginTurn() {
