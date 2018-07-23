@@ -11,42 +11,29 @@ Enemy::Enemy(char sym, string name, int hp, int atk, int def):
 Enemy::~Enemy(){}
 
 atkStatus Enemy::attack(shared_ptr<Player> p) {
-   /*if (atkStatus == 1) {
-      int PlayerHp = p->getHp();
-      int PlayerDef = p->getDef();
-      int myAtk = getAtk();
-      int damage = damage(PlayerDef, atkStatus::Hit);
-      p->setHp(PlayerHp - damage);
-   }*/
-  return p->wasAttacked(this);
-  //attackText(p,atkStatus); 
+  return p->wasAttacked(shared_from_this(),1); 
 }
 
-atkStatus Enemy::wasAttacked(shared_ptr<Creature>player) {
-  int randomAction = rand() % 2;
-  if (randomAction == 0) {
-    hp -= damage(player->getAtk(), getDef());
-    if (hp <= 0) {
+atkStatus Enemy::wasAttacked(shared_ptr<Player>player) {
+  this->setHp(this->getHp() -  damage(player->getAtk(), getDef()));
+    if (this->getHp() <= 0) {
       return atkStatus::Kill;
     }
     return atkStatus::Hit;
-  }
-  else {
-    return atkStatus::Miss;
-  }
 }
 
-string Enemy::actionText(shared_ptr<Player>p) {
+string Enemy::actionText(shared_ptr<Player>p, atkStatus as) {
   string newActionText;
-  if(wasAttacked(p) == atkStatus::Hit) {
-    string atkAsString = to_string(damage(getAtk(), p->getDef()));
-    string heroHpAsString = to_string(p->getHp());
-    //cout << "the symbol: " << getSymbol() << endl;
-    //cout << getPosn().r << " " << getPosn().c << endl;
-    newActionText = " " + getName() + " deals " + atkAsString + " damage to PC " + "(" + heroHpAsString + ")";
-  } else {
-    newActionText = p->getSymbol() + "attacks you but it missed";
-  }
+  if(as == atkStatus::Hit) {
+    string atkAsString = to_string(damage(getAtk(),p->getDef()));
+    string playerHpAsString = to_string(p->getHp());
+    newActionText = " " + getName() + " deals " + atkAsString + " damage to PC" + "(" + playerHpAsString + ")";
+  } else if (as == atkStatus::Miss){
+    newActionText = " " + getName() + " attacks you but it missed";
+  } else if (as == atkStatus::Kill){
+    newActionText = " " + getName() + " killed the player.";
+  }else newActionText = "";
   //p->actionText(newActionText);
   return newActionText;
 }
+

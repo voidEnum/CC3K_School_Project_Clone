@@ -21,6 +21,19 @@ int Creature::getHp() const{
   return hp;
 }
 
+void Creature::setAtk(int newAtk) {
+  atk = newAtk;
+}
+
+void Creature::setDef(int newDef) {
+  def = newDef;
+}
+
+void Creature::setHp(int newHp) {
+  hp = newHp;
+}
+
+
 string Creature::getName() const{
   return name;
 }

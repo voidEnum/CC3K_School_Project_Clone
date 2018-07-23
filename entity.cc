@@ -7,6 +7,10 @@ char Entity::getSymbol() const {
   return symbol;
 }
 
+string Entity::getName() const {
+  return name;
+}
+
 atkStatus Entity::wasAttacked(Creature *aggressor) {
   (void)aggressor;
   return atkStatus::InvalidTarget;

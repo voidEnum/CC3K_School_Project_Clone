@@ -187,9 +187,10 @@ string Game::moveEnemies() {
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
     if (isInAttackRange(e_Posn)) {
-      e->attack(player);
+      atkStatus as = e->attack(player);
+      //e->attack(player);
       //cout << "after_attacking player: " << e->actionText(player) <<endl;
-      full_action_text += e->actionText(player);
+      full_action_text += e->actionText(player,as);
     }
     else if (isAnyValidNeighbour(e_Posn)) theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
   }
@@ -227,21 +228,21 @@ bool Game::isAnyValidNeighbour(Posn p) {
 }
 
 Posn Game::validRandomNeighbour(Posn p) {
-  std::vector<Cell>candidates;
+  vector<Cell *>candidates;
   int candidatesize = 0;
   for (int i = p.r - 1; i <= p.r + 1; ++i) {
     for (int j = p.c - 1; j <= p.c + 1; ++j) {
       if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) {
         candidatesize++;
-        candidates.emplace_back(theGrid->getCell({i,j}));
+        candidates.emplace_back(&(theGrid->getCell({i,j})));
       }
     }
   }
   int randNum = rand()%candidatesize;
-  return candidates[randNum].getPosn();
+  return candidates[randNum]->getPosn();
 }
 
-bool Game::validSpot(Cell cell) {
+bool Game::validSpot(Cell &cell) {
   return cell.getTerrain() == Terrain::ChamFloor && cell.getOccupant() == nullptr;
 }
 
@@ -262,8 +263,8 @@ bool Game::sort_function(shared_ptr<Enemy>e1, shared_ptr<Enemy>e2) {
   }
 }
 
-void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemies) {
-  sort(enemies.begin(), enemies.end(), &sort_function);
+void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemy_vector) {
+  sort(enemy_vector.begin(), enemy_vector.end(), &sort_function);
 }
 /*
 void Game::changeFloor() {
@@ -273,7 +274,6 @@ void Game::changeFloor() {
 void Game::update_display() {
   theGrid.td.update();
 }*/
-
 
 Posn dir_to_posn(Cell &cur_cell, string direction) {
   int row = cur_cell.getRow();
@@ -305,9 +305,11 @@ string Game::movePlayer(const string &direction) {
   return full_action_text;
 }
 
-void Game::PlayerAttack(string direction) {
+string Game::PlayerAttack(string direction) {
   Posn player_Posn = player->getPosn();
-  player->attack(theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn), direction )));
+  Cell &target_cell = theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn),direction));
+  atkStatus as = player->attack(target_cell);
+  return player->actionText(static_pointer_cast<Enemy>(target_cell.getOccupant()), as);
 }
 
 /*void Game::enemyAttack() {}
@@ -349,10 +351,11 @@ string Game::processTurn(const string &command) {
   istringstream iss(command);
   string s;
   iss >> s;
+  player->beginTurn();
   if (s == "a") {
     iss >> s;
     if (valid_dir(s)) {
-      PlayerAttack(s);
+      full_printing_msg += PlayerAttack(s);
     }
   }
   /*
@@ -368,13 +371,13 @@ string Game::processTurn(const string &command) {
   else if (s == "f") {
     //freeze();
   }*/ 
-  if (valid_dir(s)) {
+  else if (valid_dir(s)) {
     full_printing_msg += movePlayer(s);
-    full_printing_msg += moveEnemies();
   } 
   /*else if (!frozen) {
    // moveEnemies(enemies);
   }*/
+  full_printing_msg += moveEnemies();
   return full_printing_msg;
 }
 

@@ -1,6 +1,7 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 #include "creature.h"
+#include "enemy.h"
 #include <memory>
 #include <string>
 
@@ -10,15 +11,15 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
  public:
   Player(std::string name, int hp = 100, int atk = 50, int def = 50);
   atkStatus attack(Cell &target);
-  atkStatus wasAttacked(Creature *aggressor);
+  atkStatus wasAttacked(std::shared_ptr<Enemy> aggressor, int modifiedDamage);
   void move(Posn p);
   //virtual void beginTurn();
   //virtual void endTurn();
   void addGold(int reward);
   //bool usePotion(Cell &cell);
-  int finalScore();
+  virtual int finalScore();
   std::shared_ptr<Player>withoutBuffs();
-  std::string actionText(Creature *aggressor);
+  std::string actionText(std::shared_ptr<Enemy> aggressor, atkStatus as);
   int getGold();
   void beginTurn();
  private:

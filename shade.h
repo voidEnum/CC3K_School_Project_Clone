@@ -7,7 +7,7 @@
 class Shade: public Player {
  public:
   Shade();
-  int finalScore();
+  int finalScore() override;
 };    
 
 #endif

@@ -7,7 +7,7 @@ atkStatus Vampire::attack(Cell &target) {
   if (target.getOccupant() == nullptr) {
     return atkStatus::EmptyTarget;
   }
-  hp += 5;
+  this->setHp(this->getHp() + 5);
   return target.getOccupant()->wasAttacked<Player *>(this);
 }
 
