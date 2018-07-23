@@ -1,5 +1,6 @@
 #include "goblin.h"
 #include <iostream>
+
 using namespace std;
 
 Goblin::Goblin(): Player("Goblin", 110, 15, 20) {}
@@ -13,7 +14,7 @@ Goblin::Goblin(): Player("Goblin", 110, 15, 20) {}
 } */
 
 string Goblin::actionText(shared_ptr<Enemy>aggressor, atkStatus as) {
- cout << "is this printed" <<endl;
+ //cout << "is this printed" <<endl;
  string newActionText;
   if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));

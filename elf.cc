@@ -1,20 +1,25 @@
 #include "elf.h"
+#include "player.h"
+#include "drow.h"
+#include <string>
 
+using namespace std;
 
 Elf::Elf(): 
   Enemy{'E', "Elf", 140, 30, 10} {}
 
-/*
-atkStatus Elf::attack(shared_ptr<Player> p) {
-   int atkStatus = rand() % 2;
-   if (atkStatus == 1) {
-      int PlayerHp = p->getHp();
-      int PlayerDef = p->getDef();
-      int myAtk = getAtk();
-      int damage = damage(PlayerDef, myAtk);
-      if(dynamic_pointer_cast<Drow>(p)) p->setHp(PlayerHp - damage);
-      else p->setHp(PlayerHp - 2 * damage);
-   }
-   attackText(p,atkStatus); 
+
+string Elf::actionText(shared_ptr<Player>p, atkStatus as1) {
+  string newActionText;
+  atkStatus as2 = attack(p);
+  string atkAsString = to_string(2 * damage(getAtk(),p->getDef()));
+  string playerHpAsString = to_string(p->getHp());
+  if(as1 == atkStatus::Hit && as2 == atkStatus::Hit) {
+    newActionText = " Elf attacks " + p->getName() + " twice deals " + atkAsString + " damage to " + p->getName() + "(" + playerHpAsString + ").";
+  } else if ((as1 == atkStatus::Miss && as2 == atkStatus::Hit) || (as1 == atkStatus::Hit&& as2 == atkStatus::Miss)){
+    newActionText = " Elf attacks " + p->getName() + " twice but it misses once deals " + atkAsString + " damage to " + p->getName() + "(" + playerHpAsString + ").";
+  } else if (as1 == atkStatus::Kill || as2 == atkStatus::Kill){
+    newActionText = "Elf killed the player.";
+  }else newActionText = " Elf attacks " + p->getName() + " twice but it misses twice.";
+  return newActionText;
 }
-*/
