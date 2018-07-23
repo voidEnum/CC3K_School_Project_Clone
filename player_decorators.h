@@ -18,7 +18,7 @@ public:
   virtual void setPos(Posn p) override;
   virtual Posn getPosn() const override;
   virtual bool isUsable() const override;
-  virtual Player * beUsedBy(Player * user) override;
+  virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
 
   //Creature Virtual Functions
   virtual void beginTurn() override;
@@ -50,7 +50,7 @@ class PlayerDecoratorAtk : public PlayerDecorator,
   int adjustment;
 public:
   PlayerDecoratorAtk(std::shared_ptr<Player> p, int n);
-  virtual int getAtk() const;
+  virtual int getAtk() const override;
 };
 
 class PlayerDecoratorDef : public PlayerDecorator, 
@@ -58,7 +58,7 @@ class PlayerDecoratorDef : public PlayerDecorator,
   int adjustment;
 public:
   PlayerDecoratorDef(std::shared_ptr<Player> p, int n);
-  virtual int getDef() const;
+  virtual int getDef() const override;
 };
 
 #endif

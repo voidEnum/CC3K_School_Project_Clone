@@ -379,10 +379,8 @@ bool valid_dir(string dir) {
   }
 }
 
-void useTogether(shared_ptr<Player> user, shared_ptr<Entity> used) {
-  (void)used;
-  (void)user;
-  used->beUsedBy(user.get());
+void useTogether(shared_ptr<Player> &user, const shared_ptr<Entity> &used) {
+  user = used->beUsedBy(user);
 }
 
 string Game::processTurn(const string &command) {
@@ -399,10 +397,15 @@ string Game::processTurn(const string &command) {
   
   else if (s == "use") {
     iss >> s;
+    //cout << "use detected" << endl;
     if (valid_dir(s)) {
       Posn target = dir_to_posn(player->getPosn(), s);
+      //cout << "target posn: " << target.r << " , " << target.c << endl;
       if (theGrid->hasUsable(target)) { // if the occupant of target can be used
-        useTogether(player, theGrid->getCell(target).getOccupant());
+        //cout << "target can be used " << endl;
+        useTogether(player, theGrid->getCell(target).getOccupant()); // make player use the occupant of target
+        theGrid->removeEntity(target);  //remove target from the board
+        //todo generate action text
       }
     }
   }/*

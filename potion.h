@@ -16,7 +16,7 @@ public:
   virtual void reveal() = 0;
 
 
-  virtual bool isUsable();
+  virtual bool isUsable() const override;
   virtual int getPotency() const;
 
   // All subclass potions must implement beUsedBy to properly

@@ -15,7 +15,7 @@ bool PlayerDecorator::wasUsed(std::shared_ptr<Player> *user) {return thePlayer->
 void PlayerDecorator::setPos(Posn p) {thePlayer->setPos(p);}
 Posn PlayerDecorator::getPosn() const {return thePlayer->getPosn();}
 bool PlayerDecorator::isUsable() const {return thePlayer->isUsable();}
-Player * PlayerDecorator::beUsedBy(Player * user) {return thePlayer->beUsedBy(user);}
+shared_ptr<Player> PlayerDecorator::beUsedBy(shared_ptr<Player> user) {return thePlayer->beUsedBy(user);}
 void PlayerDecorator::beginTurn() {thePlayer->beginTurn();}
 void PlayerDecorator::endTurn() {thePlayer->endTurn();}
 int PlayerDecorator::getAtk() const {return thePlayer->getAtk();}

@@ -5,7 +5,8 @@
 using namespace std;
 
 Potion::Potion(int p): Item('P'), potency{p} {}
-bool Potion::isUsable() {return true;}
+// potions are by default usable
+bool Potion::isUsable() const {return true;}
 int Potion::getPotency() const {
   return potency;
 }

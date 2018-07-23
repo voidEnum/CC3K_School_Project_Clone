@@ -33,8 +33,7 @@ bool Entity::isUsable() const {
   return false;
 }
 
-// do noything and return nullptr by default
-Player * Entity::beUsedBy(Player * user) {
-  (void)user;
-  return nullptr;
+// do noything and return player by default
+shared_ptr<Player> Entity::beUsedBy(shared_ptr<Player> user) {
+  return user;
 }

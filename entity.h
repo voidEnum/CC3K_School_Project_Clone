@@ -33,7 +33,7 @@ public:
   // if this entity does nothing or the entity does not need to apply a
   // decorator. May return a decorator that decorates user if this entity
   // applies a buff/debuff to user when used.
-  virtual Player * beUsedBy(Player * user);
+  virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user);
 };
 
 #endif
