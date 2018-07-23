@@ -206,7 +206,16 @@ string Game::moveEnemies() {
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
     //cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
-    if (isInAttackRange(e_Posn)) {
+    if (dynamic_pointer_cast<Merchant>(e)&& isInAttackRange(e_Posn)) {
+      auto m = static_pointer_cast<Merchant>(e);
+      if (m->checkHostile()){
+        atkStatus as = m->attack(player);
+        full_action_text += m->actionText(player, as);
+      }else if (isAnyValidNeighbour(e_Posn)) {
+        theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
+      }
+    }
+    else if (isInAttackRange(e_Posn)) {
       atkStatus as = e->attack(player);
       //cout << "after_attacking player: " << e->actionText(player) <<endl;
       full_action_text += e->actionText(player, as);
@@ -336,13 +345,24 @@ string Game::PlayerAttack(string direction) {
   } else {
     char entity_sym = target_cell.getOccupant()->getSymbol();
     auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
-    if (entity_sym == 'E' || entity_sym == 'M' ||
+    if (entity_sym == 'E' || entity_sym == 'L' ||
         entity_sym == 'H' || entity_sym == 'O' ||
-        entity_sym == 'W' || entity_sym == 'D' ||
-        entity_sym == 'L') {
+        entity_sym == 'W' || entity_sym == 'D' ) {
       atkStatus as = player->attack(e);
       return player->actionText(e, as);
-    } else return player->actionText(e, atkStatus::InvalidTarget);
+    } else if (entity_sym == 'M') {
+      auto mt  = static_pointer_cast<Merchant>(e);
+      if(!mt->checkHostile()) {
+        for (auto en : enemies) {
+          if (dynamic_pointer_cast<Merchant>(en)) {
+            auto m = static_pointer_cast<Merchant>(en);
+            m->turnHostile();
+          }
+        }
+      }
+      atkStatus as = player->attack(e);
+      return player->actionText(e, as);
+    }else return player->actionText(e, atkStatus::InvalidTarget);
   }
 }
 /*  

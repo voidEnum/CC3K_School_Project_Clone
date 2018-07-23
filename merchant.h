@@ -13,6 +13,6 @@ class Merchant: public Enemy {
    void turnHostile();
    bool checkHostile();
    atkStatus attack(std::shared_ptr<Player> p) override;
-   atkStatus wasAttacked(std::shared_ptr<Player>player) override;
-};
+}   
+;
 #endif

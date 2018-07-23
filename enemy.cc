@@ -20,16 +20,6 @@ atkStatus Enemy::wasAttacked(shared_ptr<Player>player) {
       return atkStatus::Kill;
     }
     return atkStatus::Hit;
-   /*if (atkStatus == 1) {
-      int PlayerHp = p->getHp();
-      int PlayerDef = p->getDef();
-      int myAtk = getAtk();
-      int damage = damage(PlayerDef, atkStatus::Hit);
-      p->setHp(PlayerHp - damage);
-   }*/
-  //shared_ptr<Enemy> enemy(make_shared_from_this());
-  return p->wasAttacked(shared_from_this());
-  //attackText(p,atkStatus); 
 }
 
 string Enemy::actionText(shared_ptr<Player>p, atkStatus as) {
@@ -40,7 +30,7 @@ string Enemy::actionText(shared_ptr<Player>p, atkStatus as) {
     newActionText = " " + getName() + " deals " + atkAsString + " damage to " + p->getName() + "(" + playerHpAsString + ").";
   } else if (as == atkStatus::Miss){
     newActionText = " " + getName() + " attacks you but it missed.";
-  } else if (as == atkStatus::Kill){
+  } else if (as == atkStatus::Kill && p->getHp() >= 0){
     newActionText = " " + getName() + " killed the player.";
   }else newActionText = "";
   //p->actionText(newActionText);
