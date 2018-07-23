@@ -3,11 +3,12 @@
 
 Vampire::Vampire(): Player("Vampire", 50, 25, 25) {}
 
+// this needs to be fixed
 atkStatus Vampire::attack(Cell &target) {
-  if (target.getOccupant() == nullptr) {
-    return atkStatus::EmptyTarget;
+  atkStatus ak = Player::attack(target);
+  if (ak == atkStatus::Hit) {
+    hp += 5;
   }
-  hp += 5;
-  return target.getOccupant()->wasAttacked<Player *>(this);
+  return ak;
 }
 

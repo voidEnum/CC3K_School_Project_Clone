@@ -15,11 +15,12 @@ public:
   virtual bool isRevealed() const = 0;
   virtual void reveal() = 0;
 
-  // All subclasses must implement wasUsed to be properly used by players.
-  //virtual bool wasUsed(std::shared_ptr<Player> *user) = 0;
 
   virtual bool isUsable();
   virtual int getPotency() const;
+
+  // All subclass potions must implement beUsedBy to properly
+  // interact with player classes
   virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) = 0;
 };
 
@@ -31,8 +32,8 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-  //bool wasUsed(std::shared_ptr<Player> *user) override;
 };
+
 class Potion_PH : public Potion, public std::enable_shared_from_this<Potion_PH> {
   static bool revealed;
 public:
@@ -40,8 +41,8 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-  //bool wasUsed(std::shared_ptr<Player> *user) override;
 };
+
 class Potion_BA : public Potion, public std::enable_shared_from_this<Potion_BA> {
   static bool revealed;
 public:
@@ -49,8 +50,8 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-  //bool wasUsed(std::shared_ptr<Player> *user) override;
 };
+
 class Potion_WA : public Potion, public std::enable_shared_from_this<Potion_WA>{
   static bool revealed;
 public:
@@ -58,8 +59,8 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-  //bool wasUsed(std::shared_ptr<Player> *user) override;
 };
+
 class Potion_BD : public Potion, public std::enable_shared_from_this<Potion_BD> {
   static bool revealed;
 public:
@@ -67,8 +68,8 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-  //bool wasUsed(std::shared_ptr<Player> *user) override;
 };
+
 class Potion_WD : public Potion, public std::enable_shared_from_this<Potion_WD> {
   static bool revealed;
 public:
@@ -76,23 +77,6 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-  //bool wasUsed(std::shared_ptr<Player> *user) override;
 };
-/* can't get the CRTP stuff working with regular inhertance from above.
-   commenting out CRTP stuff for now and reimplemnting the standard way.
-template<class DerivedPotion>
-class Potion_CRTP : public Potion {
-protected:
-  static bool revealed;
-public:
-  bool isRevealed() {return revealed;}
-  void reveal() {revealed = true;}
-  bool wasUsed(Player &user) override {
-    return static_cast<DerivedPotion*>(this)->wasUsed(user);}
-};
-
-template<class DerivedPotion>
-bool Potion_CRTP<DerivedPotion>::revealed = false;
-*/
 
 #endif

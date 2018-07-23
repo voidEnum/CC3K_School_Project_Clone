@@ -19,6 +19,9 @@ bool Potion_WA::revealed = false;
 bool Potion_BD::revealed = false;
 bool Potion_WD::revealed = false;
 
+// All implementations of beUsedBy are made with the visitor pattern,
+// modified slightly to use shared_pointers
+
 // RH implementation
 Potion_RH::Potion_RH(int p): Potion(p)  {}
 bool Potion_RH::isRevealed() const {return revealed;}
@@ -27,12 +30,6 @@ shared_ptr<Player> Potion_RH::beUsedBy(shared_ptr<Player> user) {
   reveal();
   return user->useEntity(shared_from_this());
 }
-/*
-bool Potion_RH::wasUsed(Player **user) {
-  user->modifyHp(potency);
-  reveal();
-  return true;
-}*/
 
 // PH implementation
 Potion_PH::Potion_PH(int p): Potion(p) {}
@@ -42,12 +39,6 @@ shared_ptr<Player> Potion_PH::beUsedBy(shared_ptr<Player> user) {
   reveal();
   return user->useEntity(shared_from_this());
 }
-/*
-bool Potion_PH::wasUsed(Player **user) {
-  user->modifyHp(-potency);
-  reveal();
-  return true;
-}*/
 
 // BA implementation incomplete
 Potion_BA::Potion_BA(int p): Potion(p) {}
@@ -57,11 +48,6 @@ shared_ptr<Player> Potion_BA::beUsedBy(shared_ptr<Player> user) {
   reveal();
   return user->useEntity(shared_from_this());
 }
-/*
-bool Potion_BA::wasUsed(Player user) {
-  (void)user;
-  return true;
-}*/
 
 // WA implementation incomplete
 Potion_WA::Potion_WA(int p): Potion(p) {}
@@ -71,11 +57,6 @@ shared_ptr<Player> Potion_WA::beUsedBy(shared_ptr<Player> user) {
   reveal();
   return user->useEntity(shared_from_this());
 }
-/*
-bool Potion_WA::wasUsed(Player *user) {
-  (void)user;
-  return true;
-}*/
 
 // BD implementation incomplete
 Potion_BD::Potion_BD(int p): Potion(p) {}
@@ -85,10 +66,6 @@ shared_ptr<Player> Potion_BD::beUsedBy(shared_ptr<Player> user) {
   reveal();
   return user->useEntity(shared_from_this());
 }
-/*bool Potion_BD::wasUsed(Player *user) {
-  (void)user;
-  return true;
-}*/
 
 // WA implementation incomplete
 Potion_WD::Potion_WD(int p): Potion(p) {}
@@ -98,7 +75,3 @@ shared_ptr<Player> Potion_WD::beUsedBy(shared_ptr<Player> user) {
   reveal();
   return user->useEntity(shared_from_this());
 }
-/*bool Potion_WD::wasUsed(Player *user) {
-  (void)user;
-  return true;
-}*/

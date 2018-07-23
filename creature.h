@@ -18,7 +18,6 @@ public:
   virtual int getHp() const;
   virtual std::string getName() const;
   virtual int damage(int atk, int def);
-
   virtual void modifyHp(int delta);
  private:
   int ceil_divide(int numerator, int denom);
