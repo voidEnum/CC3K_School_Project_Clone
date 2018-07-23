@@ -186,11 +186,11 @@ string Game::moveEnemies() {
   string full_action_text = "";
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
-    cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
+    //cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
     if (isInAttackRange(e_Posn)) {
       atkStatus as = e->attack(player);
       //cout << "after_attacking player: " << e->actionText(player) <<endl;
-      full_action_text += player->actionText(e, as);
+      full_action_text += e->actionText(player, as);
     }
     else if (isAnyValidNeighbour(e_Posn)) {
       theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
@@ -223,7 +223,7 @@ string Game::moveEnemies() {
 bool Game::isAnyValidNeighbour(Posn p) {
   for (int i = p.r - 1; i <= p.r + 1; ++i) {
     for (int j = p.c - 1; j <= p.c + 1; ++j) {
-      cout << "i: " << i << " j: " << j << endl;
+      //cout << "i: " << i << " j: " << j << endl;
       if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) return true;
     }
   }
@@ -242,7 +242,7 @@ Posn Game::validRandomNeighbour(Posn p) {
     }
   }
   int randNum = rand() % candidatesize;
-  cout << "candidate_pos: " << candidates[randNum]->getPosn().r << ", " << candidates[randNum]->getPosn().c << endl;
+  //cout << "candidate_pos: " << candidates[randNum]->getPosn().r << ", " << candidates[randNum]->getPosn().c << endl;
   return candidates[randNum]->getPosn();
 }
 
@@ -310,9 +310,11 @@ string Game::movePlayer(const string &direction) {
   return full_action_text;
 }
 
-void Game::PlayerAttack(string direction) {
+string Game::PlayerAttack(string direction) {
   Posn player_Posn = player->getPosn();
-  player->attack(theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn), direction )));
+  Cell &target_cell = theGrid->getCell(dir_to_posn(theGrid->getCell(player_Posn), direction));
+  atkStatus as = player->attack(target_cell);
+  return player->actionText(static_pointer_cast<Enemy>(target_cell.getOccupant()), as);
 }
 
 /*void Game::enemyAttack() {}
@@ -354,10 +356,12 @@ string Game::processTurn(const string &command) {
   istringstream iss(command);
   string s;
   iss >> s;
+  player->beginTurn();
   if (s == "a") {
     iss >> s;
     if (valid_dir(s)) {
-      PlayerAttack(s);
+      //cout << "wtffff" << endl;
+      full_printing_msg += PlayerAttack(s);
     }
   }
   /*
@@ -373,13 +377,13 @@ string Game::processTurn(const string &command) {
   else if (s == "f") {
     //freeze();
   }*/ 
-  if (valid_dir(s)) {
+  else if (valid_dir(s)) {
     full_printing_msg += movePlayer(s);
-    full_printing_msg += moveEnemies();
   } 
   /*else if (!frozen) {
    // moveEnemies(enemies);
   }*/
+  full_printing_msg += moveEnemies();
   return full_printing_msg;
 }
 
@@ -390,6 +394,4 @@ void Game::print(string printing_msg) {
   cout << "Atk: " << to_string(player->getAtk()) << endl;
   cout << "Def: " << to_string(player->getDef()) << endl;
   cout << "Action: " << printing_msg << endl; 
-
 }
-

@@ -7,6 +7,7 @@
 class Goblin: public Player {
  public:
   Goblin();
+  atkStatus attack(Cell &target);
 };
 
 #endif

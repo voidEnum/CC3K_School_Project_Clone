@@ -24,29 +24,27 @@ atkStatus Enemy::attack(shared_ptr<Player> p) {
 }
 
 atkStatus Enemy::wasAttacked(shared_ptr<Creature>player) {
-  int randomAction = rand() % 2;
-  if (randomAction == 0) {
-    hp -= damage(player->getAtk(), getDef());
-    if (hp <= 0) {
-      return atkStatus::Kill;
-    }
-    return atkStatus::Hit;
+  hp -= damage(player->getAtk(), getDef());
+  if (hp <= 0) {
+    return atkStatus::Kill;
   }
-  else {
-    return atkStatus::Miss;
-  }
+  return atkStatus::Hit;
 }
 
 string Enemy::actionText(shared_ptr<Player>p, atkStatus as) {
   string newActionText;
   if(as == atkStatus::Hit) {
-    string atkAsString = to_string(damage(p->getAtk(), getDef()));
-    string enemyHpAsString = to_string(getHp());
+    string atkAsString = to_string(damage(getAtk(), p->getDef()));
+    string PlayerHpAsString = to_string(p->getHp());
     //cout << "the symbol: " << getSymbol() << endl;
     //cout << getPosn().r << " " << getPosn().c << endl;
-    newActionText = " " + p->getName() + " deals " + atkAsString + " damage to " + getName() + "(" + enemyHpAsString + ").";
-  } else {
-    newActionText = " " +  p->getName() + " attacks you but it missed.";
+    newActionText = " " + getName() + " deals " + atkAsString + " damage to " + p->getName() + "(" + PlayerHpAsString + ").";
+  } 
+  else if (as == atkStatus::Kill) {
+    newActionText = " " + getName() + " killed the player.";
+  }
+  else {
+    newActionText = " " +  getName() + " attacks you but it missed.";
   }
   //p->actionText(newActionText);
   return newActionText;

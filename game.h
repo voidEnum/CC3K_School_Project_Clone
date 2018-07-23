@@ -32,7 +32,7 @@ class Game {
   //void changeFloor();
   //void update_display();
   std::string movePlayer(const std::string &direction);
-  void PlayerAttack(std::string direction);
+  std::string PlayerAttack(std::string direction);
   //void enemyAttack();
   //void Player_usePotion();
   //void freeze();
