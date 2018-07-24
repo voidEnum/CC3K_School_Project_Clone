@@ -13,6 +13,7 @@ class Potion;
 class Treasure;
 
 class Game {
+  bool quit;
   static const int NUM_TREASURE_SPAWN = 10;
   static const int NUM_POTION_SPAWN = 10;
 

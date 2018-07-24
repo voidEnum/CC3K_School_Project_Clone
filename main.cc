@@ -29,6 +29,9 @@ int main() {
     try {
       theController.getCommand();
       string print_msg = theController.sendCommand(theGame);
+      if (theGame.gameOver()) {
+        break;
+      }
       theController.requestDisplay(theGame, print_msg);
     }
     catch (Invalid_behave& ib) {
