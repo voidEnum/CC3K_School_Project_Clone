@@ -25,12 +25,9 @@ string PlayerDecorator::getName() const {return thePlayer->getName();}
 int PlayerDecorator::damage(int atk, int def) {return thePlayer->damage(atk, def);}
 void PlayerDecorator::modifyHp(int delta) {return thePlayer->modifyHp(delta);}
 // attack and wasAttacked wll probably need to be fixed
-atkStatus PlayerDecorator::attack(Cell &target) {return thePlayer->attack(target);}
-atkStatus PlayerDecorator::wasAttacked(Creature *aggressor) {return thePlayer->wasAttacked(aggressor);}
 void PlayerDecorator::move(Posn p) {return thePlayer->move(p);}
 void PlayerDecorator::addGold(int reward) {return thePlayer->addGold(reward);}
 int PlayerDecorator::finalScore() {return thePlayer->finalScore();}
-string PlayerDecorator::actionText(Creature * aggressor) {return thePlayer->actionText(aggressor);}
 int PlayerDecorator::getGold() {return thePlayer->getGold();}
 //these will probably need to be fixed
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_RH> p) {return thePlayer->useEntity(p);}

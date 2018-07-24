@@ -12,7 +12,6 @@ public:
   std::shared_ptr<Player> withoutBuffs() final override;
 
   //Entity Virtual Functions
-  virtual atkStatus wasAttacked(Creature *aggressor) override;
   virtual char getSymbol() const override;
   virtual bool wasUsed(std::shared_ptr<Player> *user) override;
   virtual void setPos(Posn p) override;
@@ -31,11 +30,9 @@ public:
   virtual void modifyHp(int delta) override;
 
   //Player Virtual Functions
-  virtual atkStatus attack(Cell &target) override;
   virtual void move(Posn p) override;
   virtual void addGold(int reward) override;
   virtual int finalScore() override;
-  virtual std::string actionText(Creature * aggressor) override;
   virtual int getGold() override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_RH> p) override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_PH> p) override;

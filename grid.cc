@@ -92,6 +92,7 @@ vector<vector<Cell *>> & Grid::getChambers() {
 }
 
 void Grid::moveEntity(Posn src, Posn dest) {
+  //cout << "src: " << src.r << ", " << src.c << "dest: " << dest.r << ", " << dest.c << endl;
   getCell(dest).setOccupant(getCell(src).getOccupant());
   getCell(dest).getOccupant()->setPos(dest);
   getCell(src).setOccupant(nullptr);

@@ -3,6 +3,7 @@
 Troll::Troll(): Player("Troll", 120, 25, 15) {}
 
 void Troll::beginTurn() {
-  hp += 5;
+  this->setHp(this->getHp() + 5);
+  if (this->getHp() >= this->getMaxHp()) this->setHp(this->getMaxHp());
 }
 

@@ -16,6 +16,9 @@ public:
   virtual int getAtk() const;
   virtual int getDef() const;
   virtual int getHp() const;
+  virtual void setAtk(int newAtk);
+  virtual void setDef(int newDef);
+  virtual void setHp(int newHp);
   virtual std::string getName() const;
   virtual int damage(int atk, int def);
   virtual void modifyHp(int delta);

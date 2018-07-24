@@ -1,6 +1,7 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
+#include <memory>
 #include <string>
 #include "posn.h"
 
@@ -34,6 +35,7 @@ public:
   // decorator. May return a decorator that decorates user if this entity
   // applies a buff/debuff to user when used.
   virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user);
+  virtual std::string getName() const;
 };
 
 #endif
