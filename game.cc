@@ -580,7 +580,7 @@ string Game::processTurn(const string &command) {
     }
   }
   
-  else if (s == "use") {
+  else if (s == "u") {
     iss >> s;
     //cout << "use detected" << endl;
     if (valid_dir(s)) {
