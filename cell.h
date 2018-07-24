@@ -7,6 +7,7 @@ class Entity;
 struct Posn;
 enum class Terrain {VertWall, HoriWall, ChamFloor,
                     PassFloor, Door, Stair, Empty};
+class Player;
 
 class Cell  {
   const size_t row, col;
@@ -31,5 +32,9 @@ public:
   void setChamber(int n);
   void makeStairs();
   bool hasUsable() const;
+  
+  // returns true if p is allowed to step on this tile based on terrain and
+  // current occupant.
+  bool canStepHere(const Entity &p) const;
 };
 #endif

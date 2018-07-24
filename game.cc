@@ -333,6 +333,15 @@ Posn dir_to_posn(Posn startPosn, string direction) {
 string Game::movePlayer(const string &direction) {
   string full_action_text = "";
   Posn player_Posn = player->getPosn();
+  Posn heading_dir = dir_to_posn(player_Posn, direction); 
+  if (theGrid->canStep(heading_dir, *player)) {
+    theGrid->moveEntity(player_Posn, heading_dir);
+    full_action_text += player->getName() + " moves " + direction + ".";
+  }else {
+    throw Invalid_behave("");
+  }
+  return full_action_text;
+  /* original
   Posn heading_dir = dir_to_posn(theGrid->getCell(player_Posn), direction);
   char heading_tile = theGrid->getCell(heading_dir).getSymbol();
   if (heading_tile == '#' || heading_tile == '.' ||
@@ -343,7 +352,7 @@ string Game::movePlayer(const string &direction) {
   else {
     throw Invalid_behave("");
   }
-  return full_action_text;
+  return full_action_text; */
 }
 
 string Game::PlayerAttack(string direction) {

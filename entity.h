@@ -36,6 +36,12 @@ public:
   // applies a buff/debuff to user when used.
   virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user);
   virtual std::string getName() const;
+
+  // perform actions when "stepped on" by another entity
+  virtual void beSteppedOn(Entity &byThis);
+  
+  // Return true if this entity can be stepped on by the entity passed as a parameter
+  virtual bool canBeSteppedOn(const Entity &onThis) const;
 };
 
 #endif
