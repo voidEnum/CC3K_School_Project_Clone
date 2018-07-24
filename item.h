@@ -5,7 +5,7 @@
 
 class Item: public Entity {
 protected:
-  Item(char sym);
+  Item(char sym = 'I', std::string name = "Item");
 public:
 };
 

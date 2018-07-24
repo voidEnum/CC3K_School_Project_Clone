@@ -7,7 +7,7 @@
 class Potion : public Item { 
 protected:
   int potency;  // represents the power of the potion.
-  Potion(int n);
+  Potion(int n, std::string name = "Potion");
 public:
   // All subclasses must implement isRevealed and reveal
   // to keep track of if one potion of that type has been
@@ -18,7 +18,7 @@ public:
 
   virtual bool isUsable() const override;
   virtual int getPotency() const;
-
+  std::string getName() const;
   // All subclass potions must implement beUsedBy to properly
   // interact with player classes
   virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) = 0;
@@ -28,7 +28,7 @@ public:
 class Potion_RH : public Potion, public std::enable_shared_from_this<Potion_RH> {
   static bool revealed;
 public:
-  Potion_RH(int p = 10);
+  Potion_RH(int p = 10, std::string name = " RH");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -37,7 +37,7 @@ public:
 class Potion_PH : public Potion, public std::enable_shared_from_this<Potion_PH> {
   static bool revealed;
 public:
-  Potion_PH(int p = 10);
+  Potion_PH(int p = 10, std::string name = " PH");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -46,7 +46,7 @@ public:
 class Potion_BA : public Potion, public std::enable_shared_from_this<Potion_BA> {
   static bool revealed;
 public:
-  Potion_BA(int p = 5);
+  Potion_BA(int p = 5, std::string name = " BA");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -55,7 +55,7 @@ public:
 class Potion_WA : public Potion, public std::enable_shared_from_this<Potion_WA>{
   static bool revealed;
 public:
-  Potion_WA(int p = 5);
+  Potion_WA(int p = 5, std::string name = " WA");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -64,7 +64,7 @@ public:
 class Potion_BD : public Potion, public std::enable_shared_from_this<Potion_BD> {
   static bool revealed;
 public:
-  Potion_BD(int p = 5);
+  Potion_BD(int p = 5, std::string name = " BD");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -73,7 +73,7 @@ public:
 class Potion_WD : public Potion, public std::enable_shared_from_this<Potion_WD> {
   static bool revealed;
 public:
-  Potion_WD(int p = 5);
+  Potion_WD(int p = 5, std::string name = " WD");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;

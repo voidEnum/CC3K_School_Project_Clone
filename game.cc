@@ -344,7 +344,7 @@ string Game::movePlayer(const string &direction) {
   char heading_tile = theGrid->getCell(heading_dir).getSymbol();
   if (heading_tile == '#' || heading_tile == '.' || heading_tile == '+') { 
     theGrid->moveEntity(player_Posn, heading_dir);
-    full_action_text += player->getName() + " moves " + direction + ".";
+    full_action_text += player->getName() + " moves " + direction;
   }
   else if (heading_tile == '\\') {
     theGrid->levelUp();
@@ -355,6 +355,31 @@ string Game::movePlayer(const string &direction) {
     throw Invalid_behave("");
   }
   return full_action_text;
+}
+
+string Game::potion_near() {
+  for (int i = -1; i <= 1; ++i) {
+    for (int j = -1; j <= 1; ++j) {
+      //cout << "r: " << player->getPosn().r + i << " c: " << player->getPosn().c + i << endl;
+      shared_ptr<Entity> cell_occupant = (theGrid->getCell({player->getPosn().r + i, player->getPosn().c + j}).getOccupant()); 
+      //cout << cell_occupant << endl;
+      if (cell_occupant != nullptr && cell_occupant->getSymbol() == 'P') {
+        return " and sees a" + cell_occupant->getName() + ".";
+      }
+    }
+  }
+  return "";
+}
+
+int Game::enemy_index(shared_ptr<Enemy> e) {
+  int enemy_num = enemies.size();
+  for (int i = 0; i < enemy_num; ++i) {
+    if (e->getPosn().r == enemies[i]->getPosn().r &&
+        e->getPosn().c == enemies[i]->getPosn().c) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 string Game::PlayerAttack(string direction) {
@@ -369,6 +394,10 @@ string Game::PlayerAttack(string direction) {
         entity_sym == 'H' || entity_sym == 'O' ||
         entity_sym == 'W' || entity_sym == 'D' ) {
       atkStatus as = player->attack(e);
+      if (as == atkStatus::Kill) {
+        theGrid->removeEntity(e->getPosn());
+        enemies.erase(enemies.begin() + enemy_index(e));
+      }
       return player->actionText(e, as);
     } else if (entity_sym == 'M') {
       changeHostile();
@@ -431,6 +460,16 @@ void useTogether(shared_ptr<Player> &user, const shared_ptr<Entity> &used) {
   user = used->beUsedBy(user);
 }
 
+/*string Game::processTurn(const string &command) {
+  string full_printing_msg = "";
+  istringstream iss(command);
+  string s;
+  iss >> s;
+  player->beginTurn();
+  if (s == "a") {
+    iss >> s;
+}*/
+
 string Game::processTurn(const string &command) {
   string full_printing_msg = "";
   istringstream iss(command);
@@ -453,7 +492,9 @@ string Game::processTurn(const string &command) {
       if (theGrid->hasUsable(target)) { // if the occupant of target can be used
         //cout << "target can be used " << endl;
         useTogether(player, theGrid->getCell(target).getOccupant()); // make player use the occupant of target
+        full_printing_msg += "PC uses " + theGrid->getCell(target).getOccupant()->getName() + ".";
         theGrid->removeEntity(target);  //remove target from the board
+        movePlayer(s); //fdsmakmfdskmfsdlfdkslk
         //todo generate action text
       }
     }
@@ -470,6 +511,7 @@ string Game::processTurn(const string &command) {
   }
   else if (valid_dir(s)) {
     full_printing_msg += movePlayer(s);
+    full_printing_msg += potion_near();
   } 
   full_printing_msg += moveEnemies(frozen);
   return full_printing_msg;

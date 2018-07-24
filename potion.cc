@@ -4,11 +4,20 @@
 
 using namespace std;
 
-Potion::Potion(int p): Item('P'), potency{p} {}
+Potion::Potion(int p, string name): Item('P', name), potency{p} {}
 // potions are by default usable
 bool Potion::isUsable() const {return true;}
 int Potion::getPotency() const {
   return potency;
+}
+
+string Potion::getName() const {
+  if (isRevealed()) {
+    return name;
+  }
+  else {
+    return "n unknown potion";
+  }
 }
 
 
@@ -24,7 +33,7 @@ bool Potion_WD::revealed = false;
 // modified slightly to use shared_pointers
 
 // RH implementation
-Potion_RH::Potion_RH(int p): Potion(p)  {}
+Potion_RH::Potion_RH(int p, string name): Potion(p, name)  {}
 bool Potion_RH::isRevealed() const {return revealed;}
 void Potion_RH::reveal() {revealed = true;}
 shared_ptr<Player> Potion_RH::beUsedBy(shared_ptr<Player> user) {
@@ -33,7 +42,7 @@ shared_ptr<Player> Potion_RH::beUsedBy(shared_ptr<Player> user) {
 }
 
 // PH implementation
-Potion_PH::Potion_PH(int p): Potion(p) {}
+Potion_PH::Potion_PH(int p, string name): Potion(p, name) {}
 bool Potion_PH::isRevealed() const {return revealed;}
 void Potion_PH::reveal() {revealed = true;}
 shared_ptr<Player> Potion_PH::beUsedBy(shared_ptr<Player> user) {
@@ -42,7 +51,7 @@ shared_ptr<Player> Potion_PH::beUsedBy(shared_ptr<Player> user) {
 }
 
 // BA implementation incomplete
-Potion_BA::Potion_BA(int p): Potion(p) {}
+Potion_BA::Potion_BA(int p, string name): Potion(p, name) {}
 bool Potion_BA::isRevealed() const {return revealed;}
 void Potion_BA::reveal() {revealed = true;}
 shared_ptr<Player> Potion_BA::beUsedBy(shared_ptr<Player> user) {
@@ -51,7 +60,7 @@ shared_ptr<Player> Potion_BA::beUsedBy(shared_ptr<Player> user) {
 }
 
 // WA implementation incomplete
-Potion_WA::Potion_WA(int p): Potion(p) {}
+Potion_WA::Potion_WA(int p, string name): Potion(p, name) {}
 bool Potion_WA::isRevealed() const {return revealed;}
 void Potion_WA::reveal() {revealed = true;}
 shared_ptr<Player> Potion_WA::beUsedBy(shared_ptr<Player> user) {
@@ -60,7 +69,7 @@ shared_ptr<Player> Potion_WA::beUsedBy(shared_ptr<Player> user) {
 }
 
 // BD implementation incomplete
-Potion_BD::Potion_BD(int p): Potion(p) {}
+Potion_BD::Potion_BD(int p, string name): Potion(p, name) {}
 bool Potion_BD::isRevealed() const {return revealed;}
 void Potion_BD::reveal() {revealed = true;}
 shared_ptr<Player> Potion_BD::beUsedBy(shared_ptr<Player> user) {
@@ -69,7 +78,7 @@ shared_ptr<Player> Potion_BD::beUsedBy(shared_ptr<Player> user) {
 }
 
 // WA implementation incomplete
-Potion_WD::Potion_WD(int p): Potion(p) {}
+Potion_WD::Potion_WD(int p, string name): Potion(p, name) {}
 bool Potion_WD::isRevealed() const {return revealed;}
 void Potion_WD::reveal() {revealed = true;}
 shared_ptr<Player> Potion_WD::beUsedBy(shared_ptr<Player> user) {
