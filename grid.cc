@@ -117,7 +117,6 @@ void Grid::moveEntity(Posn src, Posn dest) {
 void Grid::placeEntity(shared_ptr<Entity> e, Posn placeHere) {
   e->setPos(placeHere);
   if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(e.get())) {
-    cout << "placing Dragon Hoard" << endl;
     vector<Posn> emptyNeighbours;
     for (int i = placeHere.r - 1; i <= placeHere.r + 1; i++) {
       for (int j = placeHere.c -1; j <= placeHere.c + 1; j++) {

@@ -19,3 +19,7 @@ bool Treasure_Dragon::canBeSteppedOn(const Entity & whoStepped) const {
 shared_ptr<Entity> Treasure_Dragon::getDragon() {
   return dragon;
 }
+
+shared_ptr<Enemy> Treasure_Dragon::getDragonAsEnemy() {
+  return dragon;
+}

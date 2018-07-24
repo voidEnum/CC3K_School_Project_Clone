@@ -4,6 +4,7 @@
 #include "treasure.h"
 #include <memory>
 
+class Enemy;
 class Dragon;
 
 class Treasure_Dragon: public Treasure {
@@ -14,6 +15,7 @@ public:
   Treasure_Dragon();
   virtual bool canBeSteppedOn(const Entity & whoStepped) const override;
   std::shared_ptr<Entity> getDragon();
+  std::shared_ptr<Enemy> getDragonAsEnemy();
 };
 
 #endif

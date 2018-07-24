@@ -229,8 +229,11 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
 
-    shared_ptr<Treasure> toPlace =
-      tf.make<Treasure>(TREASURE_SPAWN_RATES, TREASURE_MAKERS); 
+    shared_ptr<Treasure> toPlace = tf.make<Treasure>(
+                                   TREASURE_SPAWN_RATES, TREASURE_MAKERS);
+    if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(toPlace.get())) {
+      enemies.push_back(td->getDragonAsEnemy());
+    }
     theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
   }
 }
@@ -296,6 +299,7 @@ bool Game::startRound(const string &race) {
   generatePotions(candidateCells);
   generateTreasures(candidateCells);
   generateEnemies(candidateCells);
+  
   return true;
 }
 string Game::moveEnemies(bool frozen) {
