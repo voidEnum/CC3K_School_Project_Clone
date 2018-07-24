@@ -411,6 +411,10 @@ string Game::PlayerAttack(string direction) {
         }
       }
       atkStatus as = player->attack(e);
+      if (as == atkStatus::Kill) {
+        theGrid->removeEntity(e->getPosn());
+        enemies.erase(enemies.begin() + enemy_index(e));
+      }
       return player->actionText(e, as);
     }else return player->actionText(e, atkStatus::InvalidTarget);
   }
