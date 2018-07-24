@@ -14,8 +14,8 @@ atkStatus Vampire::attack(Cell &target) {
   return ak;
 =======
 */
-atkStatus Vampire::attack(std::shared_ptr<Enemy> aggressor) {
-  this->setHp(this->getHp() + 5);
+atkStatus Vampire::attack(const std::shared_ptr<Enemy> &aggressor) {
+  setHp(getHp() + 5);
   return aggressor->wasAttacked(shared_from_this());
 }
 

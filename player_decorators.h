@@ -34,12 +34,14 @@ public:
   virtual void addGold(int reward) override;
   virtual int finalScore() override;
   virtual int getGold() override;
+  /* try not overriding the use potion functions
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_RH> p) override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_PH> p) override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_BA> p) override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_WA> p) override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_BD> p) override;
   virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_WD> p) override;
+  */
 };
 
 class PlayerDecoratorAtk : public PlayerDecorator, 

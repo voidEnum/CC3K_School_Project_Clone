@@ -37,7 +37,7 @@ public:
   void levelUp();
   void moveEntity(Posn src, Posn dest);
   void removeEntity(Posn remFrom);
-  void placeEntity(std::shared_ptr<Entity> e, Posn placeHere);
+  void placeEntity(const std::shared_ptr<Entity> &e, Posn placeHere);
 
   void placeStairs(Posn placeHere);
 
