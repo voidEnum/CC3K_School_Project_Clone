@@ -357,6 +357,17 @@ string Game::movePlayer(const string &direction) {
   return full_action_text;
 }
 
+int Game::enemy_index(shared_ptr<Enemy> e) {
+  int enemy_num = enemies.size();
+  for (int i = 0; i < enemy_num; ++i) {
+    if (e->getPosn().r == enemies[i]->getPosn().r &&
+        e->getPosn().c == enemies[i]->getPosn().c) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 string Game::PlayerAttack(string direction) {
   Posn player_Posn = player->getPosn();
   Cell &target_cell = theGrid->getCell(dir_to_posn(player_Posn,direction));
@@ -431,6 +442,16 @@ void useTogether(shared_ptr<Player> &user, const shared_ptr<Entity> &used) {
   user = used->beUsedBy(user);
 }
 
+/*string Game::processTurn(const string &command) {
+  string full_printing_msg = "";
+  istringstream iss(command);
+  string s;
+  iss >> s;
+  player->beginTurn();
+  if (s == "a") {
+    iss >> s;
+}*/
+
 string Game::processTurn(const string &command) {
   string full_printing_msg = "";
   istringstream iss(command);
@@ -482,14 +503,4 @@ void Game::print(string printing_msg) {
   cout << "Atk: " << to_string(player->getAtk()) << endl;
   cout << "Def: " << to_string(player->getDef()) << endl;
   cout << "Action: " << printing_msg << endl; 
-}
-
-bool Game::gameOver() {
-  if(player->getHp() <= 0) {
-    cout<< "You have been slained! Game Over."<<endl;
-    return true;
-  } else if (theGrid->getLevel() == 6) {
-    cout<< "Congratulations, you reach the top of the floor, you won the game!"<<endl;
-    return true;
-  } else return false;
 }

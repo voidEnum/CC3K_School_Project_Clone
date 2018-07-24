@@ -38,6 +38,7 @@ atkStatus Player::wasAttacked(shared_ptr<Enemy> aggressor, int modifiedDamage) {
   if (randomAction == 0) { 
     this->setHp(this->getHp() - modifiedDamage * damage(aggressor->getAtk(), getDef()));
     if (this->getHp() <= 0) {
+      setHp(0);
       return atkStatus::Kill;
     }
     return atkStatus::Hit;
