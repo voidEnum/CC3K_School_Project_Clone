@@ -30,5 +30,6 @@ public:
 
   void setChamber(int n);
   void makeStairs();
+  bool hasUsable() const;
 };
 #endif

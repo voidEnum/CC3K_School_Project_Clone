@@ -43,6 +43,9 @@ public:
 
   void printChambers();
 
+  // checks if the cell at Posn p has a useable entity
+  bool hasUsable(Posn p) const;
+
   friend std::ostream &operator<<(std::ostream &out, const Grid &g);
 };
 

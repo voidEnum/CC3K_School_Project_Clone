@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include "posn.h"
+
 using namespace std;
 
 char Entity::getSymbol() const {
@@ -26,3 +27,17 @@ Posn Entity::getPosn() const {
   return pos;
 }
 
+bool Entity::wasUsed(shared_ptr<Player> *user) {
+  (void)user;
+  return false; // defaults to return false. ovrride for usable entities
+}
+
+// default to false
+bool Entity::isUsable() const {
+  return false;
+}
+
+// do noything and return player by default
+shared_ptr<Player> Entity::beUsedBy(shared_ptr<Player> user) {
+  return user;
+}

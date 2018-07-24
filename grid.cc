@@ -141,6 +141,10 @@ void Grid::placeStairs(Posn p) {
   td->update(getCell(p));
 }
 
+bool Grid::hasUsable(Posn p) const {
+  return theGrid[p.r][p.c].hasUsable();
+}
+
 ostream &operator<<(ostream &out, const Grid &g) {
   return out << *(g.td);
 }
