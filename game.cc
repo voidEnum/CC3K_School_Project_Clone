@@ -204,6 +204,9 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
     vector<Cell*> &vc = vcham[rand() % vcham.size()]; // select rand chamber
 
     int selectedCellIdx = rand() % vc.size(); // get random cell index
+    while (!validSpot(*(vc[selectedCellIdx]))){
+      selectedCellIdx = rand() % vc.size();
+    }
     Cell &selected = *(vc[selectedCellIdx]);  // select random cell
     vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
 
@@ -225,7 +228,9 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
     vector<Cell *> &vc = vvc[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % numCells;
-
+    while (!validSpot(*(vc[selectedCellIdx]))){
+      selectedCellIdx = rand() % (numCells);
+    }
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
 
@@ -282,6 +287,9 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
   if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
   vector<Cell *> &stairChamber = vvc[stairChamberIdx];
   int stairIdx = rand() % stairChamber.size();
+  while (!validSpot(*(stairChamber [stairIdx]))){
+      stairIdx = rand() % stairChamber.size();
+  }
   Cell &stairway = *(stairChamber[stairIdx]);
   stairChamber.erase(stairChamber.begin() + stairIdx);
   theGrid->placeStairs({stairway.getRow(), stairway.getCol()});
@@ -430,8 +438,20 @@ string Game::movePlayer(const string &direction) {
   Posn player_Posn = player->getPosn();
   Posn heading_dir = dir_to_posn(player_Posn, direction); 
   if (theGrid->canStep(heading_dir, *player)) {
-    theGrid->moveEntity(player_Posn, heading_dir);
-    full_action_text += player->getName() + " moves " + direction + ".";
+    if (theGrid->getCell(heading_dir).getSymbol() == '\\') {
+      theGrid->levelUp();
+      changeFloor(dir_to_posn(player_Posn,direction));
+      string levelAsString = to_string(theGrid->getLevel());
+      full_action_text += player->getName() + " moves to next floor current floor(" + levelAsString + ").";
+    } else if (theGrid->getCell(heading_dir).getSymbol() == 'G') {
+      auto t = static_pointer_cast<Treasure>(theGrid->getCell(heading_dir).getOccupant());
+      string goldAsString = to_string(t->getValue());
+      full_action_text += "PC moves " + direction + ". PC picked " + t->getName() + " up, PC add gold(" + goldAsString +").";
+      theGrid->moveEntity(player_Posn, heading_dir);
+    } else {
+      theGrid->moveEntity(player_Posn, heading_dir);
+      full_action_text += "PC moves " + direction + ".";
+    }
   }else {
     throw Invalid_behave("");
   }
@@ -488,8 +508,7 @@ string Game::PlayerAttack(string direction) {
     char entity_sym = target_cell.getOccupant()->getSymbol();
     auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
     if (entity_sym == 'E' || entity_sym == 'L' ||
-        entity_sym == 'H' || entity_sym == 'O' ||
-        entity_sym == 'W' || entity_sym == 'D' ) {
+        entity_sym == 'W' || entity_sym == 'O' || entity_sym == 'D') {
       atkStatus as = player->attack(e);
       if (as == atkStatus::Kill) {
         theGrid->removeEntity(e->getPosn());
@@ -509,11 +528,28 @@ string Game::PlayerAttack(string direction) {
       }
       atkStatus as = player->attack(e);
       if (as == atkStatus::Kill) {
+        Posn e_Posn = e->getPosn();
         theGrid->removeEntity(e->getPosn());
         enemies.erase(enemies.begin() + enemy_index(e));
+        auto tm = make_shared<Treasure_Merchant>();
+        theGrid->placeEntity(tm,e_Posn);
       }
       return player->actionText(e, as);
-    }else return player->actionText(e, atkStatus::InvalidTarget);
+    } else if (entity_sym == 'H') {
+      atkStatus as = player->attack(e);
+      if (as == atkStatus::Kill) {
+        Posn e_Posn = e->getPosn();
+        theGrid->removeEntity(e->getPosn());
+        enemies.erase(enemies.begin() + enemy_index(e));
+        auto tn1 = make_shared<Treasure_Normal>();
+        theGrid->placeEntity(tn1,e_Posn);
+        if (isAnyValidNeighbour(e_Posn)) {
+          auto tn2 = make_shared<Treasure_Normal>();
+          theGrid->placeEntity(tn2,validRandomNeighbour(e_Posn));
+        } else player->addGold(2);
+      }
+      return player->actionText(e, as);
+    } else return player->actionText(e, atkStatus::InvalidTarget);
   }
 }
 /*  
@@ -629,10 +665,18 @@ void Game::print(string printing_msg) {
 
 bool Game::gameOver() {
   if(player->getHp() <= 0) {
+    string scoreAsString;
     cout<< "You have been slained! Game Over."<<endl;
+    if(dynamic_pointer_cast<Shade>(player)) scoreAsString = to_string(1.5 * player->finalScore());
+    else scoreAsString = player->finalScore();
+    cout<< "Your final score: " + scoreAsString + "."<<endl;
     return true;
   } else if (theGrid->getLevel() == 6) {
+    string scoreAsString;
     cout<< "Congratulations, you reach the top of the floor, you won the game!"<<endl;
+    if(dynamic_pointer_cast<Shade>(player)) scoreAsString = to_string(1.5 * player->finalScore());
+    else scoreAsString = player->finalScore();
+    cout<< "Your final score: " + scoreAsString + "."<<endl;
     return true;
   } else return false;
 }

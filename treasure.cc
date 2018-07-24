@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Treasure::Treasure(int v): Item('G'), value{v} {}
+Treasure::Treasure(int v, std::string name): Item('G', name), value{v} {}
 
 int Treasure::getValue() const {
   return value;
