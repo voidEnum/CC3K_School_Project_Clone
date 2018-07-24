@@ -25,7 +25,7 @@ int main() {
   theController.sendRace(theGame);
   theController.requestDisplay(theGame, "The player entered the dungeon");
 
-  while (true) {
+  while (!theGame.gameOver()) {
     try {
       theController.getCommand();
       string print_msg = theController.sendCommand(theGame);
