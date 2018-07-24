@@ -45,6 +45,7 @@ class Game {
   void changeFloor(Posn playerposn);
   //void update_display();
   std::string movePlayer(const std::string &direction);
+  std::string potion_near();
   int enemy_index(std::shared_ptr<Enemy>e);
   std::string PlayerAttack(std::string direction);
   //void enemyAttack();

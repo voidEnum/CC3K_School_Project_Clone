@@ -57,11 +57,11 @@ string Player::actionText(shared_ptr<Enemy> aggressor, atkStatus as) {
   if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
     string enemyHpAsString = to_string(aggressor->getHp());
-    newActionText = getName() + " deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + ").";
+    newActionText = "PC deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + ").";
   } else if (as == atkStatus::Kill){
-      newActionText = getName() + " killed " + aggressor->getName() + ".";
+      newActionText = "PC killed " + aggressor->getName() + ".";
   } else if (as == atkStatus::Miss){
-      newActionText = getName() + " attacks " + aggressor->getName() + " but it missed.";
+      newActionText = "PC attacks " + aggressor->getName() + " but it missed.";
   } else {
       newActionText = "There is no enemy at that direction.";
   }
