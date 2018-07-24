@@ -6,6 +6,7 @@
 class Treasure_Dragon: public Treasure {
   static const int TREASURE_DRAGON_VALUE = 8;
 public:
+  static const int SPAWN_RATE = 1;
   Treasure_Dragon();
 };
 

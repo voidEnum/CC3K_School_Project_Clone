@@ -6,6 +6,7 @@
 class Treasure_Normal : public Treasure {
   static const int TREASURE_NORMAL_VALUE = 2;
 public:
+  static const int SPAWN_RATE = 5;
   Treasure_Normal();
 };
 

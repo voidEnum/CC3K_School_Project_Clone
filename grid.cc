@@ -101,6 +101,10 @@ void Grid::levelUp() {
 
 void Grid::moveEntity(Posn src, Posn dest) {
   //cout << "src: " << src.r << ", " << src.c << "dest: " << dest.r << ", " << dest.c << endl;
+  if (getCell(dest).getOccupant()) {
+    cout << "dest has occupant";
+    getCell(dest).getOccupant()->beSteppedOn(*(getCell(src).getOccupant()));
+  }
   getCell(dest).setOccupant(getCell(src).getOccupant());
   getCell(dest).getOccupant()->setPos(dest);
   getCell(src).setOccupant(nullptr);
@@ -147,4 +151,8 @@ bool Grid::hasUsable(Posn p) const {
 
 ostream &operator<<(ostream &out, const Grid &g) {
   return out << *(g.td);
+}
+
+bool Grid::canStep(Posn p, const Entity &e) const{
+  return theGrid[p.r][p.c].canStepHere(e);
 }

@@ -2,7 +2,6 @@
 
 #include "entity.h"
 
-//for dbg
 #include <iostream>
 
 using namespace std;
@@ -64,11 +63,22 @@ char Cell::getSymbol() const {
 
 bool Cell::hasUsable() const {
   if (!occupant) {
-    cout << "no occupant detected" << endl;
     return false;
   }else {
-    cout << "calling occupant isUsable" << endl;
     return occupant->isUsable();
   }
 }
 
+bool Cell::canStepHere(const Entity &e) const {
+  switch (tile) {
+    case Terrain::VertWall  : return false;
+    case Terrain::HoriWall  : return false;
+    case Terrain::Empty     : return false;
+    default                 : break;
+  }
+  if (!occupant) {
+    return true;
+  }else {
+    return occupant->canBeSteppedOn(e);
+  }
+}
