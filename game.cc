@@ -33,7 +33,7 @@
 #include <stdlib.h>
 using namespace std;
 
-Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
+Game::Game(): theGrid(make_shared<Grid>(), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
   theGrid->init("maps/basicFloor.txt", 1);
 }
 
@@ -150,27 +150,27 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     }
     Cell &selected = *(vc[selectedCellIdx]);
     if(enemyType >= 1 && enemyType <= 4) {
-      shared_ptr<Human> H(new Human());
+      shared_ptr<Human> H(make_shared<Human>());
       theGrid->placeEntity(H, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(H);
     } else if(enemyType >= 5 && enemyType <= 7) {
-      shared_ptr<Dwarf> D(new Dwarf());
+      shared_ptr<Dwarf> D(make_shared<Dwarf>());
       theGrid->placeEntity(D, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(D);
     } else if(enemyType >= 8 && enemyType <= 12) {
-      shared_ptr<Halfling> Ha(new Halfling());
+      shared_ptr<Halfling> Ha(make_shared<Halfling>());
       theGrid->placeEntity(Ha, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(Ha);
     } else if(enemyType >= 13 && enemyType <= 14) {
-      shared_ptr<Elf> E(new Elf());
+      shared_ptr<Elf> E(make_shared<Elf>());
       theGrid->placeEntity(E, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(E);
     } else if(enemyType >= 15 && enemyType <= 16) {
-      shared_ptr<Orc> O(new Orc());
+      shared_ptr<Orc> O(make_shared<Orc>());
       theGrid->placeEntity(O, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(O);
     } else {
-      shared_ptr<Merchant> M(new Merchant());
+      shared_ptr<Merchant> M(make_shared<Merchant>());
       if(checkIfHostile()) M->turnHostile();
       theGrid->placeEntity(M, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(M);
@@ -250,9 +250,6 @@ void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
   int selectedCellIdx = rand() % numCells;
   Cell &selected = *(vc[selectedCellIdx]);
   vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-  
-  //shared_ptr<Player> test(new Player());
-  //player = test;
   if (race == "s") {
     player = make_shared<Shade>();
   }
@@ -297,6 +294,7 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
 
 bool Game::startRound(const string &race) {
   // Copy the chamber layout
+  quit = false;
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
   
   generatePlayer(race, candidateCells);
@@ -413,6 +411,7 @@ void Game::changeFloor(Posn playerPosn) {
   generatePotions(candidateCells);
   generateTreasures(candidateCells);
   generateEnemies(candidateCells);
+  //player->removeBuffs();
 }
 /*  
 void Game::update_display() {
@@ -481,7 +480,7 @@ string Game::potion_near() {
       shared_ptr<Entity> cell_occupant = (theGrid->getCell({player->getPosn().r + i, player->getPosn().c + j}).getOccupant()); 
       //cout << cell_occupant << endl;
       if (cell_occupant != nullptr && cell_occupant->getSymbol() == 'P') {
-        return " and sees a" + cell_occupant->getName() + ".";
+        return " and sees " + cell_occupant->getName() + ".";
       }
     }
   }
@@ -644,6 +643,7 @@ string Game::processTurn(const string &command) {
   } 
   else if (s == "q") {
     cout<<"You quit the game."<<endl;
+    quit = true;
     //throw 0;
   }
   else if (valid_dir(s)) {
@@ -664,19 +664,21 @@ void Game::print(string printing_msg) {
 }
 
 bool Game::gameOver() {
+  int p_score = player->finalScore();
   if(player->getHp() <= 0) {
-    string scoreAsString;
     cout<< "You have been slained! Game Over."<<endl;
-    if(dynamic_pointer_cast<Shade>(player)) scoreAsString = to_string(1.5 * player->finalScore());
-    else scoreAsString = player->finalScore();
-    cout<< "Your final score: " + scoreAsString + "."<<endl;
+    if(dynamic_pointer_cast<Shade>(player)) p_score *= 1.5;
+    cout<< "Your final score: " <<p_score<<"."<<endl;
     return true;
   } else if (theGrid->getLevel() == 6) {
-    string scoreAsString;
     cout<< "Congratulations, you reach the top of the floor, you won the game!"<<endl;
-    if(dynamic_pointer_cast<Shade>(player)) scoreAsString = to_string(1.5 * player->finalScore());
-    else scoreAsString = player->finalScore();
-    cout<< "Your final score: " + scoreAsString + "."<<endl;
+    if(dynamic_pointer_cast<Shade>(player)) p_score *= 1.5;
+    cout<< "Your final score: " <<p_score<<"."<<endl;
     return true;
-  } else return false;
+  } 
+  else if (quit == true) {
+    quit = false;
+    return true;
+  }
+  else return false;
 }

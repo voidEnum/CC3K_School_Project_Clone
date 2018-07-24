@@ -32,7 +32,7 @@ public:
   // the same baseclass. SPAWN_RATE = 0 means the object will not spawn during
   // random generation except under special circumstances.
   static const int SPAWN_RATE = 1;
-  Potion_RH(int p = 10, std::string name = " RH");
+  Potion_RH(int p = 10, std::string name = "RH");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -42,7 +42,7 @@ class Potion_PH : public Potion, public std::enable_shared_from_this<Potion_PH> 
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
-  Potion_PH(int p = 10, std::string name = " PH");
+  Potion_PH(int p = 10, std::string name = "PH");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -52,7 +52,7 @@ class Potion_BA : public Potion, public std::enable_shared_from_this<Potion_BA> 
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
-  Potion_BA(int p = 5, std::string name = " BA");
+  Potion_BA(int p = 5, std::string name = "BA");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -62,7 +62,7 @@ class Potion_WA : public Potion, public std::enable_shared_from_this<Potion_WA>{
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
-  Potion_WA(int p = 5, std::string name = " WA");
+  Potion_WA(int p = 5, std::string name = "WA");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -72,7 +72,7 @@ class Potion_BD : public Potion, public std::enable_shared_from_this<Potion_BD> 
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
-  Potion_BD(int p = 5, std::string name = " BD");
+  Potion_BD(int p = 5, std::string name = "BD");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
@@ -82,7 +82,7 @@ class Potion_WD : public Potion, public std::enable_shared_from_this<Potion_WD> 
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
-  Potion_WD(int p = 5, std::string name = " WD");
+  Potion_WD(int p = 5, std::string name = "WD");
   bool isRevealed() const override;
   void reveal() override;
   std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
