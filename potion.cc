@@ -16,7 +16,7 @@ string Potion::getName() const {
     return name;
   }
   else {
-    return "n unknown potion";
+    return "an unknown potion";
   }
 }
 

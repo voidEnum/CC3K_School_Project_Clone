@@ -116,6 +116,9 @@ shared_ptr<Player> Player::useEntity(shared_ptr<Potion> p) {
 shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_RH> &p) {
   modifyHp(p->getPotency());
   cout << "my hp is " << getHp() << endl;
+  if (this->getHp() >= this->getMaxHp()) {
+    this->setHp(this->getMaxHp());
+  }
   return shared_from_this();
 }
 shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_PH> &p) {
