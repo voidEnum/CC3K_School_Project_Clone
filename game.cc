@@ -289,6 +289,7 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
 
 bool Game::startRound(const string &race) {
   // Copy the chamber layout
+  quit = false;
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
   
   generatePlayer(race, candidateCells);
@@ -431,7 +432,7 @@ string Game::movePlayer(const string &direction) {
   Posn heading_dir = dir_to_posn(player_Posn, direction); 
   if (theGrid->canStep(heading_dir, *player)) {
     theGrid->moveEntity(player_Posn, heading_dir);
-    full_action_text += player->getName() + " moves " + direction + ".";
+    full_action_text += player->getName() + " moves " + direction;
   }else {
     throw Invalid_behave("");
   }
@@ -461,7 +462,7 @@ string Game::potion_near() {
       shared_ptr<Entity> cell_occupant = (theGrid->getCell({player->getPosn().r + i, player->getPosn().c + j}).getOccupant()); 
       //cout << cell_occupant << endl;
       if (cell_occupant != nullptr && cell_occupant->getSymbol() == 'P') {
-        return " and sees a" + cell_occupant->getName() + ".";
+        return " and sees " + cell_occupant->getName() + ".";
       }
     }
   }
@@ -604,6 +605,7 @@ string Game::processTurn(const string &command) {
   } 
   else if (s == "q") {
     cout<<"You quit the game."<<endl;
+    quit = true;
     //throw 0;
   }
   else if (valid_dir(s)) {
@@ -627,8 +629,14 @@ bool Game::gameOver() {
   if(player->getHp() <= 0) {
     cout<< "You have been slained! Game Over."<<endl;
     return true;
-  } else if (theGrid->getLevel() == 6) {
+  } 
+  else if (theGrid->getLevel() == 6) {
     cout<< "Congratulations, you reach the top of the floor, you won the game!"<<endl;
     return true;
-  } else return false;
+  } 
+  else if (quit == true) {
+    quit = false;
+    return true;
+  }
+  else return false;
 }
