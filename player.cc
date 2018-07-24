@@ -6,7 +6,8 @@
 using namespace std;
 
 Player::Player(string name, int hp, int atk, int def): 
-  Creature('@', name, hp, atk, def), gold{0}, maxHp{hp} {}
+  Creature('@', name, hp, atk, def), gold{0},
+           maxHp{hp}, atkOffset{0}, defOffset{0} {}
 
 /*void Player::usePotion(Potion &target) {
   target.occupant.applyEffect(this);
@@ -17,8 +18,14 @@ int Player::finalScore() {
   return gold;
 }
 
+// for decorators
 shared_ptr<Player>Player::withoutBuffs() {
   return shared_from_this();
+}
+
+void Player::removeBuffs() {
+  atkOffset = 0;
+  defOffset = 0;
 }
 
 //bool Player::useEntity(Entity &e) {
@@ -29,11 +36,23 @@ void Player::addGold(int reward) {
   gold += reward;
 }
 
-atkStatus Player::attack(shared_ptr<Enemy> aggressor) {
+void Player::modifyAtkOffset(double delta){atkOffset += delta;}
+
+double Player::getAtkOffset() const {return atkOffset;}
+
+int Player::getAtk() const {return atk + atkOffset;}
+
+void Player::modifyDefOffset(double delta){defOffset += delta;}
+
+double Player::getDefOffset() const {return defOffset;}
+
+int Player::getDef() const {return def + defOffset;}
+
+atkStatus Player::attack(const shared_ptr<Enemy> &aggressor) {
     return aggressor->wasAttacked(shared_from_this());
 }
 
-atkStatus Player::wasAttacked(shared_ptr<Enemy> aggressor, int modifiedDamage) {
+atkStatus Player::wasAttacked(const shared_ptr<Enemy> &aggressor, int modifiedDamage) {
   int randomAction = rand() % 2;
   if (randomAction == 0) { 
     this->setHp(this->getHp() - modifiedDamage * damage(aggressor->getAtk(), getDef()));
@@ -52,7 +71,7 @@ void Player::move(Posn target) {
   this->setPos(target);
 } 
 
-string Player::actionText(shared_ptr<Enemy> aggressor, atkStatus as) {
+string Player::actionText(shared_ptr<Enemy> &aggressor, atkStatus as) {
   string newActionText;
   if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
@@ -80,13 +99,21 @@ void Player::beginTurn() {
 }
 
 // useEntity overloads for visitor pattern
-/*
+void Player::useEntity(Potion_RH &p) {modifyHp(p.getPotency());}
+void Player::useEntity(Potion_PH &p) {modifyHp(-(p.getPotency()));}
+void Player::useEntity(Potion_BA &p) {modifyAtkOffset(p.getPotency());}
+void Player::useEntity(Potion_BD &p) {modifyDefOffset(p.getPotency());}
+void Player::useEntity(Potion_WA &p) {modifyAtkOffset(-(p.getPotency()));}
+void Player::useEntity(Potion_WD &p) {modifyDefOffset(-(p.getPotency()));}
+
+
+/* tried to use decorator pattern but ran into shared ptr issues
 shared_ptr<Player> Player::useEntity(shared_ptr<Potion> p) {
   (void)p;
   cout << "this is getting called because everyone hates me" << endl;
   return shared_from_this();
-}*/
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion_RH> p) {
+}
+shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_RH> &p) {
   modifyHp(p->getPotency());
   cout << "my hp is " << getHp() << endl;
   if (this->getHp() >= this->getMaxHp()) {
@@ -94,19 +121,19 @@ shared_ptr<Player> Player::useEntity(shared_ptr<Potion_RH> p) {
   }
   return shared_from_this();
 }
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion_PH> p) {
+shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_PH> &p) {
   modifyHp(-(p->getPotency()));
   return shared_from_this();
 }
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion_BA> p) {
+shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_BA> &p) {
   return make_shared<PlayerDecoratorAtk>(shared_from_this(), p->getPotency());
 }
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion_WA> p) {
+shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_WA> &p) {
   return make_shared<PlayerDecoratorAtk>(shared_from_this(), -(p->getPotency()));
 }
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion_BD> p) {
+shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_BD> &p) {
   return make_shared<PlayerDecoratorDef>(shared_from_this(), p->getPotency());
 }
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion_WD> p) {
+shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_WD> &p) {
   return make_shared<PlayerDecoratorDef>(shared_from_this(), -(p->getPotency()));
-}
+}*/

@@ -19,7 +19,7 @@ protected:
   std::string name;
 public:
   Entity(char sym = 'Y', std::string name = "Entity");
-  virtual atkStatus wasAttacked(Creature *aggressor);
+  virtual atkStatus wasAttacked(Creature &aggressor);
   //virtual atkStatus wasAttacked(Player *aggressor);
   virtual char getSymbol() const;
   // returns true when used successfully, false when entity cannot be used
@@ -34,7 +34,8 @@ public:
   // if this entity does nothing or the entity does not need to apply a
   // decorator. May return a decorator that decorates user if this entity
   // applies a buff/debuff to user when used.
-  virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user);
+  virtual std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user); //for Decorator
+  virtual void beUsedBy(Player &user);
   virtual std::string getName() const;
 
   // perform actions when "stepped on" by another entity

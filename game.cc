@@ -206,12 +206,13 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
     int selectedCellIdx = rand() % vc.size(); // get random cell index
     Cell &selected = *(vc[selectedCellIdx]);  // select random cell
     vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
-
-    shared_ptr<Potion> to_place = 
-      pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS); // make a random potion
+      
+    //shared_ptr<Potion> to_place = 
+    // pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS); // make a random potion
     
     // place the random potion in the selected cell
-    theGrid->placeEntity(to_place, {selected.getRow(), selected.getCol()});
+    theGrid->placeEntity(pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS), // make a random potion 
+                         {selected.getRow(), selected.getCol()});
   }
 }  
  
@@ -229,8 +230,11 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
 
-    shared_ptr<Treasure> toPlace =
-      tf.make<Treasure>(TREASURE_SPAWN_RATES, TREASURE_MAKERS); 
+    shared_ptr<Treasure> toPlace = tf.make<Treasure>(
+                                   TREASURE_SPAWN_RATES, TREASURE_MAKERS);
+    if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(toPlace.get())) {
+      enemies.push_back(td->getDragonAsEnemy());
+    }
     theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
   }
 }
@@ -297,6 +301,7 @@ bool Game::startRound(const string &race) {
   generatePotions(candidateCells);
   generateTreasures(candidateCells);
   generateEnemies(candidateCells);
+  
   return true;
 }
 string Game::moveEnemies(bool frozen) {
@@ -554,8 +559,8 @@ bool valid_dir(string dir) {
   }
 }
 
-void useTogether(shared_ptr<Player> &user, const shared_ptr<Entity> &used) {
-  user = used->beUsedBy(user);
+void useTogether(Player &user, Entity &used) {
+  used.beUsedBy(user);
 }
 
 /*string Game::processTurn(const string &command) {
@@ -581,7 +586,7 @@ string Game::processTurn(const string &command) {
     }
   }
   
-  else if (s == "use") {
+  else if (s == "u") {
     iss >> s;
     //cout << "use detected" << endl;
     if (valid_dir(s)) {
@@ -589,7 +594,7 @@ string Game::processTurn(const string &command) {
       //cout << "target posn: " << target.r << " , " << target.c << endl;
       if (theGrid->hasUsable(target)) { // if the occupant of target can be used
         //cout << "target can be used " << endl;
-        useTogether(player, theGrid->getCell(target).getOccupant()); // make player use the occupant of target
+        useTogether(*player, *(theGrid->getCell(target).getOccupant())); // make player use the occupant of target
         full_printing_msg += "PC uses " + theGrid->getCell(target).getOccupant()->getName() + ".";
         theGrid->removeEntity(target);  //remove target from the board
         movePlayer(s); //fdsmakmfdskmfsdlfdkslk
