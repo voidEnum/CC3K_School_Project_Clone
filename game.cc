@@ -15,12 +15,7 @@
 #include "treasure_normal.h"
 #include "invalid_behave.h"
 #include "posn.h"
-#include "potion_rh.h"
-#include "potion_ph.h"
-#include "potion_ba.h"
-#include "potion_wa.h"
-#include "potion_bd.h"
-#include "potion_wd.h"
+#include "potion.h"
 
 #include "shade.h"
 #include "drow.h"
@@ -321,6 +316,20 @@ Posn dir_to_posn(Cell &cur_cell, string direction) {
   else return {-1, -1};
 }
 
+Posn dir_to_posn(Posn startPosn, string direction) {
+  int row = startPosn.r;
+  int col = startPosn.c;
+  if (direction == "ea") return {row, col + 1};
+  else if (direction == "no") return {row - 1, col};
+  else if (direction == "we") return {row, col - 1};
+  else if (direction == "so") return {row + 1, col};
+  else if (direction == "nw") return {row - 1, col - 1};
+  else if (direction == "ne") return {row - 1, col + 1};
+  else if (direction == "sw") return {row + 1, col - 1};
+  else if (direction == "se") return {row + 1, col + 1};
+  else return {-1, -1};
+}
+
 string Game::movePlayer(const string &direction) {
   string full_action_text = "";
   Posn player_Posn = player->getPosn();
@@ -397,6 +406,10 @@ bool valid_dir(string dir) {
   }
 }
 
+void useTogether(shared_ptr<Player> &user, const shared_ptr<Entity> &used) {
+  user = used->beUsedBy(user);
+}
+
 string Game::processTurn(const string &command) {
   string full_printing_msg = "";
   istringstream iss(command);
@@ -409,13 +422,21 @@ string Game::processTurn(const string &command) {
       full_printing_msg += PlayerAttack(s);
     }
   }
-  /*
+  
   else if (s == "use") {
-    //iss >> s;
-    //if (valid_dir(s)) {
-    //  Player_usePotion(s);
-    //}
-  }
+    iss >> s;
+    //cout << "use detected" << endl;
+    if (valid_dir(s)) {
+      Posn target = dir_to_posn(player->getPosn(), s);
+      //cout << "target posn: " << target.r << " , " << target.c << endl;
+      if (theGrid->hasUsable(target)) { // if the occupant of target can be used
+        //cout << "target can be used " << endl;
+        useTogether(player, theGrid->getCell(target).getOccupant()); // make player use the occupant of target
+        theGrid->removeEntity(target);  //remove target from the board
+        //todo generate action text
+      }
+    }
+  }/*
   else if (s == "restart") {
     //changeFloor();
   }

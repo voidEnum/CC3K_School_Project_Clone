@@ -1,7 +1,7 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 #include "creature.h"
-#include "enemy.h"
+#include "potion.h"
 #include <memory>
 #include <string>
 #include "enemy.h"
@@ -11,22 +11,35 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   int maxHp;
  public:
   Player(std::string name, int hp = 100, int atk = 50, int def = 50);
-  virtual atkStatus attack(std::shared_ptr<Enemy> aggressor);
-  atkStatus wasAttacked(std::shared_ptr<Enemy> aggressor, int modifiedDamage);
-  void move(Posn p);
+  virtual atkStatus attack(std::shared_ptr<Enemy>);
+  virtual atkStatus wasAttacked(std::shared_ptr<Enemy> aggressor, int modifiedDamage);
+  virtual std::string actionText(std::shared_ptr<Enemy> aggressor, atkStatus as);
+  virtual int getMaxHp();
+  virtual void move(Posn p);
   //virtual void beginTurn();
   //virtual void endTurn();
-  void addGold(int reward);
-  //bool usePotion(Cell &cell);
+  virtual void addGold(int reward);
+  //bool useEntity(Cell &cell);
   virtual int finalScore();
+/*<<<<<<< HEAD
   std::shared_ptr<Player>withoutBuffs();
   virtual std::string actionText(std::shared_ptr<Enemy> aggressor, atkStatus as);
-/*<<<<<<< HEAD
-=======*/
   int getMaxHp();
-//>>>>>>> 431b61aa856f9bcc0545a46272958fc858411cf2
   int getGold();
   void beginTurn();
+=======*/
+  virtual std::shared_ptr<Player> withoutBuffs();
+  virtual int getGold();
+  virtual void beginTurn();
+  //useEntity overloads for visitor pattern
+  //virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion> p);
+  virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_RH> p);
+  virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_PH> p);
+  virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_BA> p);
+  virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_WA> p);
+  virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_BD> p);
+  virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion_WD> p);
+//>>>>>>> 10045a89f208b61fa5b1dcb354f2c139e614874a
  private:
   void die();
   static int ceil_divide(int numerator, int denom);

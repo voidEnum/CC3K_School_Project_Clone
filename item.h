@@ -6,6 +6,7 @@
 class Item: public Entity {
 protected:
   Item(char sym);
+public:
 };
 
 #endif
