@@ -13,6 +13,9 @@
 
 #include "treasure.h"
 #include "treasure_normal.h"
+#include "treasure_small.h"
+#include "treasure_merchant.h"
+#include "treasure_dragon.h"
 #include "invalid_behave.h"
 #include "posn.h"
 #include "potion.h"
@@ -34,13 +37,74 @@ Game::Game(): theGrid(new Grid()), player{nullptr}, /*enemies{nullptr}, potions{
   theGrid->init("maps/basicFloor.txt", 1);
 }
 
+/*
 Game::PotionFactory & Game::PotionFactory::getInstance() {
   static PotionFactory theFactory;
   return theFactory;
+}*/
+
+Game::GenericFactory & Game::GenericFactory::getInstance() {
+  static GenericFactory theFactory;
+  return theFactory;
 }
 
-shared_ptr<Potion> Game::PotionFactory::makePotion() {
-  int pType = rand() % 6;
+const vector<int> Game::POTION_SPAWN_RATES =
+  {Potion_RH::SPAWN_RATE, Potion_PH::SPAWN_RATE,
+   Potion_BA::SPAWN_RATE, Potion_WA::SPAWN_RATE,
+   Potion_BD::SPAWN_RATE, Potion_WD::SPAWN_RATE}; 
+const vector<function<shared_ptr<Potion>()>> Game::POTION_MAKERS =
+  {[&]{return make_shared<Potion_RH>();},[&]{return make_shared<Potion_PH>();},
+   [&]{return make_shared<Potion_BA>();},[&]{return make_shared<Potion_WA>();},
+   [&]{return make_shared<Potion_BD>();},[&]{return make_shared<Potion_WD>();}};
+
+const vector<int> Game::TREASURE_SPAWN_RATES =
+  {Treasure_Small::SPAWN_RATE, Treasure_Normal::SPAWN_RATE,
+   Treasure_Merchant::SPAWN_RATE, Treasure_Dragon::SPAWN_RATE};
+const vector<function<shared_ptr<Treasure>()>> Game::TREASURE_MAKERS =
+  {[&]{return make_shared<Treasure_Small>();},
+   [&]{return make_shared<Treasure_Normal>();},
+   [&]{return make_shared<Treasure_Merchant>();},
+   [&]{return make_shared<Treasure_Dragon>();}};
+
+/*
+const vector<int> Game::PotionFactory::S_RATES =
+  {Potion_RH::SPAWN_RATE, Potion_PH::SPAWN_RATE,
+   Potion_BA::SPAWN_RATE, Potion_WA::SPAWN_RATE,
+   Potion_BD::SPAWN_RATE, Potion_WD::SPAWN_RATE};
+
+//vector of lambda functions that return shared_ptrs to subtype
+const vector<function<shared_ptr<Potion>()>> Game::PotionFactory::MAKERS = 
+  {[&]{return make_shared<Potion_RH>();},[&]{return make_shared<Potion_PH>();},
+   [&]{return make_shared<Potion_BA>();},[&]{return make_shared<Potion_WA>();},
+   [&]{return make_shared<Potion_BD>();},[&]{return make_shared<Potion_WD>();}};
+
+shared_ptr<Potion> Game::PotionFactory::make() {
+  // get the sum of the spawn rates
+  int s_rate_sum = 0;
+  for (auto i: S_RATES) {
+    s_rate_sum += i;
+  }
+
+  // generate a random number between 1 and s_rate_sum inclusive
+  int pType = rand() % s_rate_sum + 1;
+
+  // for each element of S_RATES, add its value to accumulator
+  // when the accumulator is >= the random number, use MAKERS
+  // to spawn the appropriate Potion type.
+  int accumulated_s_rate = 0;
+  for (int i = 0, end = S_RATES.size();i < end; i++) {
+    accumulated_s_rate += S_RATES[i];
+    if (accumulated_s_rate >= pType) {
+        return MAKERS[i]();
+    }
+  }
+
+  // if function gets here, nothing was spawned. should not happen
+  return nullptr;
+}
+*/
+
+  /* original
   switch (pType) {
     case 0 : return make_shared<Potion_RH>();
     case 1 : return make_shared<Potion_PH>();
@@ -50,7 +114,27 @@ shared_ptr<Potion> Game::PotionFactory::makePotion() {
     case 5 : return make_shared<Potion_WD>();
     default: return nullptr; // should not happen
   }
+}*/
+
+/*
+Game::TreasureFactory & Game::TreasureFactory::getInstance() {
+  static TreasureFactory theFactory;
+  return theFactory;
 }
+const vector<int> Game::TreasureFactory::S_RATES =
+  {Potion_RH::SPAWN_RATE, Potion_PH::SPAWN_RATE,
+   Potion_BA::SPAWN_RATE, Potion_WA::SPAWN_RATE,
+   Potion_BD::SPAWN_RATE, Potion_WD::SPAWN_RATE};
+
+//vector of lambda functions that return shared_ptrs to subtype
+const vector<function<shared_ptr<Potion>()>> Game::PotionFactory::MAKERS = 
+  {[&]{return make_shared<Potion_RH>();},[&]{return make_shared<Potion_PH>();},
+   [&]{return make_shared<Potion_BA>();},[&]{return make_shared<Potion_WA>();},
+   [&]{return make_shared<Potion_BD>();},[&]{return make_shared<Potion_WD>();}};
+
+//shared_ptr<Treasure> Game::TreasureFactory::make() {
+//  int tType = rand() %
+*/
 
 void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
   for (int i = 0; i < 20; ++i) {
@@ -110,7 +194,7 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
 }*/  
     
 void Game::generatePotions(vector<vector<Cell *>> &vcham) {
-  Game::PotionFactory pf = Game::PotionFactory::getInstance(); // get factory
+  Game::GenericFactory pf = Game::GenericFactory::getInstance(); // get factory
   for (int i = 0; i < NUM_POTION_SPAWN; i++) {
     vector<Cell*> &vc = vcham[rand() % vcham.size()]; // select rand chamber
 
@@ -118,7 +202,8 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
     Cell &selected = *(vc[selectedCellIdx]);  // select random cell
     vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
 
-    shared_ptr<Potion> to_place = pf.makePotion(); // make a random potion
+    shared_ptr<Potion> to_place = 
+      pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS); // make a random potion
     
     // place the random potion in the selected cell
     theGrid->placeEntity(to_place, {selected.getRow(), selected.getCol()});
@@ -127,6 +212,7 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
  
  
 void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
+  Game::GenericFactory tf = Game::GenericFactory::getInstance();
   for (int i = 0; i < NUM_TREASURE_SPAWN; i++) {
     int numChambers = vvc.size();
     int selectedChamberIdx = rand() % numChambers;
@@ -137,7 +223,9 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
 
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-    shared_ptr<Treasure> toPlace(new Treasure_Normal()); 
+
+    shared_ptr<Treasure> toPlace =
+      tf.make<Treasure>(TREASURE_SPAWN_RATES, TREASURE_MAKERS); 
     theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
   }
 }
