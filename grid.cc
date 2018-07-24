@@ -91,6 +91,14 @@ vector<vector<Cell *>> & Grid::getChambers() {
   return chambers;
 }
 
+int Grid::getLevel() const {
+  return level;
+}
+
+void Grid::levelUp() {
+  level++;
+}
+
 void Grid::moveEntity(Posn src, Posn dest) {
   //cout << "src: " << src.r << ", " << src.c << "dest: " << dest.r << ", " << dest.c << endl;
   if (getCell(dest).getOccupant()) {

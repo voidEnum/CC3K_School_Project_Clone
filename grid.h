@@ -33,7 +33,8 @@ public:
   int getHeight() const;
 
   std::vector<std::vector<Cell *>> & getChambers(); //Returns a reference to the chambers vector UNSAFE
-
+  int getLevel() const;
+  void levelUp();
   void moveEntity(Posn src, Posn dest);
   void removeEntity(Posn remFrom);
   void placeEntity(std::shared_ptr<Entity> e, Posn placeHere);
