@@ -12,6 +12,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   double atkOffset;
   double defOffset;
  public:
+  virtual void modifyHp(int delta) override;
   virtual void modifyAtkOffset(double delta);
   virtual double getAtkOffset() const;
   virtual int getAtk() const override;

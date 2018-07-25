@@ -76,7 +76,7 @@ class Game {
   std::vector<std::shared_ptr<Enemy>>enemies;
   //std::vector<std::shared_ptr<Potion>>potions;
   bool frozen = false;
-  bool isHostile = false;
+  //bool isHostile = false;
   // methods
  public:
   Game();

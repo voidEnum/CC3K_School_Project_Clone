@@ -7,7 +7,7 @@
 class Player;
 
 class Merchant: public Enemy {
-  bool isHostile = false;
+static  bool isHostile;
  public:
    Merchant();
    void turnHostile();
