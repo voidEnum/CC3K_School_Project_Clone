@@ -9,7 +9,7 @@ class Enemy;
 class Vampire: public Player {
  public:
   Vampire();
-  atkStatus attack(std::shared_ptr<Enemy> aggressor) override;
+  atkStatus attack(const std::shared_ptr<Enemy> &aggressor) override;
 };
 
 #endif

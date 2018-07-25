@@ -30,12 +30,14 @@ void PlayerDecorator::addGold(int reward) {return thePlayer->addGold(reward);}
 int PlayerDecorator::finalScore() {return thePlayer->finalScore();}
 int PlayerDecorator::getGold() {return thePlayer->getGold();}
 //these will probably need to be fixed
+/* try not overriding the potion use functions, since they apply the decoratos
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_RH> p) {return thePlayer->useEntity(p);}
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_PH> p) {return thePlayer->useEntity(p);}
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_BA> p) {return thePlayer->useEntity(p);}
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_WA> p) {return thePlayer->useEntity(p);}
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_BD> p) {return thePlayer->useEntity(p);}
 shared_ptr<Player> PlayerDecorator::useEntity(shared_ptr<Potion_WD> p) {return thePlayer->useEntity(p);}
+*/
 
 // PlayerDecoratorAtk Implementation
 PlayerDecoratorAtk::PlayerDecoratorAtk(shared_ptr<Player> p, int n):

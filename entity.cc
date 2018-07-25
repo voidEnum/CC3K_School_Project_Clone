@@ -14,7 +14,7 @@ string Entity::getName() const {
   return name;
 }
 
-atkStatus Entity::wasAttacked(Creature *aggressor) {
+atkStatus Entity::wasAttacked(Creature &aggressor) {
   (void)aggressor;
   return atkStatus::InvalidTarget;
 }
@@ -44,6 +44,10 @@ shared_ptr<Player> Entity::beUsedBy(shared_ptr<Player> user) {
   return user;
 }
 
+// do nothing by default
+void Entity::beUsedBy(Player &user) {
+  (void)user;
+}
 
 // by default, do nothing when stepped on
 void Entity::beSteppedOn(Entity &whoStepped) {

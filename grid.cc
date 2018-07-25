@@ -1,8 +1,10 @@
 #include "grid.h"
+#include "posn.h"
 
 #include <fstream>
 
 #include "entity.h"
+#include "treasure_dragon.h"
 
 using namespace std;
 
@@ -102,7 +104,6 @@ void Grid::levelUp() {
 void Grid::moveEntity(Posn src, Posn dest) {
   //cout << "src: " << src.r << ", " << src.c << "dest: " << dest.r << ", " << dest.c << endl;
   if (getCell(dest).getOccupant()) {
-    cout << "dest has occupant";
     getCell(dest).getOccupant()->beSteppedOn(*(getCell(src).getOccupant()));
   }
   getCell(dest).setOccupant(getCell(src).getOccupant());
@@ -112,8 +113,22 @@ void Grid::moveEntity(Posn src, Posn dest) {
   td->update(getCell(dest));
 }
 
-void Grid::placeEntity(shared_ptr<Entity> e, Posn placeHere) {
+
+void Grid::placeEntity(const shared_ptr<Entity> &e, Posn placeHere) {
   e->setPos(placeHere);
+  if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(e.get())) {
+    vector<Posn> emptyNeighbours;
+    for (int i = placeHere.r - 1; i <= placeHere.r + 1; i++) {
+      for (int j = placeHere.c -1; j <= placeHere.c + 1; j++) {
+        if ((placeHere.r != i || placeHere.c != j) && !(getCell({i,j}).getOccupant())
+             && getCell({i,j}).getTerrain() == Terrain::ChamFloor) {
+          emptyNeighbours.push_back({i,j});
+        }
+      }
+    }
+    placeEntity((shared_ptr<Entity>) td->getDragon(), emptyNeighbours[rand() % 
+                                                      emptyNeighbours.size()]);
+  }
   getCell(placeHere).setOccupant(e);
   td->update(getCell(placeHere));
 }

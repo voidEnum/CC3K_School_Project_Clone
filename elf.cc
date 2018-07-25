@@ -12,9 +12,10 @@ Elf::Elf():
 string Elf::actionText(shared_ptr<Player>p, atkStatus as1) {
   string newActionText;
   atkStatus as2 = attack(p);
-  string atkAsString = to_string(2 * damage(getAtk(),p->getDef()));
+  string atkAsString = to_string(damage(getAtk(),p->getDef()));
   string playerHpAsString = to_string(p->getHp());
   if(as1 == atkStatus::Hit && as2 == atkStatus::Hit) {
+    atkAsString = to_string(2 * damage(getAtk(),p->getDef()));
     newActionText = " Elf attacks " + p->getName() + " twice deals " + atkAsString + " damage to " + p->getName() + "(" + playerHpAsString + ").";
   } else if ((as1 == atkStatus::Miss && as2 == atkStatus::Hit) || (as1 == atkStatus::Hit&& as2 == atkStatus::Miss)){
     newActionText = " Elf attacks " + p->getName() + " twice but it misses once deals " + atkAsString + " damage to " + p->getName() + "(" + playerHpAsString + ").";

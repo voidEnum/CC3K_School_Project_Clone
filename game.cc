@@ -7,7 +7,7 @@
 #include "dwarf.h"
 #include "elf.h"
 #include "merchant.h"
-
+#include "dragon.h"
 #include "halfling.h"
 #include "orc.h"
 
@@ -33,7 +33,7 @@
 #include <stdlib.h>
 using namespace std;
 
-Game::Game(): theGrid(make_shared<Grid>(), player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
+Game::Game(): theGrid{make_unique<Grid>()}, player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
   theGrid->init("maps/basicFloor.txt", 1);
 }
 
@@ -137,7 +137,7 @@ const vector<function<shared_ptr<Potion>()>> Game::PotionFactory::MAKERS =
 */
 
 void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
-  if(!enemies.empty())enemies.clear();
+  //if(!enemies.empty())enemies.clear();
   for (int i = 0; i < 20; ++i) {
     int numChambers = vcham.size();
     int selectedChamberIdx = rand() % (numChambers);
@@ -209,12 +209,13 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
     }
     Cell &selected = *(vc[selectedCellIdx]);  // select random cell
     vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
-
-    shared_ptr<Potion> to_place = 
-      pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS); // make a random potion
+      
+    //shared_ptr<Potion> to_place = 
+    // pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS); // make a random potion
     
     // place the random potion in the selected cell
-    theGrid->placeEntity(to_place, {selected.getRow(), selected.getCol()});
+    theGrid->placeEntity(pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS), // make a random potion 
+                         {selected.getRow(), selected.getCol()});
   }
 }  
  
@@ -234,8 +235,11 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
     Cell &selected = *(vc[selectedCellIdx]);
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
 
-    shared_ptr<Treasure> toPlace =
-      tf.make<Treasure>(TREASURE_SPAWN_RATES, TREASURE_MAKERS); 
+    shared_ptr<Treasure> toPlace = tf.make<Treasure>(
+                                   TREASURE_SPAWN_RATES, TREASURE_MAKERS);
+    if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(toPlace.get())) {
+      enemies.push_back(td->getDragonAsEnemy());
+    }
     theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
   }
 }
@@ -302,29 +306,33 @@ bool Game::startRound(const string &race) {
   generatePotions(candidateCells);
   generateTreasures(candidateCells);
   generateEnemies(candidateCells);
+  
   return true;
 }
-string Game::moveEnemies(bool frozen) {
+string Game::moveEnemies() {
   enemy_sort(enemies);
   string full_action_text = "";
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
     //cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
-    if (dynamic_pointer_cast<Merchant>(e)&& isInAttackRange(e_Posn)) {
+    if (dynamic_pointer_cast<Merchant>(e) && isInAttackRange(e_Posn)) /*&& isInAttackRange(e_Posn))*/ {
       auto m = static_pointer_cast<Merchant>(e);
       if (m->checkHostile()){
         atkStatus as = m->attack(player);
         full_action_text += m->actionText(player, as);
-      }else if (!frozen && isAnyValidNeighbour(e_Posn)) {
+      }else if (isAnyValidNeighbour(e_Posn)) {
         theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
       }
-    }
-    else if (isInAttackRange(e_Posn)) {
+    } else if (Dragon *d = dynamic_cast<Dragon *>(e.get())) {
+        if (isInAttackRange(e_Posn) || isInAttackRange(d->getHoard()->getPosn())) {
+          atkStatus as = d->attack(player);
+          full_action_text += d->actionText(player, as);
+        }
+    } else if (isInAttackRange(e_Posn)) {
       atkStatus as = e->attack(player);
       //cout << "after_attacking player: " << e->actionText(player) <<endl;
       full_action_text += e->actionText(player, as);
-    }
-    else if (!frozen && isAnyValidNeighbour(e_Posn)) {
+    } else if(isAnyValidNeighbour(e_Posn)) {
       theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
     }
   }
@@ -592,8 +600,8 @@ bool valid_dir(string dir) {
   }
 }
 
-void useTogether(shared_ptr<Player> &user, const shared_ptr<Entity> &used) {
-  user = used->beUsedBy(user);
+void useTogether(Player &user, Entity &used) {
+  used.beUsedBy(user);
 }
 
 /*string Game::processTurn(const string &command) {
@@ -619,7 +627,7 @@ string Game::processTurn(const string &command) {
     }
   }
   
-  else if (s == "use") {
+  else if (s == "u") {
     iss >> s;
     //cout << "use detected" << endl;
     if (valid_dir(s)) {
@@ -627,7 +635,7 @@ string Game::processTurn(const string &command) {
       //cout << "target posn: " << target.r << " , " << target.c << endl;
       if (theGrid->hasUsable(target)) { // if the occupant of target can be used
         //cout << "target can be used " << endl;
-        useTogether(player, theGrid->getCell(target).getOccupant()); // make player use the occupant of target
+        useTogether(*player, *(theGrid->getCell(target).getOccupant())); // make player use the occupant of target
         full_printing_msg += "PC uses " + theGrid->getCell(target).getOccupant()->getName() + ".";
         theGrid->removeEntity(target);  //remove target from the board
         movePlayer(s); //fdsmakmfdskmfsdlfdkslk
@@ -650,13 +658,16 @@ string Game::processTurn(const string &command) {
     full_printing_msg += movePlayer(s);
     full_printing_msg += potion_near();
   } 
-  full_printing_msg += moveEnemies(frozen);
+  if (!frozen) {
+    full_printing_msg += moveEnemies();
+  }
   return full_printing_msg;
 }
 
 void Game::print(string printing_msg) {
   cout << *theGrid;
-  cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) << endl;
+  cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) 
+       << "                                                  Floor "<<theGrid->getLevel()<<endl;
   cout << "HP: " << to_string(player->getHp()) << endl;
   cout << "Atk: " << to_string(player->getAtk()) << endl;
   cout << "Def: " << to_string(player->getDef()) << endl;

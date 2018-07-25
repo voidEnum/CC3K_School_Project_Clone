@@ -13,7 +13,7 @@ Goblin::Goblin(): Player("Goblin", 110, 15, 20) {}
   return as;
 } */
 
-string Goblin::actionText(shared_ptr<Enemy>aggressor, atkStatus as) {
+string Goblin::actionText(shared_ptr<Enemy>&aggressor, atkStatus as) {
  //cout << "is this printed" <<endl;
  string newActionText;
   if(as == atkStatus::Hit) {
