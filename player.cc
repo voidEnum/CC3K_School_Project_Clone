@@ -1,8 +1,8 @@
 #include <iostream>
 #include "player.h"
-#include "player_decorators.h"
 #include "cell.h"
 #include "enemy.h"
+#include "treasure.h"
 using namespace std;
 
 Player::Player(string name, int hp, int atk, int def): 
@@ -30,6 +30,21 @@ shared_ptr<Player>Player::withoutBuffs() {
 void Player::removeBuffs() {
   atkOffset = 0;
   defOffset = 0;
+}
+
+void Player::setOnGold(const shared_ptr<Treasure> &onThis) {
+  onGold = onThis;
+}
+
+shared_ptr<Treasure> Player::getOnGold() const {
+  return onGold;
+}
+
+void Player::endTurn() {
+  if (onGold && onGold->canBeAdded()) {
+    addGold(onGold->getValue());
+    setOnGold(nullptr);
+  }
 }
 
 //bool Player::useEntity(Entity &e) {

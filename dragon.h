@@ -5,9 +5,9 @@
 class Treasure_Dragon;
 
 class Dragon: public Enemy {
-  Treasure_Dragon * Hoard;
+   Treasure_Dragon *hoard;
  public:
-   Dragon(Treasure_Dragon * hoard);
+   Dragon(Treasure_Dragon *td);
    Treasure_Dragon * getHoard() const;
 };
 #endif

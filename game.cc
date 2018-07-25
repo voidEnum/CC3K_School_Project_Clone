@@ -59,12 +59,14 @@ const vector<function<shared_ptr<Potion>()>> Game::POTION_MAKERS =
 
 const vector<int> Game::TREASURE_SPAWN_RATES =
   {Treasure_Small::SPAWN_RATE, Treasure_Normal::SPAWN_RATE,
-   Treasure_Merchant::SPAWN_RATE, Treasure_Dragon::SPAWN_RATE};
+   Treasure_Merchant::SPAWN_RATE, 10000/*Treasure_Dragon::SPAWN_RATE*/};
 const vector<function<shared_ptr<Treasure>()>> Game::TREASURE_MAKERS =
   {[&]{return make_shared<Treasure_Small>();},
    [&]{return make_shared<Treasure_Normal>();},
    [&]{return make_shared<Treasure_Merchant>();},
-   [&]{return make_shared<Treasure_Dragon>();}};
+   [&]{shared_ptr<Treasure_Dragon> temp = make_shared<Treasure_Dragon>();
+       temp->makeDragon();
+       return temp;}};
 
 /*
 const vector<int> Game::PotionFactory::S_RATES =
@@ -228,12 +230,14 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
     if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(toPlace.get())) {
       vector<int> tdNeighboursCellsIdx;
       while (tdNeighboursCellsIdx.empty()) {
-        for (int i = 0; i < numCells; i++) {
-          Posn s_posn = vc[selectedCellIdx]->getPosn();
+        Posn s_posn = vc[selectedCellIdx]->getPosn();
+        cout << "selected_posn.r " << s_posn.r << " selected_posn.c " << s_posn.c << endl;
+        for (int i = 0; i < numCells; i++) { 
           Posn c_posn = vc[i]->getPosn();
           int rdiff = abs(c_posn.r - s_posn.r);
           int cdiff = abs(c_posn.c - s_posn.c);
-          if (rdiff <= 1 && cdiff <= 1 && !vc[i]->getOccupant()) {
+          if (rdiff <= 1 && cdiff <= 1 && !(s_posn == c_posn) && !vc[i]->getOccupant()) {
+            cout << "matching candidate posn.r " << c_posn.r << " matching candidate posn.c " << c_posn.c << endl;
             tdNeighboursCellsIdx.push_back(i);
           }
         }
@@ -243,6 +247,7 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
       }
       int selectedNeighbourIdx = tdNeighboursCellsIdx[rand() 
                               % tdNeighboursCellsIdx.size()];
+      cout << "dragon actual posn.r " << vc[selectedNeighbourIdx]->getPosn().r << " dragon actual posn.c " << vc[selectedNeighbourIdx]->getPosn().c << endl;
       theGrid->placeEntity(td->getDragonAsEnemy(), 
                            vc[selectedNeighbourIdx]->getPosn());
       vc.erase(vc.begin() + selectedNeighbourIdx);
@@ -617,6 +622,7 @@ string Game::processTurn(const string &command) {
     iss >> s;
     if (valid_dir(s)) {
       full_printing_msg += PlayerAttack(s);
+      player->endTurn();
     }
   }
   
@@ -632,6 +638,7 @@ string Game::processTurn(const string &command) {
         full_printing_msg += "PC uses " + theGrid->getCell(target).getOccupant()->getName() + ".";
         theGrid->removeEntity(target);  //remove target from the board
         movePlayer(s); //fdsmakmfdskmfsdlfdkslk
+        player->endTurn();
         //todo generate action text
       }
     }
@@ -650,6 +657,7 @@ string Game::processTurn(const string &command) {
   else if (valid_dir(s)) {
     full_printing_msg += movePlayer(s);
     full_printing_msg += potion_near();
+    player->endTurn();
   } 
   if (!frozen) {
     full_printing_msg += moveEnemies();

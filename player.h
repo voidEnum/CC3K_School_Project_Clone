@@ -5,21 +5,25 @@
 #include <memory>
 #include <string>
 #include "enemy.h"
+class Treasure;
 
 class Player: public Creature, public std::enable_shared_from_this<Player> {
   int gold;
   int maxHp;
   double atkOffset;
   double defOffset;
+  std::shared_ptr<Treasure> onGold;
  public:
   virtual void modifyHp(int delta) override;
   virtual void modifyAtkOffset(double delta);
   virtual double getAtkOffset() const;
-  virtual int getAtk() const override;
+  virtual int getAtk() const override; 
   virtual void modifyDefOffset(double delta);
   virtual double getDefOffset() const;
   virtual int getDef() const override;
   virtual void removeBuffs();
+  virtual void setOnGold(const std::shared_ptr<Treasure> &onThis);
+  std::shared_ptr<Treasure> getOnGold() const;
   Player(std::string name, int hp = 100, int atk = 50, int def = 50);
   virtual atkStatus attack(const std::shared_ptr<Enemy> &aggressor);
   virtual atkStatus wasAttacked(const std::shared_ptr<Enemy> &aggressor, int modifiedDamage);
@@ -27,7 +31,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   virtual int getMaxHp();
   virtual void move(Posn p);
   //virtual void beginTurn();
-  //virtual void endTurn();
+  virtual void endTurn() override;
   virtual void addGold(int reward);
   //bool useEntity(Cell &cell);
   virtual int finalScore();
