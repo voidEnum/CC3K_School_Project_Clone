@@ -623,20 +623,20 @@ string Game::processTurn(const string &command) {
 
 void Game::print(string printing_msg) {
   cout << *theGrid;
-  cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) << endl;
-  cout << "HP: " << to_string(player->getHp()) << endl;
-  cout << "Atk: " << to_string(player->getAtk()) << endl;
-  cout << "Def: " << to_string(player->getDef()) << endl;
+  cout << "Race: " << player->getName() << " Gold: " << player->finalScore() << endl;
+  cout << "HP: " << player->getHp() << endl;
+  cout << "Atk: " << player->getAtk() << endl;
+  cout << "Def: " << player->getDef() << endl;
   cout << "Action: " << printing_msg << endl; 
 }
 
 bool Game::gameOver() {
   if(player->getHp() <= 0) {
-    cout<< "You have been slained! Game Over."<<endl;
+    cout << "You have been slained! Game Over." << endl;
     return true;
   } 
   else if (theGrid->getLevel() == 6) {
-    cout<< "Congratulations, you reach the top of the floor, you won the game!"<<endl;
+    cout << "Congratulations, you reach the top of the floor, you won the game!" << endl;
     return true;
   } 
   else if (quit == true) {
