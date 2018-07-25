@@ -40,13 +40,13 @@ void Player::modifyAtkOffset(double delta){atkOffset += delta;}
 
 double Player::getAtkOffset() const {return atkOffset;}
 
-int Player::getAtk() const {return atk + atkOffset;}
+int Player::getAtk() const {return  ((atk + atkOffset) <= 0) ? 0 : atk + atkOffset;}
 
 void Player::modifyDefOffset(double delta){defOffset += delta;}
 
 double Player::getDefOffset() const {return defOffset;}
 
-int Player::getDef() const {return def + defOffset;}
+int Player::getDef() const {return ((def + defOffset) <= 0) ? 0 : def + defOffset;}
 
 atkStatus Player::attack(const shared_ptr<Enemy> &aggressor) {
     return aggressor->wasAttacked(shared_from_this());

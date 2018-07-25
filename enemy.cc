@@ -15,11 +15,11 @@ atkStatus Enemy::attack(shared_ptr<Player> p) {
 }
 
 atkStatus Enemy::wasAttacked(shared_ptr<Player>player) {
-  this->setHp(this->getHp() -  damage(player->getAtk(), getDef()));
-    if (this->getHp() <= 0) {
-      return atkStatus::Kill;
-    }
-    return atkStatus::Hit;
+  this->setHp(this->getHp() - damage(player->getAtk(), getDef()));
+  if (this->getHp() <= 0) {
+    return atkStatus::Kill;
+  }
+  return atkStatus::Hit;
 }
 
 string Enemy::actionText(shared_ptr<Player>p, atkStatus as) {
