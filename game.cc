@@ -341,8 +341,20 @@ Posn dir_to_posn(Posn currPosn, string direction) {
   else return {-1, -1};
 }
 
+string dirToDirection(const string &direction) {
+    if (direction == "ea") return "east";
+  else if (direction == "no") return "north";
+  else if (direction == "we") return "west";
+  else if (direction == "so") return "south";
+  else if (direction == "nw") return "north_west";
+  else if (direction == "ne") return "north-east";
+  else if (direction == "sw") return "south-west";
+  else return "south-east";
+}
+
 string Game::movePlayer(const string &direction) {
   string full_action_text = "";
+  string directionAsString = dirToDirection(direction);
   Posn player_Posn = player->getPosn();
   Posn heading_dir = dir_to_posn(player_Posn, direction); 
   if (theGrid->canStep(heading_dir, *player)) {
@@ -354,14 +366,14 @@ string Game::movePlayer(const string &direction) {
     } else if (theGrid->getCell(heading_dir).getSymbol() == 'G') {
       auto t = static_pointer_cast<Treasure>(theGrid->getCell(heading_dir).getOccupant());
       string goldAsString = to_string(t->getValue());
-      full_action_text += "PC moves " + direction + ". PC picked " + t->getName() + " up, PC add gold(" + goldAsString +").";
+      full_action_text += "PC moves " + directionAsString + ". PC picked up " + t->getName() + ", PC earn " + goldAsString +" gold.";
       theGrid->moveEntity(player_Posn, heading_dir);
     } else {
       theGrid->moveEntity(player_Posn, heading_dir);
-      full_action_text += "PC moves " + direction + ".";
+      full_action_text += "PC moves " + directionAsString + ".";
     }
   }else {
-    throw Invalid_behave("");
+    throw Invalid_behave("Please, enter a valid move direction!");
   }
   return full_action_text;
   /* original
@@ -580,7 +592,7 @@ void Game::print(string printing_msg) {
 bool Game::gameOver() {
   int p_score = player->finalScore();
   if(player->getHp() <= 0) {
-    cout<< "You have been slained! Game Over."<<endl;
+    cout<< "You were slained! Game Over."<<endl;
     if(dynamic_pointer_cast<Shade>(player)) p_score *= 1.5;
     cout<< "Your final score: " <<p_score<<"."<<endl;
     return true;
