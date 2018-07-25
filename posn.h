@@ -6,4 +6,5 @@ struct Posn {
   int c;
 };
 
+bool operator==(const Posn &p1, const Posn &p2);
 #endif
