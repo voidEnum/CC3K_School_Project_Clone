@@ -20,8 +20,18 @@ int main() {
   srand(time(NULL));
   cout << "please select your race: (s)hade, (t)roll, (d)row, (v)ampire, (g)oblin" <<endl;
   
-  theController.getCommand();
-  theController.sendRace(theGame);
+  //theController.getCommand();
+  while (true) {
+    theController.getCommand();
+    try {
+      theController.sendRace(theGame);
+    }
+    catch (Invalid_behave& ib) {
+      cout << ib.what() << endl;
+      continue;
+    }
+    break;
+  }
   theController.requestDisplay(theGame, "The player entered the dungeon");
 
   while (!theGame.gameOver()) {
@@ -34,6 +44,7 @@ int main() {
       theController.requestDisplay(theGame, print_msg);
     }
     catch (Invalid_behave& ib) {
+      cout << ib.what() << endl;
       continue;
     }
   }

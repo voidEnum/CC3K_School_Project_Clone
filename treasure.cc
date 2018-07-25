@@ -1,7 +1,6 @@
 #include "treasure.h"
 #include "player.h"
 
-#include <iostream>
 
 using namespace std;
 
@@ -11,17 +10,9 @@ int Treasure::getValue() const {
   return value;
 }
 
-// When players step on treasures, they gain the treasure's value in gold
-/*void Treasure::beSteppedOn(Player &whoStepped) {
-  cout << "this should get called" << endl;
-  whoStepped.addGold(value);
-}*/
-
 void Treasure::beSteppedOn(Entity &whoStepped) {
   // Using dynamic casts for double dispatch
   // If any player steps on me, use setOnGold(shared_from_this())
-  
-  cout << "calling treasure beSteppedOn" << endl;
   if (Player *p = dynamic_cast<Player*>(&whoStepped)) {
     p->setOnGold(shared_from_this());
   }

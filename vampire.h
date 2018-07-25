@@ -9,6 +9,7 @@ class Enemy;
 class Vampire: public Player {
  public:
   Vampire();
+  void modifyHp(int delta);
   atkStatus attack(const std::shared_ptr<Enemy> &aggressor) override;
 };
 

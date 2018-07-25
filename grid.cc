@@ -117,10 +117,8 @@ void Grid::moveEntity(Posn src, Posn dest) {
     p->setOnGold(nullptr);
   }  
   if (onDest) {
-    cout << "onDest use count: " << onDest.use_count() << endl;
     onDest->beSteppedOn(*onSrc);
   }
-  cout << "gets passwd be stepped on" << endl;
   dCell.setOccupant(onSrc);
   onSrc->setPos(dest);
 
