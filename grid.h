@@ -47,6 +47,7 @@ public:
   bool hasUsable(Posn p) const;
   // checks if the Entity e can step on the cell at Posn p
   bool canStep(Posn p, const Entity &e) const;
+  void clear();
 
   friend std::ostream &operator<<(std::ostream &out, const Grid &g);
 };

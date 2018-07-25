@@ -31,6 +31,7 @@
 #include <iterator>
 #include <algorithm>
 #include <stdlib.h>
+#include <vector>
 using namespace std;
 
 Game::Game(): theGrid{make_unique<Grid>()}, player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
@@ -253,37 +254,54 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
 
     theGrid->placeEntity(toPlace, selected.getPosn());
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-  }
+    }
 }
 
 
-void Game::generatePlayer(const string &race, vector<vector<Cell *>> &vvc) {
-  (void)race;
-  int numChambers = vvc.size();
-  int selectedChamberIdx = rand() % numChambers;
-  vector<Cell *> &vc = vvc[selectedChamberIdx];
-  int numCells = vc.size();
-  int selectedCellIdx = rand() % numCells;
-  Cell &selected = *(vc[selectedCellIdx]);
-  vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-  if (race == "s") {
-    player = make_shared<Shade>();
-  }
-  else if (race == "d") {
-    player = make_shared<Drow>();
-  }
-  else if (race == "v") {
-    player = make_shared<Vampire>();
-  }
-  else if (race == "t") {
-    player = make_shared<Troll>();
-  }
-  else if (race == "g") {
-    player = make_shared<Goblin>();
-  }
-  else {player = make_shared<Player>("Player");}
+void Game::generatePlayer(vector<vector<Cell *>> &vvc, const string &race = "") {
+  if (!player) {
+    int numChambers = vvc.size();
+    int selectedChamberIdx = rand() % numChambers;
+    vector<Cell *> &vc = vvc[selectedChamberIdx];
+    int numCells = vc.size();
+    int selectedCellIdx = rand() % numCells;
+    Cell &selected = *(vc[selectedCellIdx]);
+    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   
-  theGrid->placeEntity(player, {selected.getRow(), selected.getCol()});
+    if (race == "s") {
+      player = make_shared<Shade>();
+    }
+    else if (race == "d") {
+      player = make_shared<Drow>();
+    }
+    else if (race == "v") {
+      player = make_shared<Vampire>();
+    }
+    else if (race == "t") {
+      player = make_shared<Troll>();
+    }
+    else if (race == "g") {
+      player = make_shared<Goblin>();
+    }
+    else {player = make_shared<Player>("Player");
+    }
+    theGrid->placeEntity(player, selected.getPosn());
+  }else { //find the players index in vvc
+    bool done = false;
+    for (auto vc : vvc) {
+      for (auto it = vc.begin(); it != vc.end(); it++) {
+        if ((*it)->getPosn() == player->getPosn()) {
+          vc.erase(it); // remove the cell the player will be place in from candidate cells
+          done = true;
+          break;
+        }
+      }
+      if (done) break;
+    }
+    theGrid->placeEntity(player, player->getPosn());
+  }
+     
+  
  /* int stairChamberIdx = rand() % (numChambers - 1);
   if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
   vector<Cell *> &stairChamber = vvc[stairChamberIdx];
@@ -309,12 +327,17 @@ bool Game::startRound(const string &race) {
   // Copy the chamber layout
   quit = false;
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
-  
-  generatePlayer(race, candidateCells);
+  //cout << "vector" <<endl;
+  generatePlayer(candidateCells, race);
+  //cout << "player" <<endl;
   generateStair(candidateCells);
+  //cout << "stair" <<endl;
   generatePotions(candidateCells);
+  //cout << "potion" <<endl;
   generateTreasures(candidateCells);
+  //cout << "treasure" <<endl;
   generateEnemies(candidateCells);
+  //cout << "enemies" << endl;
   
   return true;
 }
@@ -420,10 +443,12 @@ void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemy_vector) {
   sort(enemy_vector.begin(), enemy_vector.end(), &sort_function);
 }
 
-void Game::changeFloor(Posn playerPosn) {
-  theGrid->init("maps/basicFloor.txt",theGrid->getLevel());
+void Game::changeFloor() {
+  theGrid->init("maps/basicFloor.txt",theGrid->getLevel() + 1);
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
-  theGrid->placeEntity(player,playerPosn);
+  
+  enemies.clear();
+  generatePlayer(candidateCells);
   generateStair(candidateCells);
   generatePotions(candidateCells);
   generateTreasures(candidateCells);
@@ -455,8 +480,7 @@ string Game::movePlayer(const string &direction) {
   Posn heading_dir = dir_to_posn(player_Posn, direction); 
   if (theGrid->canStep(heading_dir, *player)) {
     if (theGrid->getCell(heading_dir).getSymbol() == '\\') {
-      theGrid->levelUp();
-      changeFloor(dir_to_posn(player_Posn,direction));
+      changeFloor();
       string levelAsString = to_string(theGrid->getLevel());
       full_action_text += player->getName() + " moves to next floor current floor(" + levelAsString + ").";
     } else if (theGrid->getCell(heading_dir).getSymbol() == 'G') {
@@ -520,46 +544,50 @@ string Game::PlayerAttack(string direction) {
   Cell &target_cell = theGrid->getCell(dir_to_posn(player_Posn,direction));
   if(target_cell.getOccupant() == nullptr) {
     return "There is no enemy at that direction.";
-  } else {
-    char entity_sym = target_cell.getOccupant()->getSymbol();
-    auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
-    if (entity_sym == 'E' || entity_sym == 'L' ||
-        entity_sym == 'W' || entity_sym == 'O' || entity_sym == 'D') {
-      atkStatus as = player->attack(e);
-      if (as == atkStatus::Kill) {
-        theGrid->removeEntity(e->getPosn());
-        enemies.erase(enemies.begin() + enemy_index(e));
-      }
-      return player->actionText(e, as);
-    } else if (entity_sym == 'M') {
-      auto mt  = static_pointer_cast<Merchant>(e);
-      mt->turnHostile();
-      atkStatus as = player->attack(e);
-      if (as == atkStatus::Kill) {
-        Posn e_Posn = e->getPosn();
-        theGrid->removeEntity(e->getPosn());
-        enemies.erase(enemies.begin() + enemy_index(e));
-        auto tm = make_shared<Treasure_Merchant>();
-        theGrid->placeEntity(tm,e_Posn);
-      }
-      return player->actionText(e, as);
-    } else if (entity_sym == 'H') {
-      atkStatus as = player->attack(e);
-      if (as == atkStatus::Kill) {
-        Posn e_Posn = e->getPosn();
-        theGrid->removeEntity(e->getPosn());
-        enemies.erase(enemies.begin() + enemy_index(e));
-        auto tn1 = make_shared<Treasure_Normal>();
-        theGrid->placeEntity(tn1,e_Posn);
-        if (isAnyValidNeighbour(e_Posn)) {
-          auto tn2 = make_shared<Treasure_Normal>();
-          theGrid->placeEntity(tn2,validRandomNeighbour(e_Posn));
-        } else player->addGold(2);
-      }
-      return player->actionText(e, as);
-    } else return player->actionText(e, atkStatus::InvalidTarget);
+  } 
+  char entity_sym = target_cell.getOccupant()->getSymbol();
+  auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
+  if (entity_sym == 'E' || entity_sym == 'L' ||
+      entity_sym == 'W' || entity_sym == 'O' || entity_sym == 'D') {
+    atkStatus as = player->attack(e);
+    if (as == atkStatus::Kill) {
+      theGrid->removeEntity(e->getPosn());
+      enemies.erase(enemies.begin() + enemy_index(e));
+    }  
+    return player->actionText(e, as);
+  } 
+  else if (entity_sym == 'M') {
+    auto mt  = static_pointer_cast<Merchant>(e);
+    mt->turnHostile();
+    atkStatus as = player->attack(e);
+    if (as == atkStatus::Kill) {
+      Posn e_Posn = e->getPosn();
+      theGrid->removeEntity(e->getPosn());
+      enemies.erase(enemies.begin() + enemy_index(e));
+      auto tm = make_shared<Treasure_Merchant>();
+      theGrid->placeEntity(tm,e_Posn);
+    }
+    return player->actionText(e, as);
   }
+  else if (entity_sym == 'H') {
+    atkStatus as = player->attack(e);
+    if (as == atkStatus::Kill) {
+      Posn e_Posn = e->getPosn();
+      theGrid->removeEntity(e->getPosn());
+      enemies.erase(enemies.begin() + enemy_index(e));
+      auto tn1 = make_shared<Treasure_Normal>();
+      theGrid->placeEntity(tn1,e_Posn);
+      if (isAnyValidNeighbour(e_Posn)) {
+        auto tn2 = make_shared<Treasure_Normal>();
+        theGrid->placeEntity(tn2,validRandomNeighbour(e_Posn));
+      }
+      else player->addGold(2);
+      }
+     return player->actionText(e, as);
+   }
+   return player->actionText(e, atkStatus::InvalidTarget);
 }
+
 /*  
 void Game::Player_usePotion(string direction) {
   int size = potions.size();
@@ -613,13 +641,24 @@ string Game::processTurn(const string &command) {
   string s;
   iss >> s;
   player->beginTurn();
+  if (s == "r") {
+    enemies.clear();
+    theGrid->clear();
+    theGrid->init("maps/basicFloor.txt", 1);
+    //player = make_shared<Shade>();
+    //print("");
+    player = nullptr;
+    cout << "Insert a new race please" << endl;
+    cin >> s;
+    startRound(s);
+    print("the player entered the dungeon");
+  }
   if (s == "a") {
     iss >> s;
     if (valid_dir(s)) {
       full_printing_msg += PlayerAttack(s);
     }
   }
-  
   else if (s == "u") {
     iss >> s;
     //cout << "use detected" << endl;
