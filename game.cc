@@ -222,20 +222,41 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
   for (int i = 0; i < NUM_TREASURE_SPAWN; i++) {
     int numChambers = vvc.size();
     int selectedChamberIdx = rand() % numChambers;
-
+    
+    shared_ptr<Treasure> toPlace = tf.make<Treasure>(
+                                   TREASURE_SPAWN_RATES, TREASURE_MAKERS);
     vector<Cell *> &vc = vvc[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % numCells;
 
-    Cell &selected = *(vc[selectedCellIdx]);
-    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-
-    shared_ptr<Treasure> toPlace = tf.make<Treasure>(
-                                   TREASURE_SPAWN_RATES, TREASURE_MAKERS);
     if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(toPlace.get())) {
+      vector<int> tdNeighboursCellsIdx;
+      while (tdNeighboursCellsIdx.empty()) {
+        for (int i = 0; i < numCells; i++) {
+          Posn s_posn = vc[selectedCellIdx]->getPosn();
+          Posn c_posn = vc[i]->getPosn();
+          int rdiff = abs(c_posn.r - s_posn.r);
+          int cdiff = abs(c_posn.c - s_posn.c);
+          if (rdiff <= 1 && cdiff <= 1 && !vc[i]->getOccupant()) {
+            tdNeighboursCellsIdx.push_back(i);
+          }
+        }
+        if (tdNeighboursCellsIdx.empty()) {
+          selectedCellIdx = rand() % numCells;
+        }
+      }
+      int selectedNeighbourIdx = tdNeighboursCellsIdx[rand() 
+                              % tdNeighboursCellsIdx.size()];
+      theGrid->placeEntity(td->getDragonAsEnemy(), 
+                           vc[selectedNeighbourIdx]->getPosn());
+      vc.erase(vc.begin() + selectedNeighbourIdx);
       enemies.push_back(td->getDragonAsEnemy());
     }
-    theGrid->placeEntity(toPlace, {selected.getRow(), selected.getCol()});
+
+    Cell &selected = *(vc[selectedCellIdx]);
+
+    theGrid->placeEntity(toPlace, selected.getPosn());
+    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
 
@@ -288,7 +309,7 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
   int stairIdx = rand() % stairChamber.size();
   Cell &stairway = *(stairChamber[stairIdx]);
   stairChamber.erase(stairChamber.begin() + stairIdx);
-  theGrid->placeStairs({stairway.getRow(), stairway.getCol()});
+  theGrid->placeStairs(stairway.getPosn());
 }
 
 bool Game::startRound(const string &race) {
