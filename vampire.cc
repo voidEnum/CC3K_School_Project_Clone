@@ -1,6 +1,8 @@
 #include "vampire.h"
 #include "enemy.h"
 
+#include "dwarf.h"
+
 Vampire::Vampire(): Player("Vampire", 50, 25, 25) {}
 
 /*
@@ -15,7 +17,17 @@ atkStatus Vampire::attack(Cell &target) {
 =======
 */
 atkStatus Vampire::attack(const std::shared_ptr<Enemy> &aggressor) {
-  setHp(getHp() + 5);
-  return aggressor->wasAttacked(shared_from_this());
+  atkStatus result = aggressor->wasAttacked(shared_from_this());
+  if (Dwarf* d = dynamic_cast<Dwarf*>(aggressor.get())) {
+    (void)d;
+    if (result == atkStatus::Hit || result == atkStatus::Kill) {
+      modifyHp(-5);
+    }
+  }else {
+    if (result == atkStatus::Hit || result == atkStatus::Kill) {
+      modifyHp(5);
+    }
+  }
+  return result;
 }
 

@@ -122,7 +122,6 @@ void Grid::placeEntity(const shared_ptr<Entity> &e, Posn placeHere) {
       for (int j = placeHere.c -1; j <= placeHere.c + 1; j++) {
         if ((placeHere.r != i || placeHere.c != j) && !(getCell({i,j}).getOccupant())
              && getCell({i,j}).getTerrain() == Terrain::ChamFloor) {
-          cout << "i is " << i << " j is " << j << endl;
           emptyNeighbours.push_back({i,j});
         }
       }

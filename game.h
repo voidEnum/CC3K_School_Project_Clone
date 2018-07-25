@@ -90,7 +90,7 @@ class Game {
   void generateTreasures(std::vector<std::vector<Cell *>> &vcham); // all normal treasures for now
   void generatePlayer(const std::string &race, std::vector<std::vector<Cell *>> &vvc); // generic player for now
   void generateStair(std::vector<std::vector<Cell *>> &vvc);
-  std::string moveEnemies(bool frozen);
+  std::string moveEnemies();
   void changeFloor(Posn playerposn);
   //void update_display();
   std::string movePlayer(const std::string &direction);

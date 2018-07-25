@@ -9,7 +9,7 @@ class Player;
 class Treasure: public Item {
 protected:
   int value;
-  Treasure(int v = 2);
+  Treasure(int v, std::string name);
 public:
   virtual int getValue() const;
   virtual void beSteppedOn(Entity &whoStepped) override;
