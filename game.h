@@ -52,32 +52,11 @@ class Game {
       return nullptr;
     }
   };
-  /* Not needed if generic works
-  class PotionFactory {
-    PotionFactory() = default;
-    static const std::vector<int> S_RATES;
-    static const std::vector<std::function<std::shared_ptr<Potion>()>> MAKERS;
-  public:
-    static PotionFactory& getInstance();
-    std::shared_ptr<Potion> make();
-  }; */
-
-  /*class TreasureFactory {
-    TreasureFactory() = default;
-    static const std::vector<int> S_RATES;
-    static const std::vector<std::function<std::shared_ptr<Treasure>()>> MAKERS;
-  public:
-    static TreasureFactory &getInstance();
-    std::shared_ptr<Treasure> make();
-  };*/
     
   std::unique_ptr<Grid> theGrid;
   std::shared_ptr<Player> player;
   std::vector<std::shared_ptr<Enemy>>enemies;
-  //std::vector<std::shared_ptr<Potion>>potions;
   bool frozen = false;
-  //bool isHostile = false;
-  // methods
  public:
   Game();
   bool startRound(const std::string &race);
@@ -92,13 +71,10 @@ class Game {
   void generateStair(std::vector<std::vector<Cell *>> &vvc);
   std::string moveEnemies();
   void changeFloor();
-  //void update_display();
   std::string movePlayer(const std::string &direction);
   std::string potion_near();
   int enemy_index(std::shared_ptr<Enemy>e);
   std::string PlayerAttack(std::string direction);
-  //void enemyAttack();
-  //void Player_usePotion();
   void freeze();
   void chackvalid();
   bool checkIfHostile() const;

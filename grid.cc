@@ -4,7 +4,8 @@
 #include <fstream>
 
 #include "entity.h"
-#include "treasure_dragon.h"
+#include "player.h"
+#include "treasure.h"
 
 using namespace std;
 
@@ -103,12 +104,27 @@ void Grid::levelUp() {
 
 void Grid::moveEntity(Posn src, Posn dest) {
   //cout << "src: " << src.r << ", " << src.c << "dest: " << dest.r << ", " << dest.c << endl;
-  if (getCell(dest).getOccupant()) {
-    getCell(dest).getOccupant()->beSteppedOn(*(getCell(src).getOccupant()));
+  Cell &sCell = getCell(src);
+  Cell &dCell = getCell(dest);
+
+  shared_ptr<Entity> onSrc = sCell.getOccupant();
+  shared_ptr<Entity> onDest = dCell.getOccupant();
+
+  shared_ptr<Treasure> putOnSrc;
+   
+  if (Player*p = dynamic_cast<Player *>(onSrc.get())) {
+    putOnSrc = p->getOnGold();
+    p->setOnGold(nullptr);
+  }  
+  if (onDest) {
+    cout << "onDest use count: " << onDest.use_count() << endl;
+    onDest->beSteppedOn(*onSrc);
   }
-  getCell(dest).setOccupant(getCell(src).getOccupant());
-  getCell(dest).getOccupant()->setPos(dest);
-  getCell(src).setOccupant(nullptr);
+  cout << "gets passwd be stepped on" << endl;
+  dCell.setOccupant(onSrc);
+  onSrc->setPos(dest);
+
+  sCell.setOccupant(putOnSrc);
   td->update(getCell(src));
   td->update(getCell(dest));
 }

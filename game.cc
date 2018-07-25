@@ -34,15 +34,9 @@
 #include <vector>
 using namespace std;
 
-Game::Game(): theGrid{make_unique<Grid>()}, player{nullptr}, /*enemies{nullptr}, potions{nullptr},*/ frozen{false} {
+Game::Game(): theGrid{make_unique<Grid>()}, player{nullptr},frozen{false} {
   theGrid->init("maps/basicFloor.txt", 1);
 }
-
-/*
-Game::PotionFactory & Game::PotionFactory::getInstance() {
-  static PotionFactory theFactory;
-  return theFactory;
-}*/
 
 Game::GenericFactory & Game::GenericFactory::getInstance() {
   static GenericFactory theFactory;
@@ -65,80 +59,11 @@ const vector<function<shared_ptr<Treasure>()>> Game::TREASURE_MAKERS =
   {[&]{return make_shared<Treasure_Small>();},
    [&]{return make_shared<Treasure_Normal>();},
    [&]{return make_shared<Treasure_Merchant>();},
-   [&]{return make_shared<Treasure_Dragon>();}};
-
-/*
-const vector<int> Game::PotionFactory::S_RATES =
-  {Potion_RH::SPAWN_RATE, Potion_PH::SPAWN_RATE,
-   Potion_BA::SPAWN_RATE, Potion_WA::SPAWN_RATE,
-   Potion_BD::SPAWN_RATE, Potion_WD::SPAWN_RATE};
-
-//vector of lambda functions that return shared_ptrs to subtype
-const vector<function<shared_ptr<Potion>()>> Game::PotionFactory::MAKERS = 
-  {[&]{return make_shared<Potion_RH>();},[&]{return make_shared<Potion_PH>();},
-   [&]{return make_shared<Potion_BA>();},[&]{return make_shared<Potion_WA>();},
-   [&]{return make_shared<Potion_BD>();},[&]{return make_shared<Potion_WD>();}};
-
-shared_ptr<Potion> Game::PotionFactory::make() {
-  // get the sum of the spawn rates
-  int s_rate_sum = 0;
-  for (auto i: S_RATES) {
-    s_rate_sum += i;
-  }
-
-  // generate a random number between 1 and s_rate_sum inclusive
-  int pType = rand() % s_rate_sum + 1;
-
-  // for each element of S_RATES, add its value to accumulator
-  // when the accumulator is >= the random number, use MAKERS
-  // to spawn the appropriate Potion type.
-  int accumulated_s_rate = 0;
-  for (int i = 0, end = S_RATES.size();i < end; i++) {
-    accumulated_s_rate += S_RATES[i];
-    if (accumulated_s_rate >= pType) {
-        return MAKERS[i]();
-    }
-  }
-
-  // if function gets here, nothing was spawned. should not happen
-  return nullptr;
-}
-*/
-
-  /* original
-  switch (pType) {
-    case 0 : return make_shared<Potion_RH>();
-    case 1 : return make_shared<Potion_PH>();
-    case 2 : return make_shared<Potion_BA>();
-    case 3 : return make_shared<Potion_WA>();
-    case 4 : return make_shared<Potion_BD>();
-    case 5 : return make_shared<Potion_WD>();
-    default: return nullptr; // should not happen
-  }
-}*/
-
-/*
-Game::TreasureFactory & Game::TreasureFactory::getInstance() {
-  static TreasureFactory theFactory;
-  return theFactory;
-}
-const vector<int> Game::TreasureFactory::S_RATES =
-  {Potion_RH::SPAWN_RATE, Potion_PH::SPAWN_RATE,
-   Potion_BA::SPAWN_RATE, Potion_WA::SPAWN_RATE,
-   Potion_BD::SPAWN_RATE, Potion_WD::SPAWN_RATE};
-
-//vector of lambda functions that return shared_ptrs to subtype
-const vector<function<shared_ptr<Potion>()>> Game::PotionFactory::MAKERS = 
-  {[&]{return make_shared<Potion_RH>();},[&]{return make_shared<Potion_PH>();},
-   [&]{return make_shared<Potion_BA>();},[&]{return make_shared<Potion_WA>();},
-   [&]{return make_shared<Potion_BD>();},[&]{return make_shared<Potion_WD>();}};
-
-//shared_ptr<Treasure> Game::TreasureFactory::make() {
-//  int tType = rand() %
-*/
+   [&]{shared_ptr<Treasure_Dragon> temp = make_shared<Treasure_Dragon>();
+       temp->makeDragon(); // Guard Dragon must be initialized
+       return temp;}};
 
 void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
-  //if(!enemies.empty())enemies.clear();
   for (int i = 0; i < 20; ++i) {
     int numChambers = vcham.size();
     int selectedChamberIdx = rand() % (numChambers);
@@ -175,25 +100,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   }
 }
-  /*int size = theGrid.size();
-  int randomrange = 0;
-  int randomnumber = 0;
-  Vector<Cell>candidates;
-  for (int i = 0; i < size; ++i) {
-    for (int j = 0; j < size; ++j) {
-      if (theGrid[i][j].cell.tile == Terrain::Chamfloor) {
-        ++randomrange;
-        candidates.emplace_back(theGrid[i][j]);
-      }
-    }
-  }
-  for (int k = 0; k < 20; ++k) {
-    randomnumber = rand() % randomrange;
-    Enemy &e = Enemy{&candidates[randomnumber]};
-    placeEntity(e, candidates[randomnumber]);
-    enemies.emplace_back(e);
-  }
-}*/  
     
 void Game::generatePotions(vector<vector<Cell *>> &vcham) {
   Game::GenericFactory pf = Game::GenericFactory::getInstance(); // get factory
@@ -204,8 +110,6 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
     Cell &selected = *(vc[selectedCellIdx]);  // select random cell
     vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
       
-    //shared_ptr<Potion> to_place = 
-    // pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS); // make a random potion
     
     // place the random potion in the selected cell
     theGrid->placeEntity(pf.make<Potion>(POTION_SPAWN_RATES, POTION_MAKERS), // make a random potion 
@@ -225,16 +129,17 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
     vector<Cell *> &vc = vvc[selectedChamberIdx];
     int numCells = vc.size();
     int selectedCellIdx = rand() % numCells;
+    
 
     if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(toPlace.get())) {
       vector<int> tdNeighboursCellsIdx;
       while (tdNeighboursCellsIdx.empty()) {
-        for (int i = 0; i < numCells; i++) {
-          Posn s_posn = vc[selectedCellIdx]->getPosn();
+        Posn s_posn = vc[selectedCellIdx]->getPosn();
+        for (int i = 0; i < numCells; i++) { 
           Posn c_posn = vc[i]->getPosn();
           int rdiff = abs(c_posn.r - s_posn.r);
           int cdiff = abs(c_posn.c - s_posn.c);
-          if (rdiff <= 1 && cdiff <= 1 && !vc[i]->getOccupant()) {
+          if (rdiff <= 1 && cdiff <= 1 && !(s_posn == c_posn) && !vc[i]->getOccupant()) {
             tdNeighboursCellsIdx.push_back(i);
           }
         }
@@ -248,10 +153,12 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
                            vc[selectedNeighbourIdx]->getPosn());
       vc.erase(vc.begin() + selectedNeighbourIdx);
       enemies.push_back(td->getDragonAsEnemy());
+      if (selectedNeighbourIdx < selectedCellIdx) {
+        selectedCellIdx--; //if an ealier index was deleted, decrement the index by one to compensate
+      }
     }
 
     Cell &selected = *(vc[selectedCellIdx]);
-
     theGrid->placeEntity(toPlace, selected.getPosn());
     vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
     }
@@ -300,18 +207,8 @@ void Game::generatePlayer(vector<vector<Cell *>> &vvc, const string &race = "") 
     }
     theGrid->placeEntity(player, player->getPosn());
   }
-     
+}     
   
- /* int stairChamberIdx = rand() % (numChambers - 1);
-  if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
-  vector<Cell *> &stairChamber = vvc[stairChamberIdx];
-  int stairIdx = rand() % stairChamber.size();
-  Cell &stairway = *(stairChamber[stairIdx]);
-  stairChamber.erase(stairChamber.begin() + stairIdx);
-  theGrid->placeStairs({stairway.getRow(), stairway.getCol()});
-*/
-}         
-
 void Game::generateStair(vector<vector<Cell *>> &vvc) {
   int stairChamberIdx = rand() % (vvc.size() - 1);
   int selectedChamberIdx = (theGrid->getCell(player->getPosn())).getChamber() - 1;
@@ -324,20 +221,14 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
 }
 
 bool Game::startRound(const string &race) {
-  // Copy the chamber layout
   quit = false;
+  // Copy the chamber layout
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
-  //cout << "vector" <<endl;
   generatePlayer(candidateCells, race);
-  //cout << "player" <<endl;
   generateStair(candidateCells);
-  //cout << "stair" <<endl;
   generatePotions(candidateCells);
-  //cout << "potion" <<endl;
   generateTreasures(candidateCells);
-  //cout << "treasure" <<endl;
   generateEnemies(candidateCells);
-  //cout << "enemies" << endl;
   
   return true;
 }
@@ -346,8 +237,7 @@ string Game::moveEnemies() {
   string full_action_text = "";
   for(auto e : enemies) {
     Posn e_Posn = e->getPosn();
-    //cout << "e_posn: " << e_Posn.r << ", " << e_Posn.c << endl;
-    if (dynamic_pointer_cast<Merchant>(e) && isInAttackRange(e_Posn)) /*&& isInAttackRange(e_Posn))*/ {
+    if (dynamic_pointer_cast<Merchant>(e) && isInAttackRange(e_Posn))  {
       auto m = static_pointer_cast<Merchant>(e);
       if (m->checkHostile()){
         atkStatus as = m->attack(player);
@@ -362,40 +252,17 @@ string Game::moveEnemies() {
         }
     } else if (isInAttackRange(e_Posn)) {
       atkStatus as = e->attack(player);
-      //cout << "after_attacking player: " << e->actionText(player) <<endl;
       full_action_text += e->actionText(player, as);
     } else if(isAnyValidNeighbour(e_Posn)) {
       theGrid->moveEntity(e_Posn,validRandomNeighbour(e_Posn));
     }
   }
   return full_action_text;
-  /*int size = enemies.size();
-  int randomrange = 0;
-  int randomnumber = 0;
-  vector<Cell>candidates;
-  for (int i = 0; i < size; ++i) {
-    row = enemies.cell.getRow();
-    col = enemies.cell.getCol();
-    for (int r = ((row == 0) ? 0 : -1); r <= ((row == size - 1) ? 0 : 1); ++r) {
-        //checks for all neighbors
-      for (int c = ((col == 0) ? 0 : -1); c <= ((col == size - 1) ? 0 : 1); ++c) {
-        if (!(r == 0 && c == 0)) {
-          candidates.emplace_back(theGrid[row + r][col + c]);
-          ++randomrange;
-        }
-      }
-    }
-    randomnumber = rand() % randomrange;
-    theGrid.moveEntity(enemies.at(i).cell, candidates.at(randomnumber));
-    randomnumber = 0;
-    randomrange = 0;
-  }*/
 }
 
 bool Game::isAnyValidNeighbour(Posn p) {
   for (int i = p.r - 1; i <= p.r + 1; ++i) {
     for (int j = p.c - 1; j <= p.c + 1; ++j) {
-      //cout << "i: " << i << " j: " << j << endl;
       if (i != p.r && i != p.c && validSpot(theGrid->getCell({i,j}))) return true;
     }
   }
@@ -492,6 +359,7 @@ string Game::movePlayer(const string &direction) {
   Posn heading_dir = dir_to_posn(player_Posn, direction); 
   if (theGrid->canStep(heading_dir, *player)) {
     if (theGrid->getCell(heading_dir).getSymbol() == '\\') {
+      theGrid->moveEntity(player_Posn, heading_dir);
       changeFloor();
       string levelAsString = to_string(theGrid->getLevel());
       full_action_text += player->getName() + " moves to next floor current floor(" + levelAsString + ").";
@@ -669,6 +537,7 @@ string Game::processTurn(const string &command) {
     iss >> s;
     if (valid_dir(s)) {
       full_printing_msg += PlayerAttack(s);
+      player->endTurn();
     }
   }
   else if (s == "u") {
@@ -683,6 +552,7 @@ string Game::processTurn(const string &command) {
         full_printing_msg += "PC uses " + theGrid->getCell(target).getOccupant()->getName() + ".";
         theGrid->removeEntity(target);  //remove target from the board
         movePlayer(s); //fdsmakmfdskmfsdlfdkslk
+        player->endTurn();
         //todo generate action text
       }
     }
@@ -701,6 +571,7 @@ string Game::processTurn(const string &command) {
   else if (valid_dir(s)) {
     full_printing_msg += movePlayer(s);
     full_printing_msg += potion_near();
+    player->endTurn();
   } 
   if (!frozen) {
     full_printing_msg += moveEnemies();

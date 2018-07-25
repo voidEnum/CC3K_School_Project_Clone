@@ -19,11 +19,17 @@ int Treasure::getValue() const {
 
 void Treasure::beSteppedOn(Entity &whoStepped) {
   // Using dynamic casts for double dispatch
-  // If any player steps on me, add my value of gold to the player
+  // If any player steps on me, use setOnGold(shared_from_this())
+  
+  cout << "calling treasure beSteppedOn" << endl;
   if (Player *p = dynamic_cast<Player*>(&whoStepped)) {
-    p->addGold(value);
+    p->setOnGold(shared_from_this());
   }
   // in all other cases do nothing
+}
+
+bool Treasure::canBeAdded() const {
+  return true;
 }
 
 // By default, players can step on treasure and no one else can
