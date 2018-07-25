@@ -18,8 +18,7 @@ int main() {
   Controller theController(cin);
 
   srand(time(NULL));
-
-  cout << "please select your race: (all input will result in a generic player for now)" <<endl;
+  cout << "please select your race: (s)hade, (t)roll, (d)row, (v)ampire, (g)oblin" <<endl;
   
   theController.getCommand();
   theController.sendRace(theGame);

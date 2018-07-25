@@ -17,7 +17,7 @@ Player::Player(string name, int hp, int atk, int def):
 
 void Player::modifyHp(int delta) {
   hp = (hp + delta > maxHp) ? maxHp : hp + delta;
-  hp = (hp < 0) ? 0 : hp;  
+  hp = (hp <= 0) ? 0 : hp;  
 }
 
 int Player::finalScore() {
