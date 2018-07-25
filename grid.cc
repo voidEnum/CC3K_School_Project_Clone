@@ -116,7 +116,7 @@ void Grid::moveEntity(Posn src, Posn dest) {
 
 void Grid::placeEntity(const shared_ptr<Entity> &e, Posn placeHere) {
   e->setPos(placeHere);
-  if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(e.get())) {
+  /*if (Treasure_Dragon *td = dynamic_cast<Treasure_Dragon *>(e.get())) {
     vector<Posn> emptyNeighbours;
     for (int i = placeHere.r - 1; i <= placeHere.r + 1; i++) {
       for (int j = placeHere.c -1; j <= placeHere.c + 1; j++) {
@@ -128,7 +128,7 @@ void Grid::placeEntity(const shared_ptr<Entity> &e, Posn placeHere) {
     }
     placeEntity((shared_ptr<Entity>) td->getDragon(), emptyNeighbours[rand() % 
                                                       emptyNeighbours.size()]);
-  }
+  }*/
   getCell(placeHere).setOccupant(e);
   td->update(getCell(placeHere));
 }
