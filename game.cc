@@ -145,9 +145,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
     int numCells = vc.size();
     int selectedCellIdx = rand() % (numCells);
     int enemyType = rand() % 18 + 1;
-    while (!validSpot(*(vc[selectedCellIdx]))){
-      selectedCellIdx = rand() % (numCells);
-    }
     Cell &selected = *(vc[selectedCellIdx]);
     if(enemyType >= 1 && enemyType <= 4) {
       shared_ptr<Human> H(make_shared<Human>());
@@ -171,7 +168,6 @@ void Game::generateEnemies(vector<vector<Cell *>> &vcham) {
       enemies.emplace_back(O);
     } else {
       shared_ptr<Merchant> M(make_shared<Merchant>());
-      if(checkIfHostile()) M->turnHostile();
       theGrid->placeEntity(M, {selected.getRow(), selected.getCol()});
       enemies.emplace_back(M);
     }
@@ -204,9 +200,6 @@ void Game::generatePotions(vector<vector<Cell *>> &vcham) {
     vector<Cell*> &vc = vcham[rand() % vcham.size()]; // select rand chamber
 
     int selectedCellIdx = rand() % vc.size(); // get random cell index
-    while (!validSpot(*(vc[selectedCellIdx]))){
-      selectedCellIdx = rand() % vc.size();
-    }
     Cell &selected = *(vc[selectedCellIdx]);  // select random cell
     vc.erase(vc.begin() + selectedCellIdx);   // remove cell from candidates
       
@@ -307,9 +300,6 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
   if (stairChamberIdx >= selectedChamberIdx) stairChamberIdx++;
   vector<Cell *> &stairChamber = vvc[stairChamberIdx];
   int stairIdx = rand() % stairChamber.size();
-  while (!validSpot(*(stairChamber [stairIdx]))){
-      stairIdx = rand() % stairChamber.size();
-  }
   Cell &stairway = *(stairChamber[stairIdx]);
   stairChamber.erase(stairChamber.begin() + stairIdx);
   theGrid->placeStairs(stairway.getPosn());
@@ -438,7 +428,7 @@ void Game::changeFloor(Posn playerPosn) {
   generatePotions(candidateCells);
   generateTreasures(candidateCells);
   generateEnemies(candidateCells);
-  //player->removeBuffs();
+  player->removeBuffs();
 }
 /*  
 void Game::update_display() {
@@ -542,16 +532,8 @@ string Game::PlayerAttack(string direction) {
       }
       return player->actionText(e, as);
     } else if (entity_sym == 'M') {
-      changeHostile();
       auto mt  = static_pointer_cast<Merchant>(e);
-      if(!mt->checkHostile()) {
-        for (auto en : enemies) {
-          if (dynamic_pointer_cast<Merchant>(en)) {
-            auto m = static_pointer_cast<Merchant>(en);
-            m->turnHostile();
-          }
-        }
-      }
+      mt->turnHostile();
       atkStatus as = player->attack(e);
       if (as == atkStatus::Kill) {
         Posn e_Posn = e->getPosn();
@@ -594,15 +576,7 @@ void Game::Player_usePotion(string direction) {
     }
   }
 }
-*/
-
-bool Game::checkIfHostile() const {
-  return isHostile;
-}
-
-void Game::changeHostile() {
-  isHostile = true;
-}
+}*/
 
 void Game::freeze() {
   frozen = !frozen;

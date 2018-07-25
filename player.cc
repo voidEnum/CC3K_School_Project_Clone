@@ -13,6 +13,10 @@ Player::Player(string name, int hp, int atk, int def):
   target.occupant.applyEffect(this);
 }*/
 
+void Player::modifyHp(int delta) {
+  hp = (hp + delta > maxHp) ? maxHp : hp + delta;
+  hp = (hp < 0) ? hp : 0;  
+}
 
 int Player::finalScore() {
   return gold;

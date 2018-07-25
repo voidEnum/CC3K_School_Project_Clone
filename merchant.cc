@@ -2,7 +2,9 @@
 #include "player.h"
 
 Merchant::Merchant(): 
-   Enemy{'M', "Merchant", 30, 70, 5}, isHostile{false} {}
+   Enemy{'M', "Merchant", 30, 70, 5} {}
+
+bool Merchant::isHostile = false;
 
 
 void Merchant::turnHostile() {
