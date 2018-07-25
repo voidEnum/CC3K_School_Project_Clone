@@ -527,15 +527,22 @@ string Game::processTurn(const string &command) {
   player->beginTurn();
   if (s == "r") {
     enemies.clear();
-    theGrid->clear();
+    player = nullptr;
     theGrid->init("maps/basicFloor.txt", 1);
     //player = make_shared<Shade>();
     //print("");
-    player = nullptr;
     cout << "Insert a new race please" << endl;
-    cin >> s;
-    startRound(s);
-    print("the player entered the dungeon");
+    while (true) {
+      getline(cin, s);
+      try {
+        startRound(s);
+      } catch (Invalid_behave& ib) {
+        cout << ib.what() << endl;
+        continue;
+      }
+      break;
+    }
+    return "The player entered the dungeon";
   }
   if (s == "a") {
     iss >> s;
