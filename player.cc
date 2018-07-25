@@ -102,6 +102,7 @@ string Player::actionText(shared_ptr<Enemy> &aggressor, atkStatus as) {
       char sym = aggressor->getSymbol();
       if(sym != 'M' && sym != 'H' && sym != 'D') {
         int whatTreasure = rand() % 2;
+        
         addGold(whatTreasure + 1);
         newActionText = "PC killed " + aggressor->getName() + ", PC earned " + to_string(whatTreasure + 1) + " gold.";
         /*if (whatTreasure == 0) {
@@ -139,34 +140,3 @@ void Player::useEntity(Potion_BD &p) {modifyDefOffset(p.getPotency());}
 void Player::useEntity(Potion_WA &p) {modifyAtkOffset(-(p.getPotency()));}
 void Player::useEntity(Potion_WD &p) {modifyDefOffset(-(p.getPotency()));}
 
-
-/* tried to use decorator pattern but ran into shared ptr issues
-shared_ptr<Player> Player::useEntity(shared_ptr<Potion> p) {
-  (void)p;
-  cout << "this is getting called because everyone hates me" << endl;
-  return shared_from_this();
-}
-shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_RH> &p) {
-  modifyHp(p->getPotency());
-  cout << "my hp is " << getHp() << endl;
-  if (this->getHp() >= this->getMaxHp()) {
-    this->setHp(this->getMaxHp());
-  }
-  return shared_from_this();
-}
-shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_PH> &p) {
-  modifyHp(-(p->getPotency()));
-  return shared_from_this();
-}
-shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_BA> &p) {
-  return make_shared<PlayerDecoratorAtk>(shared_from_this(), p->getPotency());
-}
-shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_WA> &p) {
-  return make_shared<PlayerDecoratorAtk>(shared_from_this(), -(p->getPotency()));
-}
-shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_BD> &p) {
-  return make_shared<PlayerDecoratorDef>(shared_from_this(), p->getPotency());
-}
-shared_ptr<Player> Player::useEntity(const shared_ptr<Potion_WD> &p) {
-  return make_shared<PlayerDecoratorDef>(shared_from_this(), -(p->getPotency()));
-}*/

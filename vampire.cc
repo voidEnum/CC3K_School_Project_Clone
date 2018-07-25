@@ -16,6 +16,12 @@ atkStatus Vampire::attack(Cell &target) {
   return ak;
 =======
 */
+
+void Vampire::modifyHp(int delta) {
+  hp = hp + delta;
+  hp = (hp <= 0) ? 0 : hp;
+}
+
 atkStatus Vampire::attack(const std::shared_ptr<Enemy> &aggressor) {
   atkStatus result = aggressor->wasAttacked(shared_from_this());
   if (Dwarf* d = dynamic_cast<Dwarf*>(aggressor.get())) {

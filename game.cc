@@ -222,6 +222,10 @@ void Game::generateStair(vector<vector<Cell *>> &vvc) {
 
 bool Game::startRound(const string &race) {
   quit = false;
+  if (race != "s" && race != "d" && race != "v" &&
+      race != "t" && race != "g") {
+    throw Invalid_behave("Please enter one of (s), (d), (v), (t), (g)");
+  }
   // Copy the chamber layout
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
   generatePlayer(candidateCells, race);
@@ -366,7 +370,7 @@ string Game::movePlayer(const string &direction) {
     } else if (theGrid->getCell(heading_dir).getSymbol() == 'G') {
       auto t = static_pointer_cast<Treasure>(theGrid->getCell(heading_dir).getOccupant());
       string goldAsString = to_string(t->getValue());
-      full_action_text += "PC moves " + directionAsString + ". PC picked up " + t->getName() + ", PC earn " + goldAsString +" gold.";
+      full_action_text += "PC moves " + directionAsString + ". PC picked up " + t->getName() + ", PC earned " + goldAsString +" gold.";
       theGrid->moveEntity(player_Posn, heading_dir);
     } else {
       theGrid->moveEntity(player_Posn, heading_dir);

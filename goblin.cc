@@ -14,9 +14,9 @@ Goblin::Goblin(): Player("Goblin", 110, 15, 20) {}
 } */
 
 string Goblin::actionText(shared_ptr<Enemy>&aggressor, atkStatus as) {
+ string newActionText = Player::actionText(aggressor, as);
  //cout << "is this printed" <<endl;
- string newActionText;
-  if(as == atkStatus::Hit) {
+  /*if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
     string EnemyHpAsString = to_string(aggressor->getHp());
     newActionText = getName() + " deals " + atkAsString + " damage to " + aggressor->getName() + "(" + EnemyHpAsString + ").";
@@ -27,7 +27,11 @@ string Goblin::actionText(shared_ptr<Enemy>&aggressor, atkStatus as) {
   }
   else {
     newActionText = getName() + " attacks " + aggressor->getName() +  " but it missed.";
-  }
+  }*/
+  if (as == atkStatus::Kill) {
+    addGold(5);
+    newActionText += " Goblin abilities earn you 5 extra gold.";
+  } 
   //p->actionText(newActionText);
   return newActionText;
 } 
