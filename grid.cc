@@ -187,3 +187,11 @@ ostream &operator<<(ostream &out, const Grid &g) {
 bool Grid::canStep(Posn p, const Entity &e) const{
   return theGrid[p.r][p.c].canStepHere(e);
 }
+
+void Grid::clear() {
+  int size = theGrid.size();
+  for (int i = 0; i < size; ++i) {
+    theGrid[i].clear();
+  }
+  theGrid.clear();
+}

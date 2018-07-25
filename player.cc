@@ -3,6 +3,8 @@
 #include "cell.h"
 #include "enemy.h"
 #include "treasure.h"
+#include <cstdlib>
+#include <string>
 using namespace std;
 
 Player::Player(string name, int hp, int atk, int def): 
@@ -15,7 +17,7 @@ Player::Player(string name, int hp, int atk, int def):
 
 void Player::modifyHp(int delta) {
   hp = (hp + delta > maxHp) ? maxHp : hp + delta;
-  hp = (hp < 0) ? hp : 0;  
+  hp = (hp < 0) ? 0 : hp;  
 }
 
 int Player::finalScore() {
@@ -71,7 +73,7 @@ atkStatus Player::attack(const shared_ptr<Enemy> &aggressor) {
     return aggressor->wasAttacked(shared_from_this());
 }
 
-atkStatus Player::wasAttacked(const shared_ptr<Enemy> &aggressor, int modifiedDamage) {
+atkStatus Player::wasAttacked(const shared_ptr<Enemy> &aggressor, double modifiedDamage) {
   int randomAction = rand() % 2;
   if (randomAction == 0) { 
     this->setHp(this->getHp() - modifiedDamage * damage(aggressor->getAtk(), getDef()));
@@ -97,7 +99,19 @@ string Player::actionText(shared_ptr<Enemy> &aggressor, atkStatus as) {
     string enemyHpAsString = to_string(aggressor->getHp());
     newActionText = "PC deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + ").";
   } else if (as == atkStatus::Kill){
-      newActionText = "PC killed " + aggressor->getName() + ".";
+      char sym = aggressor->getSymbol();
+      if(sym != 'M' && sym != 'H' && sym != 'D') {
+        int whatTreasure = rand() % 2;
+        addGold(whatTreasure + 1);
+        newActionText = "PC killed " + aggressor->getName() + ", PC earned " + to_string(whatTreasure + 1) + " gold.";
+        /*if (whatTreasure == 0) {
+          shared_from_this()->addGold(1);
+          newActionText = "PC killed " + aggressor->getName() + ", PC earn 1 gold ";
+        } else  {
+          shared_from_this()->addGold(2);
+          newActionText = "PC killed " + aggressor->getName() + ", PC earn 2 gold ";
+        }*/
+      } else newActionText = "PC killed " + aggressor->getName() + ".";
   } else if (as == atkStatus::Miss){
       newActionText = "PC attacks " + aggressor->getName() + " but it missed.";
   } else {

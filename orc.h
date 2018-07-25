@@ -9,6 +9,7 @@ class Orc: public Enemy {
  public:
    Orc();
    atkStatus attack(std::shared_ptr<Player> p) override;
+   std::string actionText(std::shared_ptr<Player>p, atkStatus as) override;
 };
 
 #endif

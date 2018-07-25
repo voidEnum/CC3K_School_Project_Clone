@@ -26,7 +26,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   std::shared_ptr<Treasure> getOnGold() const;
   Player(std::string name, int hp = 100, int atk = 50, int def = 50);
   virtual atkStatus attack(const std::shared_ptr<Enemy> &aggressor);
-  virtual atkStatus wasAttacked(const std::shared_ptr<Enemy> &aggressor, int modifiedDamage);
+  virtual atkStatus wasAttacked(const std::shared_ptr<Enemy> &aggressor, double modifiedDamage);
   virtual std::string actionText(std::shared_ptr<Enemy> &aggressor, atkStatus as);
   virtual int getMaxHp();
   virtual void move(Posn p);
