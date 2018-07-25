@@ -13,7 +13,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   double atkOffset;
   double defOffset;
   std::shared_ptr<Treasure> onGold;
- public:
+public:
   virtual void modifyHp(int delta) override;
   virtual void modifyAtkOffset(double delta);
   virtual double getAtkOffset() const;
@@ -35,13 +35,6 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   virtual void addGold(int reward);
   //bool useEntity(Cell &cell);
   virtual int finalScore();
-/*<<<<<<< HEAD
-  std::shared_ptr<Player>withoutBuffs();
-  virtual std::string actionText(std::shared_ptr<Enemy> aggressor, atkStatus as);
-  int getMaxHp();
-  int getGold();
-  void beginTurn();
-=======*/
   virtual std::shared_ptr<Player> withoutBuffs();
   virtual int getGold();
   virtual void beginTurn();
@@ -52,16 +45,7 @@ class Player: public Creature, public std::enable_shared_from_this<Player> {
   virtual void useEntity(Potion_BD &p);
   virtual void useEntity(Potion_WA &p);
   virtual void useEntity(Potion_WD &p);
-  //virtual std::shared_ptr<Player> useEntity(std::shared_ptr<Potion> p); with decorrators
-  //virtual std::shared_ptr<Player> useEntity(const std::shared_ptr<Potion_RH> &p);
-  //virtual std::shared_ptr<Player> useEntity(const std::shared_ptr<Potion_PH> &p);
-  //virtual std::shared_ptr<Player> useEntity(const std::shared_ptr<Potion_BA> &p);
-  //virtual std::shared_ptr<Player> useEntity(const std::shared_ptr<Potion_WA> &p);
-  //virtual std::shared_ptr<Player> useEntity(const std::shared_ptr<Potion_BD> &p);
-  //virtual std::shared_ptr<Player> useEntity(const std::shared_ptr<Potion_WD> &p);
-//>>>>>>> 10045a89f208b61fa5b1dcb354f2c139e614874a
- private:
-  void die();
+private:
   static int ceil_divide(int numerator, int denom);
 };
 
