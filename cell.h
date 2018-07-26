@@ -14,10 +14,7 @@ class Cell  {
   Terrain tile; 
   std::shared_ptr<Entity> occupant;
   int chamber;
-
-  // Add other private members if necessary
-
-public:
+ public:
   Cell(size_t r, size_t c, Terrain t);
   int getRow() const;
   int getCol() const;
@@ -26,13 +23,11 @@ public:
   std::shared_ptr<Entity> getOccupant() const;
   void setOccupant(std::shared_ptr<Entity> e);
   Terrain getTerrain() const;
-
   char getSymbol() const;
-
   void setChamber(int n);
   void makeStairs();
   bool hasUsable() const;
-  
+
   // returns true if p is allowed to step on this tile based on terrain and
   // current occupant.
   bool canStepHere(const Entity &p) const;

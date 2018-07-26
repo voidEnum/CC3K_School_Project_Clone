@@ -2,6 +2,12 @@
 #define _PLAYER_H_
 #include "creature.h"
 #include "potion.h"
+#include "potion_RH.h"
+#include "potion_PH.h"
+#include "potion_BA.h"
+#include "potion_WA.h"
+#include "potion_BD.h"
+#include "potion_WD.h"
 #include <memory>
 #include <string>
 #include "enemy.h"
@@ -30,15 +36,11 @@ public:
   virtual std::string actionText(std::shared_ptr<Enemy> &aggressor, atkStatus as);
   virtual int getMaxHp();
   virtual void move(Posn p);
-  //virtual void beginTurn();
   virtual void endTurn() override;
   virtual void addGold(int reward);
-  //bool useEntity(Cell &cell);
   virtual int finalScore();
-  virtual std::shared_ptr<Player> withoutBuffs();
   virtual int getGold();
   virtual void beginTurn();
-  //useEntity overloads for visitor pattern
   virtual void useEntity(Potion_RH &p);
   virtual void useEntity(Potion_PH &p);
   virtual void useEntity(Potion_BA &p);

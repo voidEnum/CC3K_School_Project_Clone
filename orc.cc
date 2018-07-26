@@ -32,14 +32,13 @@ string Orc::actionText(shared_ptr<Player>p, atkStatus as) {
       atkAsString = to_string(damage(getAtk(), p->getDef()));
     }
     string playerHpAsString = std::to_string(p->getHp());
-    newActionText = " " + getName() + " deals " + atkAsString + " damage to PC" + "(" + playerHpAsString + ").";
+    newActionText = getName() + " deals " + atkAsString + " damage to PC" + "(" + playerHpAsString + ").";
   
   } else if (as == atkStatus::Miss){
-    newActionText = " " + getName() + " attacks you but it missed.";
-  } else if (as == atkStatus::Kill /*&& p->getHp() >= 0*/){
-    newActionText = " " + getName() + " killed PC.";
+    newActionText = getName() + " attacks you but it missed.";
+  } else if (as == atkStatus::Kill){
+    newActionText = getName() + " killed PC.";
   }else newActionText = "";
-  //p->actionText(newActionText);
   return newActionText;
 }
 

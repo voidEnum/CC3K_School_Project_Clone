@@ -66,7 +66,8 @@ class Game {
  private:
   void generateEnemies(std::vector<std::vector<Cell *>> &vcham);
   void generatePotions(std::vector<std::vector<Cell *>> &vcham);
-  void generateTreasures(std::vector<std::vector<Cell *>> &vcham); // all normal treasures for now
+  void generateTreasures(std::vector<std::vector<Cell *>> &vcham); 
+  // all normal treasures for now
   void generatePlayer(std::vector<std::vector<Cell *>> &vvc, const std::string &race); // generic player for now
   void generateStair(std::vector<std::vector<Cell *>> &vvc);
   std::string moveEnemies();

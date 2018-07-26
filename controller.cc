@@ -17,6 +17,5 @@ std::string Controller::sendCommand(Game &g) {
 }
 
 void Controller::requestDisplay(Game &g, std::string print_msg) {
-  //std::cout << "controller p_msg: " << print_msg << std::endl;
   g.print(print_msg);
 }
