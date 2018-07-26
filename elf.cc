@@ -10,6 +10,10 @@ Elf::Elf():
 
 
 string Elf::actionText(shared_ptr<Player>p, atkStatus as1) {
+  if (Drow* d = dynamic_cast<Drow *>(p.get())) {
+    (void)d;
+    return Enemy::actionText(p, as1);
+  }else {
   string newActionText;
   atkStatus as2 = attack(p);
   string atkAsString = to_string(damage(getAtk(),p->getDef()));
@@ -22,5 +26,5 @@ string Elf::actionText(shared_ptr<Player>p, atkStatus as1) {
   } else if ((as1 == atkStatus::Kill || as2 == atkStatus::Kill) && p->getHp() >= 0) {
     newActionText = "Elf killed the player.";
   }else newActionText = " Elf attacks " + p->getName() + " twice but it misses twice.";
-  return newActionText;
+  return newActionText;}
 }
