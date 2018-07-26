@@ -5,6 +5,7 @@
 #include "treasure.h"
 #include <cstdlib>
 #include <string>
+#include <cmath>
 using namespace std;
 
 Player::Player(string name, int hp, int atk, int def): 
@@ -61,13 +62,13 @@ void Player::modifyAtkOffset(double delta){atkOffset += delta;}
 
 double Player::getAtkOffset() const {return atkOffset;}
 
-int Player::getAtk() const {return  ((atk + atkOffset) <= 0) ? 0 : atk + atkOffset;}
+int Player::getAtk() const {return  (round(atk + atkOffset) <= 0) ? 0 : round(atk + atkOffset);}
 
 void Player::modifyDefOffset(double delta){defOffset += delta;}
 
 double Player::getDefOffset() const {return defOffset;}
 
-int Player::getDef() const {return ((def + defOffset) <= 0) ? 0 : def + defOffset;}
+int Player::getDef() const {return (round(def + defOffset) <= 0) ? 0 : round(def + defOffset);}
 
 atkStatus Player::attack(const shared_ptr<Enemy> &aggressor) {
     return aggressor->wasAttacked(shared_from_this());
