@@ -12,6 +12,5 @@ public:
   bool isRevealed() const override;
   void reveal() override;
   virtual void beUsedBy(Player &user);
-  //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
 };
 #endif

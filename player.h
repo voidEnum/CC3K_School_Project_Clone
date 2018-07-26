@@ -36,15 +36,11 @@ public:
   virtual std::string actionText(std::shared_ptr<Enemy> &aggressor, atkStatus as);
   virtual int getMaxHp();
   virtual void move(Posn p);
-  //virtual void beginTurn();
   virtual void endTurn() override;
   virtual void addGold(int reward);
-  //bool useEntity(Cell &cell);
   virtual int finalScore();
-  virtual std::shared_ptr<Player> withoutBuffs();
   virtual int getGold();
   virtual void beginTurn();
-  //useEntity overloads for visitor pattern
   virtual void useEntity(Potion_RH &p);
   virtual void useEntity(Potion_PH &p);
   virtual void useEntity(Potion_BA &p);

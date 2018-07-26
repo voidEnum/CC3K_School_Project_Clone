@@ -166,15 +166,15 @@ void Game::generateTreasures(vector<vector<Cell *>> &vvc) {
 
 
 void Game::generatePlayer(vector<vector<Cell *>> &vvc, const string &race = "") {
+ 
+  int numChambers = vvc.size();
+  int selectedChamberIdx = rand() % numChambers;
+  vector<Cell *> &vc = vvc[selectedChamberIdx];
+  int numCells = vc.size();
+  int selectedCellIdx = rand() % numCells;
+  Cell &selected = *(vc[selectedCellIdx]);
+  vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
   if (!player) {
-    int numChambers = vvc.size();
-    int selectedChamberIdx = rand() % numChambers;
-    vector<Cell *> &vc = vvc[selectedChamberIdx];
-    int numCells = vc.size();
-    int selectedCellIdx = rand() % numCells;
-    Cell &selected = *(vc[selectedCellIdx]);
-    vc.erase(vc.begin() + selectedCellIdx); // remove cell from candidate spawn locations
-  
     if (race == "s") {
       player = make_shared<Shade>();
     }
@@ -192,23 +192,9 @@ void Game::generatePlayer(vector<vector<Cell *>> &vvc, const string &race = "") 
     }
     else {player = make_shared<Player>("Player");
     }
-    theGrid->placeEntity(player, selected.getPosn());
-  }else { //find the players index in vvc
-    bool done = false;
-    for (auto vc : vvc) {
-      for (auto it = vc.begin(); it != vc.end(); it++) {
-        if ((*it)->getPosn() == player->getPosn()) {
-          vc.erase(it); // remove the cell the player will be place in from candidate cells
-          done = true;
-          break;
-        }
-      }
-      if (done) break;
-    }
-    theGrid->placeEntity(player, player->getPosn());
   }
-}     
-  
+  theGrid->placeEntity(player, selected.getPosn());
+}  
 void Game::generateStair(vector<vector<Cell *>> &vvc) {
   int stairChamberIdx = rand() % (vvc.size() - 1);
   int selectedChamberIdx = (theGrid->getCell(player->getPosn())).getChamber() - 1;
@@ -285,7 +271,6 @@ Posn Game::validRandomNeighbour(Posn p) {
     }
   }
   int randNum = rand() % candidatesize;
-  //cout << "candidate_pos: " << candidates[randNum]->getPosn().r << ", " << candidates[randNum]->getPosn().c << endl;
   return candidates[randNum]->getPosn();
 }
 
@@ -315,6 +300,7 @@ void Game::enemy_sort(vector<shared_ptr<Enemy>>&enemy_vector) {
 }
 
 void Game::changeFloor() {
+
   theGrid->init("maps/basicFloor.txt",theGrid->getLevel() + 1);
   vector<vector<Cell *>> candidateCells = theGrid->getChambers();
   
@@ -326,10 +312,6 @@ void Game::changeFloor() {
   generateEnemies(candidateCells);
   player->removeBuffs();
 }
-/*  
-void Game::update_display() {
-  theGrid.td.update();
-}*/
 
 Posn dir_to_posn(Posn currPosn, string direction) {
   int row = currPosn.r;
@@ -366,49 +348,44 @@ string Game::movePlayer(const string &direction) {
       theGrid->moveEntity(player_Posn, heading_dir);
       changeFloor();
       string levelAsString = to_string(theGrid->getLevel());
-      full_action_text += player->getName() + " moves to next floor current floor(" + levelAsString + ").";
-    } else if (theGrid->getCell(heading_dir).getSymbol() == 'G') {
-      auto t = static_pointer_cast<Treasure>(theGrid->getCell(heading_dir).getOccupant());
-      string goldAsString = to_string(t->getValue());
-      full_action_text += "PC moves " + directionAsString + ". PC picked up " + t->getName() + ", PC earned " + goldAsString +" gold.";
-      theGrid->moveEntity(player_Posn, heading_dir);
-    } else {
-      theGrid->moveEntity(player_Posn, heading_dir);
-      full_action_text += "PC moves " + directionAsString + ".";
+      full_action_text += player->getName() + 
+                          " moves to next floor current floor(" 
+                          + levelAsString + "). ";
     }
-  }else {
+     else if (theGrid->getCell(heading_dir).getSymbol() == 'G') {
+       auto t = static_pointer_cast<Treasure>
+                (theGrid->getCell(heading_dir).getOccupant());
+       string goldAsString = to_string(t->getValue());
+       if (t->getName() == "Dragon Hoard" && !t->canBeAdded()) {
+         full_action_text += "";
+       }
+       else {
+         full_action_text += "PC moves " + directionAsString + 
+                          ". PC picked up " + t->getName() + 
+                          ", PC earned " + goldAsString +" gold. ";
+       }
+       theGrid->moveEntity(player_Posn, heading_dir);
+    } 
+    else {
+      theGrid->moveEntity(player_Posn, heading_dir);
+      full_action_text += "PC moves " + directionAsString + ". ";
+    }
+  }
+  else {
     throw Invalid_behave("Please, enter a valid move direction!");
   }
   return full_action_text;
-  /* original
-  Posn heading_dir = dir_to_posn(theGrid->getCell(player_Posn), direction);
-  char heading_tile = theGrid->getCell(heading_dir).getSymbol();
-  if (heading_tile == '#' || heading_tile == '.' || heading_tile == '+') { 
-    theGrid->moveEntity(player_Posn, heading_dir);
-    full_action_text += player->getName() + " moves " + direction;
-  }
-  else if (heading_tile == '\\') {
-    theGrid->levelUp();
-    changeFloor(dir_to_posn(player_Posn,direction));
-    string stringAsLevel = to_string(theGrid->getLevel());
-    full_action_text += player->getName() + " moves to next floor current floor(" + stringAsLevel +").";
-  } else {
-    throw Invalid_behave("");
-  }
-  return full_action_text; */
 }
 
 string Game::potion_near() {
   for (int i = -1; i <= 1; ++i) {
     for (int j = -1; j <= 1; ++j) {
-      //cout << "r: " << player->getPosn().r + i << " c: " << player->getPosn().c + i << endl;
-      shared_ptr<Entity> cell_occupant = (theGrid->getCell({player->getPosn().r + i, player->getPosn().c + j}).getOccupant()); 
-      //cout << cell_occupant << endl;
-      if (cell_occupant != nullptr && cell_occupant->getSymbol() == 'P') {
-        return " and sees " + cell_occupant->getName() + ".";
+      shared_ptr<Entity> cell_occupant = 
+      (theGrid->getCell({player->getPosn().r + 
+       i, player->getPosn().c + j}).getOccupant()); 
+        return "PC sees " + cell_occupant->getName() + ". ";
       }
     }
-  }
   return "";
 }
 
@@ -427,7 +404,7 @@ string Game::PlayerAttack(string direction) {
   Posn player_Posn = player->getPosn();
   Cell &target_cell = theGrid->getCell(dir_to_posn(player_Posn,direction));
   if(target_cell.getOccupant() == nullptr) {
-    return "There is no enemy at that direction.";
+    return "There is no enemy at that direction. ";
   } 
   char entity_sym = target_cell.getOccupant()->getSymbol();
   auto e = static_pointer_cast<Enemy>(target_cell.getOccupant());
@@ -472,24 +449,6 @@ string Game::PlayerAttack(string direction) {
    return player->actionText(e, atkStatus::InvalidTarget);
 }
 
-/*  
-void Game::Player_usePotion(string direction) {
-  int size = potions.size();
-  int target_row = target.getRow();
-  int target_col = target.getCol();
-  for (int i = 0; i < size; ++size) { 
-    if (target_row == potions.at(i).getRow() &&
-        target_col == potions.at(i).getCol()) {
-      player->usePotion(dir_to_cell(player.cell, direction));
-      shared_ptr<Potion>removed_potion = potions.back();
-      potions.pop_back();
-      removeEntity(removed_potion.cell);
-      return;
-    }
-  }
-}
-}*/
-
 void Game::freeze() {
   frozen = !frozen;
 }
@@ -500,6 +459,7 @@ bool valid_dir(string dir) {
     return true;
   }
   else {
+    throw Invalid_behave("Invalid command! please try again."); 
     return false;
   }
 }
@@ -507,16 +467,6 @@ bool valid_dir(string dir) {
 void useTogether(Player &user, Entity &used) {
   used.beUsedBy(user);
 }
-
-/*string Game::processTurn(const string &command) {
-  string full_printing_msg = "";
-  istringstream iss(command);
-  string s;
-  iss >> s;
-  player->beginTurn();
-  if (s == "a") {
-    iss >> s;
-}*/
 
 string Game::processTurn(const string &command) {
   string full_printing_msg = "";
@@ -528,8 +478,6 @@ string Game::processTurn(const string &command) {
     enemies.clear();
     player = nullptr;
     theGrid->init("maps/basicFloor.txt", 1);
-    //player = make_shared<Shade>();
-    //print("");
     cout << "Insert a new race please" << endl;
     while (true) {
       getline(cin, s);
@@ -552,31 +500,25 @@ string Game::processTurn(const string &command) {
   }
   else if (s == "u") {
     iss >> s;
-    //cout << "use detected" << endl;
     if (valid_dir(s)) {
       Posn target = dir_to_posn(player->getPosn(), s);
-      //cout << "target posn: " << target.r << " , " << target.c << endl;
       if (theGrid->hasUsable(target)) { // if the occupant of target can be used
-        //cout << "target can be used " << endl;
-        useTogether(*player, *(theGrid->getCell(target).getOccupant())); // make player use the occupant of target
-        full_printing_msg += "PC uses " + theGrid->getCell(target).getOccupant()->getName() + ".";
+        useTogether(*player, *(theGrid->getCell(target).getOccupant())); 
+        // make player use the occupant of target
+        full_printing_msg += "PC uses " + 
+                             theGrid->getCell(target).getOccupant()->getName() + ". ";
         theGrid->removeEntity(target);  //remove target from the board
-        movePlayer(s); //fdsmakmfdskmfsdlfdkslk
+        movePlayer(s); 
         player->endTurn();
-        //todo generate action text
       }
     }
-  }/*
-  else if (s == "r") {
-    //changeFloor();
-  }*/
+  }
   else if (s == "f") {
     freeze();
   } 
   else if (s == "q") {
     cout<<"You quit the game."<<endl;
     quit = true;
-    //throw 0;
   }
   else if (valid_dir(s)) {
     full_printing_msg += movePlayer(s);
@@ -590,6 +532,9 @@ string Game::processTurn(const string &command) {
 }
 
 void Game::print(string printing_msg) {
+  if (quit || theGrid->getLevel() == 6) {
+    return;
+  }
   cout << *theGrid;
   cout << "Race: " << player->getName() << " Gold: " << to_string(player->finalScore()) 
        << "                                                  Floor "<<theGrid->getLevel()<<endl;
@@ -602,14 +547,14 @@ void Game::print(string printing_msg) {
 bool Game::gameOver() {
   int p_score = player->finalScore();
   if(player->getHp() <= 0) {
-    cout<< "You have been slain! Game Over."<<endl;
+    cout << "You have been slain! Game Over." << endl;
     if(dynamic_pointer_cast<Shade>(player)) p_score *= 1.5;
-    cout<< "Your final score: " <<p_score<<"."<<endl;
+    cout << "Your final score: " << p_score << "." << endl;
     return true;
   } else if (theGrid->getLevel() == 6) {
-    cout<< "Congratulations, you reach the top of the floor, you won the game!"<<endl;
+    cout << "Congratulations, you reach the top of the floor, you won the game!" << endl;
     if(dynamic_pointer_cast<Shade>(player)) p_score *= 1.5;
-    cout<< "Your final score: " <<p_score<<"."<<endl;
+    cout << "Your final score: " << p_score << "." <<endl;
     return true;
   } 
   else if (quit == true) {

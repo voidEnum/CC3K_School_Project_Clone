@@ -15,7 +15,6 @@ atkStatus Halfling::wasAttacked(std::shared_ptr<Player>player) {
     return atkStatus::Hit;
   }
   else {
-    //if (std::dynamic_pointer_cast<Vampire>(player)) player->setHp(player->getHp() - 5);
     return atkStatus::Miss;
   }
 }

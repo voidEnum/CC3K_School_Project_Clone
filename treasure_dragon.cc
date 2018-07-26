@@ -8,7 +8,7 @@ Treasure_Dragon::Treasure_Dragon() : Treasure(TREASURE_DRAGON_VALUE, "Dragon Hoa
 
 // returns true if the dragon is dead
 bool Treasure_Dragon::canBeAdded() const {
-  if (!dragon || dragon->getHp() > 0) {
+  if (dragon && dragon->getHp() > 0) {
     return false;
   }else {
     return true;

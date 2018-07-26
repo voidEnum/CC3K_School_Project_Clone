@@ -5,18 +5,6 @@
 
 Vampire::Vampire(): Player("Vampire", 50, 25, 25) {}
 
-/*
-<<<<<<< HEAD
-// this needs to be fixed
-atkStatus Vampire::attack(Cell &target) {
-  atkStatus ak = Player::attack(target);
-  if (ak == atkStatus::Hit) {
-    hp += 5;
-  }
-  return ak;
-=======
-*/
-
 void Vampire::modifyHp(int delta) {
   hp = hp + delta;
   hp = (hp <= 0) ? 0 : hp;

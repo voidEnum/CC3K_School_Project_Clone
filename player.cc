@@ -12,10 +12,6 @@ Player::Player(string name, int hp, int atk, int def):
   Creature('@', name, hp, atk, def), gold{0},
            maxHp{hp}, atkOffset{0}, defOffset{0} {}
 
-/*void Player::usePotion(Potion &target) {
-  target.occupant.applyEffect(this);
-}*/
-
 void Player::modifyHp(int delta) {
   hp = (hp + delta > maxHp) ? maxHp : hp + delta;
   hp = (hp <= 0) ? 0 : hp;  
@@ -23,11 +19,6 @@ void Player::modifyHp(int delta) {
 
 int Player::finalScore() {
   return gold;
-}
-
-// for decorators
-shared_ptr<Player>Player::withoutBuffs() {
-  return shared_from_this();
 }
 
 void Player::removeBuffs() {
@@ -49,10 +40,6 @@ void Player::endTurn() {
     setOnGold(nullptr);
   }
 }
-
-//bool Player::useEntity(Entity &e) {
-//  return e.wasUsed(&(shared_from_this()));
-//}
 
 void Player::addGold(int reward) {
   gold += reward;
@@ -98,26 +85,19 @@ string Player::actionText(shared_ptr<Enemy> &aggressor, atkStatus as) {
   if(as == atkStatus::Hit) {
     string atkAsString = to_string(damage(getAtk(), aggressor->getDef()));
     string enemyHpAsString = to_string(aggressor->getHp());
-    newActionText = "PC deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + ").";
+    newActionText = "PC deals " + atkAsString + " damage to " + aggressor->getName() +  "(" + enemyHpAsString + "). ";
   } else if (as == atkStatus::Kill){
       char sym = aggressor->getSymbol();
       if(sym != 'M' && sym != 'H' && sym != 'D') {
         int whatTreasure = rand() % 2;
         
         addGold(whatTreasure + 1);
-        newActionText = "PC killed " + aggressor->getName() + ", PC earned " + to_string(whatTreasure + 1) + " gold.";
-        /*if (whatTreasure == 0) {
-          shared_from_this()->addGold(1);
-          newActionText = "PC killed " + aggressor->getName() + ", PC earn 1 gold ";
-        } else  {
-          shared_from_this()->addGold(2);
-          newActionText = "PC killed " + aggressor->getName() + ", PC earn 2 gold ";
-        }*/
-      } else newActionText = "PC killed " + aggressor->getName() + ".";
+        newActionText = "PC killed " + aggressor->getName() + ", PC earned " + to_string(whatTreasure + 1) + " gold. ";
+      } else newActionText = "PC killed " + aggressor->getName() + ". ";
   } else if (as == atkStatus::Miss){
-      newActionText = "PC attacks " + aggressor->getName() + " but it missed.";
+      newActionText = "PC attacks " + aggressor->getName() + " but it missed. ";
   } else {
-      newActionText = "There is no enemy at that direction.";
+      newActionText = "There is no enemy at that direction. ";
   }
   return newActionText; 
 }

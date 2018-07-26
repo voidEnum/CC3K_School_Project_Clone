@@ -20,7 +20,6 @@ protected:
 public:
   Entity(char sym = 'Y', std::string name = "Entity");
   virtual atkStatus wasAttacked(Creature &aggressor);
-  //virtual atkStatus wasAttacked(Player *aggressor);
   virtual char getSymbol() const;
   // returns true when used successfully, false when entity cannot be used
   // or was otherwise not able to be used for some reason. User might be
