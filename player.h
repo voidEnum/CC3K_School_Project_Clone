@@ -2,6 +2,12 @@
 #define _PLAYER_H_
 #include "creature.h"
 #include "potion.h"
+#include "potion_RH.h"
+#include "potion_PH.h"
+#include "potion_BA.h"
+#include "potion_WA.h"
+#include "potion_BD.h"
+#include "potion_WD.h"
 #include <memory>
 #include <string>
 #include "enemy.h"

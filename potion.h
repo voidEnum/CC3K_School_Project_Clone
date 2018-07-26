@@ -29,7 +29,7 @@ public:
 };
 
 // Declaring default potions here as well to reduce number of files
-class Potion_RH : public Potion, public std::enable_shared_from_this<Potion_RH> {
+/*class Potion_RH : public Potion, public std::enable_shared_from_this<Potion_RH> {
   static bool revealed; 
 public:
   // How likely something is to spawn, relative to other things derived from
@@ -41,9 +41,9 @@ public:
   void reveal() override;
   virtual void beUsedBy(Player &user);
   //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-};
+};*/
 
-class Potion_PH : public Potion, public std::enable_shared_from_this<Potion_PH> {
+/*class Potion_PH : public Potion, public std::enable_shared_from_this<Potion_PH> {
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
@@ -52,9 +52,9 @@ public:
   void reveal() override;
   virtual void beUsedBy(Player &user);
   //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-};
+};*/
 
-class Potion_BA : public Potion, public std::enable_shared_from_this<Potion_BA> {
+/*class Potion_BA : public Potion, public std::enable_shared_from_this<Potion_BA> {
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
@@ -63,9 +63,9 @@ public:
   void reveal() override;
   virtual void beUsedBy(Player &user);
   //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-};
+};*/
 
-class Potion_WA : public Potion, public std::enable_shared_from_this<Potion_WA>{
+/*class Potion_WA : public Potion, public std::enable_shared_from_this<Potion_WA>{
   static bool revealed;
 public:
   static const int SPAWN_RATE = 1;
@@ -74,8 +74,8 @@ public:
   void reveal() override;
   virtual void beUsedBy(Player &user);
   //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-};
-
+};*/
+/*
 class Potion_BD : public Potion, public std::enable_shared_from_this<Potion_BD> {
   static bool revealed;
 public:
@@ -85,8 +85,8 @@ public:
   void reveal() override;
   virtual void beUsedBy(Player &user);
   //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
-};
-
+};*/
+/*
 class Potion_WD : public Potion, public std::enable_shared_from_this<Potion_WD> {
   static bool revealed;
 public:
@@ -97,5 +97,5 @@ public:
   virtual void beUsedBy(Player &user);
   //std::shared_ptr<Player> beUsedBy(std::shared_ptr<Player> user) override;
 };
-
+*/
 #endif

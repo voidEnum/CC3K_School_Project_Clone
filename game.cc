@@ -537,7 +537,7 @@ string Game::processTurn(const string &command) {
     startRound(s);
     print("the player entered the dungeon");
   }
-  if (s == "a") {
+  else if (s == "a") {
     iss >> s;
     if (valid_dir(s)) {
       full_printing_msg += PlayerAttack(s);
@@ -596,7 +596,7 @@ void Game::print(string printing_msg) {
 bool Game::gameOver() {
   int p_score = player->finalScore();
   if(player->getHp() <= 0) {
-    cout<< "You were slained! Game Over."<<endl;
+    cout<< "You have been slain! Game Over."<<endl;
     if(dynamic_pointer_cast<Shade>(player)) p_score *= 1.5;
     cout<< "Your final score: " <<p_score<<"."<<endl;
     return true;
