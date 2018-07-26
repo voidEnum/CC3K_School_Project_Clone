@@ -7,12 +7,12 @@
 class Drow: public Player {
  public:
   Drow();  
-void useEntity(Potion_RH &p); 
-void useEntity(Potion_PH &p); 
-void useEntity(Potion_BA &p); 
-void useEntity(Potion_BD &p); 
-void useEntity(Potion_WA &p); 
-void useEntity(Potion_WD &p); 
+  void useEntity(Potion_RH &p) override; 
+  void useEntity(Potion_PH &p) override; 
+  void useEntity(Potion_BA &p) override; 
+  void useEntity(Potion_BD &p) override; 
+  void useEntity(Potion_WA &p) override; 
+  void useEntity(Potion_WD &p) override; 
 };
 
 #endif
