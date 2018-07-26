@@ -500,7 +500,6 @@ bool valid_dir(string dir) {
     return true;
   }
   else {
-    throw Invalid_behave("");
     return false;
   }
 }
