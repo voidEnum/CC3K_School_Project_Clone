@@ -382,7 +382,8 @@ string Game::potion_near() {
     for (int j = -1; j <= 1; ++j) {
       shared_ptr<Entity> cell_occupant = 
       (theGrid->getCell({player->getPosn().r + 
-       i, player->getPosn().c + j}).getOccupant()); 
+       i, player->getPosn().c + j}).getOccupant());
+       if (cell_occupant != nullptr && cell_occupant->getSymbol() == 'P') 
         return "PC sees " + cell_occupant->getName() + ". ";
       }
     }
